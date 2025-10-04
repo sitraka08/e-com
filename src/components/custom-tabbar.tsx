@@ -23,7 +23,7 @@ export default function CustomTabBar({
   navigation,
 }: BottomTabBarProps) {
   return (
-    <View className="flex-row bg-[#fff] h-24 justify-around mx-3 items-center border p-4 border-[#fff] rounded-2xl mb-12">
+    <View className="flex-row bg-[#fff] h-20 justify-around mx-3 items-center border p-4 border-[#fff] rounded-2xl mb-12">
       {state.routes.map((route, index) => {
         const label = TABS[index]?.label ?? route.name;
         const Icon = TABS[index]?.icon ?? House;
@@ -42,7 +42,7 @@ export default function CustomTabBar({
             <View className={`"flex items-center gap-2"`}>
               <Icon size={20} color={isFocused ? "#fff" : "#000"} />
               <Text
-                className={`text-xs font-fsemibold ${isFocused && "text-[#fff]"}`}
+                className={`text-xs font-fregular ${isFocused && "text-[#fff]"}`}
               >
                 {label}
               </Text>
