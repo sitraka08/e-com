@@ -32,7 +32,7 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <View
-        className=" w-full h-12"
+        className="w-full h-12"
         style={{
           backgroundColor: COLORS.primary,
         }}

@@ -19,7 +19,7 @@ module.exports = {
       fblack: ["FBlack"],
     },
     colors: {
-      primary: "#677BE5",
+      primary: "#6695e8",
       white: "#fff",
     },
   },

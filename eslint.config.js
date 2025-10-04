@@ -8,6 +8,7 @@ module.exports = defineConfig([
     ignores: ["dist/*"],
     rules: {
       "react/no-unescaped-entities": "off",
+      "@typescript-eslint/no-explicit-any": "error",
     },
   },
 ]);
