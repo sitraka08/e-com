@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "application-name",
-    "slug": "application-name",
+    "name": "e-commerce",
+    "slug": "e-commerce",
     "version": "1.0.0",
     "orientation": "portrait",
-    "scheme": "application-name",
+    "scheme": "e-commerce",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -18,7 +18,7 @@
     },
     "web": {
       "bundler": "metro",
-      "output": "static",
+      "output": "static"
     },
     "plugins": [
       "expo-router",

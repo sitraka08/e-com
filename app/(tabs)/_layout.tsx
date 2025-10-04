@@ -1,25 +1,19 @@
 import { Tabs } from "expo-router";
+import CustomTabBar from "@/components/CustomTabBar";
 
 export default function TabLayout() {
   return (
     <Tabs
+      tabBar={(props) => <CustomTabBar {...props} />}
       screenOptions={{
-        tabBarActiveTintColor: "#000",
-        tabBarInactiveTintColor: "#bfb9b9",
         headerShown: false,
       }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarLabelStyle: {
-            fontFamily: "SpaceMono",
-            color: "#bfb9b9",
-            fontSize: 12,
-          },
-        }}
-      />
+      <Tabs.Screen name="home/index" />
+      <Tabs.Screen name="search/index" />
+      <Tabs.Screen name="cart/index" />
+      <Tabs.Screen name="command/index" />
+      <Tabs.Screen name="profile/index" />
     </Tabs>
   );
 }

@@ -1,18 +1,18 @@
-import "../global.css";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Text } from "react-native";
-import "react-native-reanimated";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import "react-native-reanimated";
+import "../global.css";
 import { FONTS } from "@/constants/fonts";
 
+const queryClient = new QueryClient();
 (Text as any).defaultProps = (Text as any).defaultProps || {};
 (Text as any).defaultProps.allowFontScaling = false;
 
 export default function RootLayout() {
-  const queryClient = new QueryClient();
-  const [loaded] = useFonts({
+  const [loaded, error] = useFonts({
     FThin: FONTS.Thin,
     FExtraLight: FONTS.ExtraLight,
     FLight: FONTS.Light,
@@ -29,13 +29,11 @@ export default function RootLayout() {
   }
 
   return (
-    <>
-      <QueryClientProvider client={queryClient}>
-        <StatusBar style="dark" />
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack>
-      </QueryClientProvider>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <StatusBar style="dark" />
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      </Stack>
+    </QueryClientProvider>
   );
 }

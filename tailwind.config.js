@@ -18,7 +18,9 @@ module.exports = {
       ffextrabold: ["FExtraBold"],
       fblack: ["FBlack"],
     },
-    colors: {},
+    colors: {
+      primary: "#677BE5",
+    },
   },
   plugins: [],
 };
