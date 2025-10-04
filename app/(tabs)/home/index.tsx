@@ -75,7 +75,7 @@ export const CATEGORIES = [
   },
 ];
 
-const PRODUCTS: ProductType[] = [
+export const PRODUCTS: ProductType[] = [
   {
     id: 1,
     name: "T-shirt Homme",

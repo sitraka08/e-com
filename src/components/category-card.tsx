@@ -18,7 +18,7 @@ export default function CategoryCard({
 }: CategoryCardProps) {
   return (
     <TouchableOpacity
-      className={`bg-[#e4f2fc] p-3 rounded-xl flex items-center justify-center border border-[#b6d1f1] ${active && "bg-primary"}`}
+      className={`bg-[#e4f2fc] p-3 rounded-xl flex items-center justify-center border border-[#b6f1d8bd] ${active && "bg-primary"}`}
       onPress={() => onPress(name)}
     >
       <View
