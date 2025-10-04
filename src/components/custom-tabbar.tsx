@@ -1,5 +1,5 @@
 import React from "react";
-import { View, TouchableOpacity, Text } from "react-native";
+import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import {
   House,
   CircleUser,
@@ -23,7 +23,10 @@ export default function CustomTabBar({
   navigation,
 }: BottomTabBarProps) {
   return (
-    <View className="flex-row bg-[#fff] h-20 justify-around mx-3 items-center border p-4 border-[#fff] rounded-2xl mb-12">
+    <View
+      className="flex-row bg-[#fff] h-20 justify-around mx-3 items-center  p-4 border-[#e2e2e2] rounded-2xl mb-12 "
+      style={styles.shadow}
+    >
       {state.routes.map((route, index) => {
         const label = TABS[index]?.label ?? route.name;
         const Icon = TABS[index]?.icon ?? House;
@@ -53,3 +56,16 @@ export default function CustomTabBar({
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  shadow: {
+    // shadowColor: "#677DE8",
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 5,
+    // },
+    // shadowOpacity: 0.36,
+    // shadowRadius: 6.68,
+    // elevation: 11,
+  },
+});

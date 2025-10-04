@@ -2,10 +2,15 @@ import CategoryCard from "@/components/category-card";
 import ProductCard from "@/components/product-card";
 import SearchBar from "@/components/search-bar";
 import { ProductType } from "@/types/product";
+import { useState } from "react";
 import { FlatList, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
+  const [category, setCategory] = useState<string>();
+  const categoryHandle = (name: string) => {
+    setCategory(name);
+  };
   return (
     <SafeAreaView className="flex-1">
       <SearchBar />
@@ -15,7 +20,11 @@ export default function Home() {
           <View className="flex flex-row flex-wrap -m-1">
             {CATEGORIES.map((item) => (
               <View key={item.id} className="w-1/4 p-1">
-                <CategoryCard name={item.name} icon={item.icon} />
+                <CategoryCard
+                  {...item}
+                  onPress={categoryHandle}
+                  active={category === item.name}
+                />
               </View>
             ))}
           </View>
@@ -42,22 +51,26 @@ export default function Home() {
 export const CATEGORIES = [
   {
     id: 1,
-    name: "Mode",
+    name: "MODE",
+    title: "Mode",
     icon: "👗",
   },
   {
     id: 2,
-    name: "High-Tech",
+    name: "INFORMATIQUE",
+    title: "Tech",
     icon: "📱",
   },
   {
     id: 3,
-    name: "Maison",
+    name: "MAISON",
+    title: "Maison",
     icon: "🏠",
   },
   {
     id: 4,
-    name: "Beauté",
+    name: "BEAUTE",
+    title: "Beauté",
     icon: "💄",
   },
 ];
