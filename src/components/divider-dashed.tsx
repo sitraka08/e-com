@@ -1,9 +1,19 @@
 import { Text } from "react-native";
 import React from "react";
+import { cn } from "utils/utils";
 
-const DividerDashed = () => {
+interface DividerDashedProps {
+  className?: string;
+}
+
+const DividerDashed = ({ className = "" }: DividerDashedProps) => {
   return (
-    <Text className="border-dashed w-full border-t border-[#06b664] -mb-5"></Text>
+    <Text
+      className={cn(
+        "border-dashed w-full border-t border-[#06b664] -mb-5",
+        className
+      )}
+    ></Text>
   );
 };
 

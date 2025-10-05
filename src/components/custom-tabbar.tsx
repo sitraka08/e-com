@@ -8,6 +8,7 @@ import {
   ScrollText,
 } from "lucide-react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { removeTabsByNames } from "utils/utils";
 
 const TABS = [
   { label: "Accueil", icon: House },
@@ -17,17 +18,21 @@ const TABS = [
   { label: "Profil", icon: CircleUser },
 ];
 
+const removeInTabs = ["cart/payement/index"];
+
 export default function CustomTabBar({
   state,
   descriptors,
   navigation,
 }: BottomTabBarProps) {
+  const STATE = removeTabsByNames(state.routes, removeInTabs);
+
   return (
     <View
       className="flex-row bg-[#fff] h-20 justify-around mx-3 items-center  p-4 border-[#e2e2e2] rounded-2xl mb-12 "
       style={styles.shadow}
     >
-      {state.routes.map((route, index) => {
+      {STATE.map((route, index) => {
         const label = TABS[index]?.label ?? route.name;
         const Icon = TABS[index]?.icon ?? House;
         const isFocused = state.index === index;

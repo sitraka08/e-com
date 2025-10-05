@@ -2,6 +2,7 @@ import CategoryCard from "@/components/category-card";
 import ProductCard from "@/components/product-card";
 import SearchBar from "@/components/search-bar";
 import { ProductType } from "@/types/product";
+import { Computer, Pizza, Shirt } from "lucide-react-native";
 import { useState } from "react";
 import { FlatList, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,7 +15,7 @@ export default function Home() {
   return (
     <SafeAreaView className="flex-1">
       <SearchBar />
-      <View className="mt-36 p-5 flex gap-4">
+      <View className="mt-28 p-5 flex gap-4">
         <View>
           <Text className="text-base font-fsemibold">Catégories</Text>
           <View className="flex flex-row flex-wrap -m-1">
@@ -52,26 +53,26 @@ export const CATEGORIES = [
   {
     id: 1,
     name: "MODE",
-    title: "Mode",
-    icon: "👗",
+    title: "Food",
+    icon: Pizza,
   },
   {
     id: 2,
     name: "INFORMATIQUE",
     title: "Tech",
-    icon: "📱",
+    icon: Computer,
   },
   {
     id: 3,
     name: "MAISON",
     title: "Maison",
-    icon: "🏠",
+    icon: Shirt,
   },
   {
     id: 4,
     name: "BEAUTE",
     title: "Beauté",
-    icon: "💄",
+    icon: Shirt,
   },
 ];
 

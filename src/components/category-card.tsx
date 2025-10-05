@@ -1,9 +1,11 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
+import { LucideIcon } from "lucide-react-native";
+import { COLORS } from "@/constants/colors";
 
 interface CategoryCardProps {
   name: string;
-  icon: string;
+  icon: LucideIcon;
   title: string;
   active: boolean;
   onPress: (name: string) => void;
@@ -16,6 +18,7 @@ export default function CategoryCard({
   title,
   active,
 }: CategoryCardProps) {
+  const Icon = icon;
   return (
     <TouchableOpacity
       className={`bg-[#e4f2fc] p-3 rounded-xl flex items-center justify-center border border-[#b6f1d8bd] ${active && "bg-primary"}`}
@@ -24,7 +27,9 @@ export default function CategoryCard({
       <View
         className={`h-10 flex items-center justify-center w-10 bg-primary rounded-full ${active && "bg-white"}`}
       >
-        <Text className="text-lg">{icon}</Text>
+        <Text className="text-lg">
+          {<Icon color={active ? COLORS.primary : "#fff"} />}
+        </Text>
       </View>
       <Text className={`text-xs font-fmedium ${active && "text-white"}`}>
         {title}

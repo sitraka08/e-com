@@ -13,7 +13,7 @@ const queryClient = new QueryClient();
 (Text as any).defaultProps.allowFontScaling = false;
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
+  const [loaded] = useFonts({
     FThin: FONTS.Thin,
     FExtraLight: FONTS.ExtraLight,
     FLight: FONTS.Light,
