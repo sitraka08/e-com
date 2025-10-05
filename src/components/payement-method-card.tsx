@@ -2,7 +2,7 @@ import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import React from "react";
 import { RadioButton } from "./button/radio-button";
 import DividerDashed from "./divider-dashed";
-import { BanknoteArrowUp } from "lucide-react-native";
+import { BanknoteArrowUp, LucideIcon } from "lucide-react-native";
 import { cn } from "utils/utils";
 
 interface PayementMethodCardProps {
@@ -11,6 +11,7 @@ interface PayementMethodCardProps {
   label: string;
   description?: string;
   noInput?: boolean;
+  icon: LucideIcon;
 }
 
 export default function PayementMethodCard({
@@ -19,7 +20,9 @@ export default function PayementMethodCard({
   label,
   description,
   noInput = false,
+  icon = BanknoteArrowUp,
 }: PayementMethodCardProps) {
+  const Icon = icon;
   return (
     <TouchableOpacity
       activeOpacity={0.5}
@@ -32,7 +35,7 @@ export default function PayementMethodCard({
       <View className="flex flex-row justify-between items-center">
         <View className="flex flex-row gap-5 items-center">
           <View className="bg-primary p-2 rounded-lg w-14 h-14 flex items-center justify-center">
-            <BanknoteArrowUp size={22} color="#fff" />
+            <Icon size={22} color="#fff" />
           </View>
           <View className="flex flex-col justify-center">
             <Text className="font-fsemibold text-sm">{label}</Text>

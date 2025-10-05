@@ -18,18 +18,14 @@ const TABS = [
   { label: "Profil", icon: CircleUser },
 ];
 
-const removeInTabs = ["cart/payement/index"];
+const removeInTabs = ["cart/payement/index", "home/[id]"];
 
-export default function CustomTabBar({
-  state,
-  descriptors,
-  navigation,
-}: BottomTabBarProps) {
+export default function CustomTabBar({ state, navigation }: BottomTabBarProps) {
   const STATE = removeTabsByNames(state.routes, removeInTabs);
 
   return (
     <View
-      className="flex-row bg-[#fff] h-20 justify-around mx-3 items-center  p-4 border-[#e2e2e2] rounded-2xl mb-12 "
+      className="flex-row bg-[#fff] h-20 justify-around mx-3 items-center  border p-4 border-[#0000000e] rounded-2xl mb-12 "
       style={styles.shadow}
     >
       {STATE.map((route, index) => {

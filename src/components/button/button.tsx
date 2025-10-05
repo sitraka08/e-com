@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import { cn } from "utils/utils";
 
@@ -24,7 +24,11 @@ export default function Button({
       onPress={onPress}
       activeOpacity={0.7}
     >
-      <Text className={cn("font-fsemibold text-white")}>{label}</Text>
+      {loading ? (
+        <ActivityIndicator color="#fff" />
+      ) : (
+        <Text className={cn("font-fsemibold text-sm text-white")}>{label}</Text>
+      )}
     </TouchableOpacity>
   );
 }

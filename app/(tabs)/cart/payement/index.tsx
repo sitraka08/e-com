@@ -4,6 +4,7 @@ import TopNavigation from "@/components/top-navigation";
 import PayementMethodCard from "@/components/payement-method-card";
 import DividerDashed from "@/components/divider-dashed";
 import Button from "@/components/button/button";
+import { BanknoteArrowUp, HandCoins, Landmark } from "lucide-react-native";
 
 export default function Payement() {
   const [payementMethod, setPayementMethod] = useState<
@@ -31,18 +32,21 @@ export default function Payement() {
               checked={payementMethod === "MONEY"}
               onPress={() => setPayementMethod("MONEY")}
               noInput
+              icon={HandCoins}
             />
             <PayementMethodCard
               label="Mobile Money"
-              description="Orange Money, MVola"
+              description="MVola"
               checked={payementMethod === "MOBILE"}
               onPress={() => setPayementMethod("MOBILE")}
+              icon={BanknoteArrowUp}
             />
             <PayementMethodCard
               label="Carte bancaire"
               description="Visa, Mastercard"
               checked={payementMethod === "CARD"}
               onPress={() => setPayementMethod("CARD")}
+              icon={Landmark}
             />
           </View>
           <View className="bg-[#fff] w-full  p-5 rounded-xl border-2 border-primary mt-5">
@@ -61,7 +65,8 @@ export default function Payement() {
             </View>
             <Button
               className="mt-8"
-              label="Procéder au payement"
+              label="Confirmer la commande"
+              // loading
               // onPress={() => router.push("/(tabs)/cart/payement")}
             />
           </View>

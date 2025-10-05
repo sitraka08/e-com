@@ -6,12 +6,14 @@ interface SearchInputProps {
   placeholder?: string;
   className?: string;
   onChange?: (value: string) => void;
+  autoFocus?: boolean;
 }
 
 const SearchInput = ({
   placeholder = "Rechercher un produit",
   className,
   onChange,
+  autoFocus,
 }: SearchInputProps) => {
   return (
     <View
@@ -22,6 +24,7 @@ const SearchInput = ({
         placeholder={placeholder}
         onChangeText={onChange}
         placeholderTextColor={"#DCDCF4"}
+        autoFocus={autoFocus}
       />
       <Search color="#fff" />
     </View>

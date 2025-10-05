@@ -3,17 +3,20 @@ import React from "react";
 import { ArrowLeft } from "lucide-react-native";
 import { COLORS } from "@/constants/colors";
 import { useRouter } from "expo-router";
+import SearchInput from "./search-input";
 
 interface TopNavigationProps {
   onPress?: () => void;
   title: string;
   description?: string;
+  withIput?: boolean;
 }
 
 export default function TopNavigation({
   title,
   onPress,
   description,
+  withIput = false,
 }: TopNavigationProps) {
   const router = useRouter();
   return (
@@ -25,11 +28,14 @@ export default function TopNavigation({
         >
           <ArrowLeft size={20} color={COLORS.primary} />
         </TouchableOpacity>
-        <View>
+        <View className="flex justify-center">
           <Text className="text-white font-fmedium text-xl">{title}</Text>
-          <Text className="text-xs text-white">{description}</Text>
+          {description && (
+            <Text className="text-xs text-white">{description}</Text>
+          )}
         </View>
       </View>
+      {withIput && <SearchInput autoFocus />}
     </View>
   );
 }

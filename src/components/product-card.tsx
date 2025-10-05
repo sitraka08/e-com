@@ -3,15 +3,20 @@ import React from "react";
 import { ProductType } from "@/types/product";
 import { ShoppingCart } from "lucide-react-native";
 import useCartStore from "@/stores/useCartStore";
+import { useRouter } from "expo-router";
 
 export default function ProductCard(product: ProductType) {
   const { image, name, price } = product;
-  const { addItem, getTotal } = useCartStore();
+  const { addItem } = useCartStore();
+  const router = useRouter();
 
-  console.log(getTotal(), "haha");
   return (
-    <View className="bg-white flex items-center justify-center rounded-3xl p-4 relative">
-      <View className="flex w-full h-[140px] items-center justify-center bg-secondary rounded-2xl p-5">
+    <TouchableOpacity
+      activeOpacity={0.6}
+      className="bg-white flex items-center justify-center rounded-3xl p-4 relative"
+      onPress={() => router.push(`/(tabs)/home/${product.id}`)}
+    >
+      <View className="flex w-full h-[140px] items-center justify-center bg-[#0000001a] rounded-2xl p-5">
         <Image
           source={{ uri: image }}
           className="w-full h-full rounded-xl"
@@ -28,6 +33,6 @@ export default function ProductCard(product: ProductType) {
       >
         <ShoppingCart size={16} />
       </TouchableOpacity>
-    </View>
+    </TouchableOpacity>
   );
 }
