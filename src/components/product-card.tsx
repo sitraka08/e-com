@@ -11,7 +11,7 @@ export default function ProductCard(product: ProductType) {
   console.log(getTotal(), "haha");
   return (
     <View className="bg-white flex items-center justify-center rounded-3xl p-4 relative">
-      <View className="flex w-full h-[140px] items-center justify-center bg-[#e9f3fa] rounded-2xl p-5">
+      <View className="flex w-full h-[140px] items-center justify-center bg-secondary rounded-2xl p-5">
         <Image
           source={{ uri: image }}
           className="w-full h-full rounded-xl"
@@ -23,7 +23,7 @@ export default function ProductCard(product: ProductType) {
         <Text className="text font-fbold text-base text-primary">{price}</Text>
       </View>
       <TouchableOpacity
-        className="absolute bottom-5 right-5 rounded-full border p-2 bg-[#e9f3fa] border-[#8d8d8d48]"
+        className="absolute bottom-5 right-5 rounded-full border p-2 bg-secondary border-[#8d8d8d48]"
         onPress={() => addItem(product)}
       >
         <ShoppingCart size={16} />

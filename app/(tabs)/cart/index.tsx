@@ -32,7 +32,7 @@ export default function Cart() {
             </View>
           )}
           ListFooterComponent={
-            <View className="bg-[#fff] w-full  p-5 rounded-xl border border-[#0000003d]">
+            <View className="bg-[#fff] w-full  p-5 rounded-xl border-2 border-primary">
               <View className="flex flex-row justify-between">
                 <Text className="font-fmedium ">Sous-total</Text>
                 <Text className="font-fbold ">2000 Ar</Text>
