@@ -1,4 +1,4 @@
-import { Image, SafeAreaView, Text, View } from "react-native";
+import { Image, SafeAreaView, Text, ToastAndroid, View } from "react-native";
 import React from "react";
 import TopNavigation from "@/components/top-navigation";
 import { PRODUCTS } from "../search";
@@ -10,6 +10,14 @@ import Button from "@/components/button/button";
 
 export default function ProductDetails() {
   //   const { id } = useLocalSearchParams();
+
+  const showToastWithGravity = () => {
+    ToastAndroid.showWithGravity(
+      "All Your Base Are Belong To Us",
+      ToastAndroid.LONG,
+      ToastAndroid.CENTER
+    );
+  };
 
   return (
     <SafeAreaView className="flex-1">
@@ -49,7 +57,11 @@ export default function ProductDetails() {
             <Text className="font-fmedium">10</Text>
             <PlusButton onPress={() => {}} />
           </View>
-          <Button label="Ajouter au panier" className="w-auto min-w-[70%]" />
+          <Button
+            label="Ajouter au panier"
+            className="w-auto min-w-[70%]"
+            onPress={showToastWithGravity}
+          />
         </View>
       </View>
     </SafeAreaView>
