@@ -18,9 +18,29 @@ const TABS = [
   { label: "Profil", icon: CircleUser },
 ];
 
-const removeInTabs = ["cart/payement/index", "home/[id]"];
+const removeInTabs = [
+  "cart/payement/index",
+  "profile/login/index",
+  "profile/register/index",
+  "home/[id]",
+];
+const hiddenTabBarRoutes = [
+  "profile/login/index",
+  "profile/index",
+  "profile/register/index",
+];
 
 export default function CustomTabBar({ state, navigation }: BottomTabBarProps) {
+  const currentRoute = state.routes[state.index].name;
+  const shouldHideTabBar = hiddenTabBarRoutes.some((route) => {
+    const pattern = route.replace(/\[.*?\]/g, "[^/]+");
+    const regex = new RegExp(`^${pattern}$`);
+    return regex.test(currentRoute);
+  });
+
+  if (shouldHideTabBar) {
+    return null;
+  }
   const STATE = removeTabsByNames(state.routes, removeInTabs);
 
   return (

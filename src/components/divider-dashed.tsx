@@ -10,7 +10,7 @@ const DividerDashed = ({ className = "" }: DividerDashedProps) => {
   return (
     <Text
       className={cn(
-        "border-dashed w-full border-t border-[#06b664] -mb-5",
+        "border-dashed w-full border-t border-[#068db6] -mb-5",
         className
       )}
     ></Text>

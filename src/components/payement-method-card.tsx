@@ -29,7 +29,7 @@ export default function PayementMethodCard({
       onPress={onPress}
       className={cn(
         "p-5 border-2 border-[#0000000a]  rounded-xl ",
-        checked ? "!border-primary !bg-secondary" : "bg-[#ffffffd0]"
+        checked ? "!border-primary !bg-secondary" : "bg-[#ffffff]"
       )}
     >
       <View className="flex flex-row justify-between items-center">

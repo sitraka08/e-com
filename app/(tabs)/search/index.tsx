@@ -1,5 +1,4 @@
 import ProductCard from "@/components/product-card";
-import SearchBar from "@/components/search-bar";
 import TopNavigation from "@/components/top-navigation";
 import { ProductType } from "@/types/product";
 import { Computer, Pizza, Shirt } from "lucide-react-native";

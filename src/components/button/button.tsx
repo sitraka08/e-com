@@ -7,6 +7,7 @@ interface ButtonProps {
   loading?: boolean;
   onPress?: () => void;
   className?: string;
+  textClassName?: string;
 }
 
 export default function Button({
@@ -14,6 +15,7 @@ export default function Button({
   className = "",
   loading,
   onPress,
+  textClassName = "",
 }: ButtonProps) {
   return (
     <TouchableOpacity
@@ -27,7 +29,11 @@ export default function Button({
       {loading ? (
         <ActivityIndicator color="#fff" />
       ) : (
-        <Text className={cn("font-fsemibold text-sm text-white")}>{label}</Text>
+        <Text
+          className={cn("font-fsemibold text-sm text-white", textClassName)}
+        >
+          {label}
+        </Text>
       )}
     </TouchableOpacity>
   );

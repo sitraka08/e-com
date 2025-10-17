@@ -19,9 +19,9 @@ module.exports = {
       fblack: ["FBlack"],
     },
     colors: {
-      primary: "#158779",
+      primary: "#0174D8",
       white: "#fff",
-      secondary: "#f0fff69c",
+      secondary: "#d7e8f7",
     },
   },
   plugins: [],
