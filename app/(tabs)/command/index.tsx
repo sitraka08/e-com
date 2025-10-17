@@ -1,10 +1,14 @@
-import { View, Text } from "react-native";
 import React from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import TopNavigation from "@/components/top-navigation";
 
 export default function Command() {
   return (
-    <View>
-      <Text>Command</Text>
-    </View>
+    <SafeAreaView className="">
+      <TopNavigation
+        title="Mes Commandes"
+        description="Retrouve la liste de tes commandes"
+      />
+    </SafeAreaView>
   );
 }

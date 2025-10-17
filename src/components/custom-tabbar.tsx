@@ -22,12 +22,14 @@ const removeInTabs = [
   "cart/payement/index",
   "profile/login/index",
   "profile/register/index",
+  "profile/forgot-password/index",
   "home/[id]",
 ];
 const hiddenTabBarRoutes = [
   "profile/login/index",
   "profile/index",
   "profile/register/index",
+  "profile/forgot-password/index",
 ];
 
 export default function CustomTabBar({ state, navigation }: BottomTabBarProps) {
@@ -61,12 +63,12 @@ export default function CustomTabBar({ state, navigation }: BottomTabBarProps) {
                 navigation.navigate(route.name);
               }
             }}
-            className={`flex-1 items-center justify-center h-full ${isFocused ? "bg-primary rounded-xl" : ""}`}
+            className={`flex-1 items-center justify-center h-full ${isFocused ? "bg-primary rounded-xl p-1" : ""}`}
           >
             <View className={`"flex items-center gap-2"`}>
               <Icon size={20} color={isFocused ? "#fff" : "#000"} />
               <Text
-                className={`text-xs font-fregular ${isFocused && "text-[#fff]"}`}
+                className={`text-[10px] font-fregular ${isFocused && "text-[#fff]"}`}
               >
                 {label}
               </Text>
