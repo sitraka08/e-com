@@ -1,12 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -14,92 +7,215 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Énumération des rôles utilisateur
-enum Role {
-  ADMIN   // Administrateur - accès complet
-  SELLER  // Vendeur - peut gérer ses propres produits
-  BUYER   // Acheteur - peut acheter des produits
+enum UserRole {
+  CLIENT
+  ADMIN
 }
 
-// Énumération des statuts de commande
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  PENDING_VALIDATION
+}
+
+enum PaymentMethodType {
+  MOBILE_MONEY
+  BANK_CARD
+  CASH
+}
+
 enum OrderStatus {
-  PENDING    // En attente
-  CONFIRMED  // Confirmée
-  PROCESSING // En traitement
-  SHIPPED    // Expédiée
-  DELIVERED  // Livrée
-  CANCELLED  // Annulée
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
 }
 
-// Modèle Utilisateur
-model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  password  String    // Hashé avec bcrypt
-  name      String
-  phone     String?
-  address   String?
-  role      Role      @default(BUYER)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
 
-  // Relations
-  products  Product[] // Produits créés (pour les vendeurs)
-  orders    Order[]   // Commandes passées (pour les acheteurs)
+model User {
+  id            Int              @id @default(autoincrement())
+  firstName     String           @db.VarChar(100)
+  lastName      String           @db.VarChar(100)
+  email         String           @unique @db.VarChar(255)
+  password      String           @db.VarChar(255)
+  role          UserRole         @default(CLIENT)
+  status        UserStatus       @default(PENDING_VALIDATION)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  lastLoginAt   DateTime?
+
+  addresses       Address[]
+  paymentMethods  PaymentMethod[]
+  orders          Order[]
+  otpResets       OtpReset[]
 
   @@index([email])
+  @@index([status])
+  @@map("users")
 }
 
-// Modèle Produit
-model Product {
+model OtpReset {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  email     String   @db.VarChar(255)
+  otp       String   @db.VarChar(6)
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([email, otp])
+  @@index([expiresAt])
+  @@map("otp_resets")
+}
+
+model Category {
   id          Int       @id @default(autoincrement())
-  name        String
+  name        String    @unique @db.VarChar(100)
+  slug        String    @unique @db.VarChar(100)
   description String?   @db.Text
-  price       Float
-  image       String?
-  category    String?
-  stock       Int       @default(0)
-  sellerId    Int       // Vendeur qui a créé le produit
+  icon        String?   @db.VarChar(100)
+  isActive    Boolean   @default(true)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  // Relations
-  seller      User      @relation(fields: [sellerId], references: [id], onDelete: Cascade)
-  orderItems  OrderItem[]
+  products Product[]
 
-  @@index([sellerId])
-  @@index([category])
+  @@index([slug])
+  @@index([isActive])
+  @@map("categories")
 }
 
-// Modèle Commande
-model Order {
-  id         Int         @id @default(autoincrement())
-  userId     Int         // Acheteur
-  total      Float
-  status     OrderStatus @default(PENDING)
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+model Product {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(255)
+  description String    @db.Text
+  price       Decimal   @db.Decimal(10, 2)
+  stock       Int       @default(0)
+  images      String    @db.Text
+  categoryId  Int
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  // Relations
-  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  items      OrderItem[]
+  category   Category    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  orderItems OrderItem[]
+
+  @@index([categoryId])
+  @@index([isActive])
+  @@index([name])
+  @@map("products")
+}
+
+model Address {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  label      String   @db.VarChar(50)
+  fullName   String   @db.VarChar(200)
+  phone      String   @db.VarChar(20)
+  street     String   @db.VarChar(255)
+  city       String   @db.VarChar(100)
+  region     String   @db.VarChar(100)
+  postalCode String?  @db.VarChar(10)
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders Order[]
+
+  @@index([userId])
+  @@index([userId, isDefault])
+  @@map("addresses")
+}
+
+model PaymentMethod {
+  id        Int               @id @default(autoincrement())
+  userId    Int
+  type      PaymentMethodType
+  label     String            @db.VarChar(100)
+  details   String            @db.Text
+  isDefault Boolean           @default(false)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments Payment[]
+
+  @@index([userId])
+  @@index([userId, isDefault])
+  @@map("payment_methods")
+}
+
+model Order {
+  id                Int         @id @default(autoincrement())
+  orderNumber       String      @unique @db.VarChar(50)
+  userId            Int
+  addressId         Int
+  status            OrderStatus @default(PENDING)
+  subtotal          Decimal     @db.Decimal(10, 2)
+  deliveryFee       Decimal     @db.Decimal(10, 2)
+  total             Decimal     @db.Decimal(10, 2)
+  totalPaid         Decimal     @default(0) @db.Decimal(10, 2)
+  estimatedDelivery DateTime?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  user      User        @relation(fields: [userId], references: [id], onDelete: Restrict)
+  address   Address     @relation(fields: [addressId], references: [id], onDelete: Restrict)
+  items     OrderItem[]
+  payments  Payment[]
 
   @@index([userId])
   @@index([status])
+  @@index([orderNumber])
+  @@index([createdAt])
+  @@map("orders")
 }
 
-// Modèle Article de Commande (relation many-to-many entre Order et Product)
 model OrderItem {
-  id        Int      @id @default(autoincrement())
-  orderId   Int
-  productId Int
-  quantity  Int
-  price     Float    // Prix au moment de l'achat
+  id              Int     @id @default(autoincrement())
+  orderId         Int
+  productId       Int
+  productName     String  @db.VarChar(255)
+  productImage    String  @db.VarChar(500)
+  quantity        Int
+  priceAtPurchase Decimal @db.Decimal(10, 2)
+  subtotal        Decimal @db.Decimal(10, 2)
 
-  // Relations
-  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
 
   @@index([orderId])
   @@index([productId])
+  @@map("order_items")
+}
+
+model Payment {
+  id              Int           @id @default(autoincrement())
+  orderId         Int
+  paymentMethodId Int
+  amount          Decimal       @db.Decimal(10, 2)
+  status          PaymentStatus @default(PENDING)
+  transactionId   String?       @unique @db.VarChar(100)
+  metadata        String?       @db.Text
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  order         Order         @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  paymentMethod PaymentMethod @relation(fields: [paymentMethodId], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+  @@index([status])
+  @@index([transactionId])
+  @@map("payments")
 }
