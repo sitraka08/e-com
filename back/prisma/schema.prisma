@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Énumération des rôles utilisateur
+enum Role {
+  ADMIN   // Administrateur - accès complet
+  SELLER  // Vendeur - peut gérer ses propres produits
+  BUYER   // Acheteur - peut acheter des produits
+}
+
+// Énumération des statuts de commande
+enum OrderStatus {
+  PENDING    // En attente
+  CONFIRMED  // Confirmée
+  PROCESSING // En traitement
+  SHIPPED    // Expédiée
+  DELIVERED  // Livrée
+  CANCELLED  // Annulée
+}
+
+// Modèle Utilisateur
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String    // Hashé avec bcrypt
+  name      String
+  phone     String?
+  address   String?
+  role      Role      @default(BUYER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  products  Product[] // Produits créés (pour les vendeurs)
+  orders    Order[]   // Commandes passées (pour les acheteurs)
+
+  @@index([email])
+}
+
+// Modèle Produit
+model Product {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?   @db.Text
+  price       Float
+  image       String?
+  category    String?
+  stock       Int       @default(0)
+  sellerId    Int       // Vendeur qui a créé le produit
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  seller      User      @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  orderItems  OrderItem[]
+
+  @@index([sellerId])
+  @@index([category])
+}
+
+// Modèle Commande
+model Order {
+  id         Int         @id @default(autoincrement())
+  userId     Int         // Acheteur
+  total      Float
+  status     OrderStatus @default(PENDING)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  // Relations
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items      OrderItem[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+// Modèle Article de Commande (relation many-to-many entre Order et Product)
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int
+  price     Float    // Prix au moment de l'achat
+
+  // Relations
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([productId])
+}
