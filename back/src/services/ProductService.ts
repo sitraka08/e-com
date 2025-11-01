@@ -1,60 +1,136 @@
-import { Product } from '../types';
-import { IProductRepository } from '../repositories/IProductRepository';
+import { IProductRepository, ICategoryRepository } from '../repositories';
+import { ProductDTO, CreateProductDTO, UpdateProductDTO, ProductFilters, PaginationParams, PaginatedResponse, UpdateStockDTO } from '../types';
 
-/**
- * Service pour la logique métier des produits (Principe S - Single Responsibility)
- * Ce service ne gère QUE la logique métier des produits
- */
 export class ProductService {
-  constructor(private productRepository: IProductRepository) {}
+  constructor(
+    private productRepository: IProductRepository,
+    private categoryRepository: ICategoryRepository
+  ) {}
 
-  async getAllProducts(): Promise<Product[]> {
-    return await this.productRepository.findAll();
+  async createProduct(data: CreateProductDTO): Promise<ProductDTO> {
+    if (data.price <= 0) {
+      throw new Error('Price must be greater than 0');
+    }
+
+    const category = await this.categoryRepository.findById(data.categoryId);
+    if (!category) {
+      throw new Error('Category not found');
+    }
+
+    const product = await this.productRepository.create(data);
+    return this.mapToDTO(product, category.name);
   }
 
-  async getProductById(id: number): Promise<Product | null> {
-    if (id <= 0) {
-      throw new Error('ID du produit invalide');
-    }
-    return await this.productRepository.findById(id);
+  async getAllProducts(filters?: ProductFilters, pagination?: PaginationParams): Promise<PaginatedResponse<ProductDTO>> {
+    const result = await this.productRepository.findAll(filters, pagination);
+
+    const productsDTO = await Promise.all(
+      result.data.map(async (product: any) => {
+        const category = await this.categoryRepository.findById(product.categoryId);
+        return this.mapToDTO(product, category?.name);
+      })
+    );
+
+    return {
+      data: productsDTO,
+      pagination: result.pagination,
+    };
   }
 
-  async getProductsByCategory(category: string): Promise<Product[]> {
-    if (!category || category.trim() === '') {
-      throw new Error('Catégorie invalide');
+  async getProductById(id: number): Promise<ProductDTO> {
+    const product: any = await this.productRepository.findById(id);
+    if (!product) {
+      throw new Error('Product not found');
     }
-    return await this.productRepository.findByCategory(category);
+
+    return this.mapToDTO(product, product.category?.name);
   }
 
-  async searchProducts(query: string): Promise<Product[]> {
-    if (!query || query.trim() === '') {
-      return await this.getAllProducts();
-    }
-    return await this.productRepository.search(query);
+  async searchProducts(query: string, pagination?: PaginationParams): Promise<PaginatedResponse<ProductDTO>> {
+    const result = await this.productRepository.search(query, pagination);
+
+    const productsDTO = await Promise.all(
+      result.data.map(async (product: any) => {
+        const category = await this.categoryRepository.findById(product.categoryId);
+        return this.mapToDTO(product, category?.name);
+      })
+    );
+
+    return {
+      data: productsDTO,
+      pagination: result.pagination,
+    };
   }
 
-  async createProduct(productData: Omit<Product, 'id'>): Promise<Product> {
-    // Validation métier
-    if (!productData.name || productData.price <= 0) {
-      throw new Error('Données du produit invalides');
+  async updateProduct(id: number, data: UpdateProductDTO): Promise<ProductDTO> {
+    if (data.price !== undefined && data.price <= 0) {
+      throw new Error('Price must be greater than 0');
     }
-    return await this.productRepository.create(productData);
+
+    if (data.categoryId) {
+      const category = await this.categoryRepository.findById(data.categoryId);
+      if (!category) {
+        throw new Error('Category not found');
+      }
+    }
+
+    const product: any = await this.productRepository.update(id, data);
+    const category = await this.categoryRepository.findById(product.categoryId);
+    return this.mapToDTO(product, category?.name);
   }
 
-  async updateProduct(
-    id: number,
-    productData: Partial<Product>
-  ): Promise<Product | null> {
-    if (id <= 0) {
-      throw new Error('ID du produit invalide');
-    }
-    return await this.productRepository.update(id, productData);
+  async deleteProduct(id: number): Promise<void> {
+    await this.productRepository.delete(id);
   }
 
-  async deleteProduct(id: number): Promise<boolean> {
-    if (id <= 0) {
-      throw new Error('ID du produit invalide');
+  async updateStock(id: number, data: UpdateStockDTO): Promise<ProductDTO> {
+    const product = await this.productRepository.findById(id);
+    if (!product) {
+      throw new Error('Product not found');
     }
-    return await this.productRepository.delete(id);
+
+    let newStock = product.stock;
+    if (data.operation === 'add') {
+      newStock += data.quantity;
+    } else if (data.operation === 'subtract') {
+      newStock -= data.quantity;
+      if (newStock < 0) throw new Error('Insufficient stock');
+    } else if (data.operation === 'set') {
+      newStock = data.quantity;
+    }
+
+    const updatedProduct: any = await this.productRepository.updateStock(id, newStock);
+    const category = await this.categoryRepository.findById(updatedProduct.categoryId);
+    return this.mapToDTO(updatedProduct, category?.name);
+  }
+
+  async getLowStockProducts(threshold: number = 10): Promise<ProductDTO[]> {
+    const products: any[] = await this.productRepository.getLowStock(threshold);
+
+    return Promise.all(
+      products.map(async (product) => {
+        const category = await this.categoryRepository.findById(product.categoryId);
+        return this.mapToDTO(product, category?.name);
+      })
+    );
+  }
+
+  private mapToDTO(product: any, categoryName?: string): ProductDTO {
+    const images = typeof product.images === 'string' ? JSON.parse(product.images) : product.images;
+
+    return {
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: Number(product.price),
+      stock: product.stock,
+      images,
+      categoryId: product.categoryId,
+      categoryName,
+      isActive: product.isActive,
+      createdAt: product.createdAt,
+      updatedAt: product.updatedAt,
+    };
   }
 }
+

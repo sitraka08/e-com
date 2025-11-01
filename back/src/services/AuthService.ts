@@ -1,147 +1,127 @@
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import { PrismaClient, Role } from '../generated/prisma';
-import { config } from '../config/env';
+import { IUserRepository, IOtpRepository } from '../repositories';
+import { RegisterDTO, LoginDTO, ForgotPasswordDTO, ResetPasswordDTO, AuthResponse, UserDTO } from '../types';
+import { hashPassword, comparePassword, generateToken, generateOTP, getOTPExpiryDate, isOTPExpired } from '../utils';
 
-export interface RegisterData {
-  email: string;
-  password: string;
-  name: string;
-  phone?: string;
-  address?: string;
-  role?: Role;
-}
-
-export interface LoginData {
-  email: string;
-  password: string;
-}
-
-export interface AuthResponse {
-  user: {
-    id: number;
-    email: string;
-    name: string;
-    role: Role;
-  };
-  token: string;
-}
-
-/**
- * Service d'authentification (Principe S - Single Responsibility)
- * Gère uniquement la logique d'authentification et d'autorisation
- */
 export class AuthService {
-  constructor(private prisma: PrismaClient) {}
+  constructor(
+    private userRepository: IUserRepository,
+    private otpRepository: IOtpRepository
+  ) {}
 
-  async register(data: RegisterData): Promise<AuthResponse> {
-    // Vérifier si l'utilisateur existe déjà
-    const existingUser = await this.prisma.user.findUnique({
-      where: { email: data.email },
-    });
-
+  async register(data: RegisterDTO): Promise<AuthResponse> {
+    const existingUser = await this.userRepository.findByEmail(data.email);
     if (existingUser) {
-      throw new Error('Un utilisateur avec cet email existe déjà');
+      throw new Error('Email already registered');
     }
 
-    // Hasher le mot de passe
-    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const hashedPassword = await hashPassword(data.password);
 
-    // Créer l'utilisateur
-    const user = await this.prisma.user.create({
-      data: {
-        email: data.email,
-        password: hashedPassword,
-        name: data.name,
-        phone: data.phone,
-        address: data.address,
-        role: data.role || Role.BUYER, // Par défaut: BUYER
-      },
+    const user = await this.userRepository.create({
+      ...data,
+      password: hashedPassword,
+      role: 'CLIENT',
     });
 
-    // Générer le token JWT
-    const token = this.generateToken(user.id, user.role);
+    const token = generateToken({
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+    });
 
     return {
       user: {
         id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
-        name: user.name,
         role: user.role,
+        status: user.status,
       },
-      token,
+      tokens: {
+        accessToken: token,
+      },
     };
   }
 
-  async login(data: LoginData): Promise<AuthResponse> {
-    // Trouver l'utilisateur
-    const user = await this.prisma.user.findUnique({
-      where: { email: data.email },
-    });
-
+  async login(data: LoginDTO): Promise<AuthResponse> {
+    const user = await this.userRepository.findByEmail(data.email);
     if (!user) {
-      throw new Error('Email ou mot de passe incorrect');
+      throw new Error('Invalid credentials');
     }
 
-    // Vérifier le mot de passe
-    const isPasswordValid = await bcrypt.compare(data.password, user.password);
-
+    const isPasswordValid = await comparePassword(data.password, user.password);
     if (!isPasswordValid) {
-      throw new Error('Email ou mot de passe incorrect');
+      throw new Error('Invalid credentials');
     }
 
-    // Générer le token JWT
-    const token = this.generateToken(user.id, user.role);
+    if (user.status === 'SUSPENDED') {
+      throw new Error('Account suspended');
+    }
+
+    await this.userRepository.updateLastLogin(user.id);
+
+    const token = generateToken({
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+    });
 
     return {
       user: {
         id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
-        name: user.name,
         role: user.role,
+        status: user.status,
       },
-      token,
+      tokens: {
+        accessToken: token,
+      },
     };
   }
 
-  async getUserById(id: number) {
-    const user = await this.prisma.user.findUnique({
-      where: { id },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        phone: true,
-        address: true,
-        role: true,
-        createdAt: true,
-      },
-    });
-
+  async forgotPassword(data: ForgotPasswordDTO): Promise<{ otp: string }> {
+    const user = await this.userRepository.findByEmail(data.email);
     if (!user) {
-      throw new Error('Utilisateur non trouvé');
+      throw new Error('User not found');
     }
 
-    return user;
+    const otp = generateOTP(5);
+    const expiresAt = getOTPExpiryDate(15);
+
+    await this.otpRepository.create(user.id, data.email, otp, expiresAt);
+
+    return { otp };
   }
 
-  private generateToken(userId: number, role: Role): string {
-    return jwt.sign(
-      { userId, role },
-      config.jwt.secret,
-      { expiresIn: config.jwt.expiresIn }
-    );
-  }
-
-  verifyToken(token: string): { userId: number; role: Role } {
-    try {
-      const decoded = jwt.verify(token, config.jwt.secret) as {
-        userId: number;
-        role: Role;
-      };
-      return decoded;
-    } catch (error) {
-      throw new Error('Token invalide ou expiré');
+  async resetPassword(data: ResetPasswordDTO): Promise<void> {
+    const otpRecord = await this.otpRepository.findByEmailAndOtp(data.email, data.otp);
+    if (!otpRecord) {
+      throw new Error('Invalid or expired OTP');
     }
+
+    if (isOTPExpired(otpRecord.expiresAt)) {
+      throw new Error('OTP has expired');
+    }
+
+    const user = await this.userRepository.findByEmail(data.email);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const hashedPassword = await hashPassword(data.newPassword);
+    await this.userRepository.update(user.id, { password: hashedPassword });
+    await this.otpRepository.markAsUsed(otpRecord.id);
+  }
+
+  async getProfile(userId: number): Promise<UserDTO> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword as UserDTO;
   }
 }
