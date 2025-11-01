@@ -1,12 +1,12 @@
 import { createApp } from './app';
-import { config } from './config/env';
 
 /**
  * Point d'entrée de l'application
  */
 const startServer = (): void => {
   const app = createApp();
-  const port = config.port;
+  const port = process.env.PORT || 3000;
+  const nodeEnv = process.env.NODE_ENV || 'development';
 
   app.listen(port, () => {
     console.log(`
@@ -14,7 +14,7 @@ const startServer = (): void => {
 ║   Serveur E-Commerce démarré avec succès  ║
 ╠═══════════════════════════════════════════╣
 ║   Port: ${port}                            ║
-║   Environnement: ${config.nodeEnv}        ║
+║   Environnement: ${nodeEnv}        ║
 ║   URL: http://localhost:${port}           ║
 ║   API: http://localhost:${port}/api       ║
 ╚═══════════════════════════════════════════╝
