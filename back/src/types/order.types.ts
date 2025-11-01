@@ -2,14 +2,7 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { AddressDTO } from './address.types';
 import { PaymentDTO } from './payment.types';
 
-export enum OrderStatus {
-  PENDING = 'PENDING',
-  CONFIRMED = 'CONFIRMED',
-  PROCESSING = 'PROCESSING',
-  SHIPPED = 'SHIPPED',
-  DELIVERED = 'DELIVERED',
-  CANCELLED = 'CANCELLED',
-}
+export { OrderStatus } from '@prisma/client';
 
 export interface OrderItem {
   id: number;

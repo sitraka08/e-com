@@ -1,17 +1,6 @@
 import { Decimal } from '@prisma/client/runtime/library';
 
-export enum PaymentMethodType {
-  MOBILE_MONEY = 'MOBILE_MONEY',
-  BANK_CARD = 'BANK_CARD',
-  CASH = 'CASH',
-}
-
-export enum PaymentStatus {
-  PENDING = 'PENDING',
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED',
-  REFUNDED = 'REFUNDED',
-}
+export { PaymentMethodType, PaymentStatus } from '@prisma/client';
 
 export interface PaymentMethod {
   id: number;

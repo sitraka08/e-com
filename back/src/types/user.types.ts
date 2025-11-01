@@ -1,13 +1,4 @@
-export enum UserRole {
-  CLIENT = 'CLIENT',
-  ADMIN = 'ADMIN',
-}
-
-export enum UserStatus {
-  ACTIVE = 'ACTIVE',
-  SUSPENDED = 'SUSPENDED',
-  PENDING_VALIDATION = 'PENDING_VALIDATION',
-}
+export { UserRole, UserStatus } from '@prisma/client';
 
 export interface User {
   id: number;
