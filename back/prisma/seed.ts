@@ -1,4 +1,4 @@
-import { PrismaClient, Role } from '../src/generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
@@ -6,7 +6,22 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Début du seeding...');
 
-  // Créer un admin
+  const categories = [
+    { name: 'MODE', slug: 'mode', description: 'Vêtements et accessoires de mode', icon: 'Shirt' },
+    { name: 'INFORMATIQUE', slug: 'informatique', description: 'Ordinateurs et équipements informatiques', icon: 'Laptop' },
+    { name: 'MAISON', slug: 'maison', description: 'Articles pour la maison', icon: 'Home' },
+    { name: 'BEAUTE', slug: 'beaute', description: 'Produits de beauté et cosmétiques', icon: 'Sparkles' },
+  ];
+
+  for (const cat of categories) {
+    await prisma.category.upsert({
+      where: { slug: cat.slug },
+      update: {},
+      create: cat,
+    });
+    console.log(`✅ Catégorie créée: ${cat.name}`);
+  }
+
   const adminPassword = await bcrypt.hash('admin123', 10);
   const admin = await prisma.user.upsert({
     where: { email: 'admin@ecommerce.com' },
@@ -14,94 +29,64 @@ async function main() {
     create: {
       email: 'admin@ecommerce.com',
       password: adminPassword,
-      name: 'Administrateur',
-      role: Role.ADMIN,
+      firstName: 'Admin',
+      lastName: 'System',
+      role: 'ADMIN',
+      status: 'ACTIVE',
     },
   });
   console.log('✅ Admin créé:', admin.email);
 
-  // Créer un vendeur
-  const sellerPassword = await bcrypt.hash('seller123', 10);
-  const seller = await prisma.user.upsert({
-    where: { email: 'seller@ecommerce.com' },
+  const clientPassword = await bcrypt.hash('client123', 10);
+  const client = await prisma.user.upsert({
+    where: { email: 'client@ecommerce.com' },
     update: {},
     create: {
-      email: 'seller@ecommerce.com',
-      password: sellerPassword,
-      name: 'Vendeur Test',
-      role: Role.SELLER,
+      email: 'client@ecommerce.com',
+      password: clientPassword,
+      firstName: 'Marie',
+      lastName: 'Dupont',
+      role: 'CLIENT',
+      status: 'ACTIVE',
     },
   });
-  console.log('✅ Vendeur créé:', seller.email);
+  console.log('✅ Client créé:', client.email);
 
-  // Créer un acheteur
-  const buyerPassword = await bcrypt.hash('buyer123', 10);
-  const buyer = await prisma.user.upsert({
-    where: { email: 'buyer@ecommerce.com' },
-    update: {},
-    create: {
-      email: 'buyer@ecommerce.com',
-      password: buyerPassword,
-      name: 'Acheteur Test',
-      role: Role.BUYER,
-    },
-  });
-  console.log('✅ Acheteur créé:', buyer.email);
+  const informatique = await prisma.category.findUnique({ where: { slug: 'informatique' } });
+  const mode = await prisma.category.findUnique({ where: { slug: 'mode' } });
 
-  // Créer des produits
-  const products = [
-    {
-      name: 'Smartphone XYZ Pro',
-      description: 'Un excellent smartphone avec 128GB de stockage, écran OLED 6.5"',
-      price: 299.99,
-      image: 'https://via.placeholder.com/300/0174D8/FFFFFF?text=Smartphone',
-      category: 'Électronique',
-      stock: 50,
-      sellerId: seller.id,
-    },
-    {
-      name: 'Laptop Ultra Performance',
-      description: 'Ordinateur portable haute performance, 16GB RAM, SSD 512GB',
-      price: 999.99,
-      image: 'https://via.placeholder.com/300/0174D8/FFFFFF?text=Laptop',
-      category: 'Électronique',
-      stock: 30,
-      sellerId: seller.id,
-    },
-    {
-      name: 'Casque Audio Premium',
-      description: 'Casque sans fil avec réduction de bruit active',
-      price: 79.99,
-      image: 'https://via.placeholder.com/300/0174D8/FFFFFF?text=Casque',
-      category: 'Audio',
-      stock: 100,
-      sellerId: seller.id,
-    },
-    {
-      name: 'Montre Connectée Sport',
-      description: 'Montre intelligente avec suivi fitness et GPS',
-      price: 149.99,
-      image: 'https://via.placeholder.com/300/0174D8/FFFFFF?text=Montre',
-      category: 'Accessoires',
-      stock: 75,
-      sellerId: seller.id,
-    },
-    {
-      name: 'Tablette GraphicPro',
-      description: 'Tablette graphique professionnelle pour designers',
-      price: 199.99,
-      image: 'https://via.placeholder.com/300/0174D8/FFFFFF?text=Tablette',
-      category: 'Électronique',
-      stock: 40,
-      sellerId: seller.id,
-    },
-  ];
+  if (informatique && mode) {
+    const products = [
+      {
+        name: 'Smartphone XYZ Pro',
+        description: 'Excellent smartphone 128GB, écran OLED 6.5"',
+        price: 29999,
+        images: JSON.stringify(['https://via.placeholder.com/300/0174D8/FFF?text=Phone']),
+        stock: 50,
+        categoryId: informatique.id,
+      },
+      {
+        name: 'Laptop Ultra Performance',
+        description: 'Ordinateur portable 16GB RAM, SSD 512GB',
+        price: 99999,
+        images: JSON.stringify(['https://via.placeholder.com/300/0174D8/FFF?text=Laptop']),
+        stock: 30,
+        categoryId: informatique.id,
+      },
+      {
+        name: 'T-Shirt Premium',
+        description: 'T-shirt en coton bio, coupe moderne',
+        price: 2999,
+        images: JSON.stringify(['https://via.placeholder.com/300/0174D8/FFF?text=TShirt']),
+        stock: 100,
+        categoryId: mode.id,
+      },
+    ];
 
-  for (const product of products) {
-    const created = await prisma.product.create({
-      data: product,
-    });
-    console.log(`✅ Produit créé: ${created.name}`);
+    for (const product of products) {
+      await prisma.product.create({ data: product });
+      console.log(`✅ Produit créé: ${product.name}`);
+    }
   }
 
   console.log('\n🎉 Seeding terminé avec succès!');
