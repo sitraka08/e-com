@@ -1,0 +1,67 @@
+meta {
+  name: Update Product
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{baseUrl}}/api/products/{{productId}}
+  body: multipartForm
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:multipart-form {
+  name: Produit Mis à Jour
+  description: Description mise à jour avec nouvelles images
+  price: 18000
+  stock: 30
+}
+
+docs {
+  ## Update produit avec upload d'images
+
+  **IMPORTANT**: Cette requête supporte 2 modes:
+
+  ### Mode 1: Upload de nouvelles images (FormData - ACTUEL)
+  - Utilisez Bruno UI pour ajouter de nouveaux fichiers via "images"
+  - Les nouvelles images remplaceront les anciennes
+  - Jusqu'à 5 images (JPEG, PNG, GIF, WebP)
+  - Taille max: 5MB par image
+
+  ### Mode 2: Update sans changer les images (JSON - ALTERNATIF)
+  Changez le body type en `json`:
+  ```json
+  {
+    "name": "Produit Mis à Jour",
+    "description": "Description mise à jour",
+    "price": 18000,
+    "stock": 30
+  }
+  ```
+  (Ne pas inclure "images" conserve les images existantes)
+
+  ### Mode 3: Update avec URLs d'images
+  ```json
+  {
+    "name": "Produit Mis à Jour",
+    "images": [
+      "https://images.unsplash.com/photo-xxx?w=400",
+      "https://images.unsplash.com/photo-yyy?w=400"
+    ]
+  }
+  ```
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("Product updated", function() {
+    expect(res.body.data).to.have.property('name');
+  });
+}

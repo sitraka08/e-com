@@ -1,0 +1,36 @@
+meta {
+  name: Create Payment Method
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/payment-methods
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "type": "MOBILE_MONEY",
+    "label": "MVola",
+    "details": {
+      "phone": "+261340000001",
+      "operatorName": "Telma"
+    },
+    "isDefault": false
+  }
+}
+
+tests {
+  test("Status is 201", function() {
+    expect(res.status).to.equal(201);
+  });
+
+  // Save payment method ID
+  bru.setEnvVar("paymentMethodId", res.body.data.id);
+}

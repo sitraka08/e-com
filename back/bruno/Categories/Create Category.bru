@@ -1,0 +1,34 @@
+meta {
+  name: Create Category
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/categories
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "name": "ELECTRONIQUE",
+    "slug": "electronique",
+    "description": "Appareils électroniques et gadgets",
+    "icon": "Zap",
+    "isActive": true
+  }
+}
+
+tests {
+  test("Status is 201", function() {
+    expect(res.status).to.equal(201);
+  });
+
+  // Save new category ID
+  bru.setEnvVar("newCategoryId", res.body.data.id);
+}

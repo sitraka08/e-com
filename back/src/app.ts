@@ -1,5 +1,6 @@
 import express, { Application } from 'express';
 import cors from 'cors';
+import path from 'path';
 import { PrismaClient } from '@prisma/client';
 import { logger, errorHandler, notFoundHandler } from './middlewares';
 import {
@@ -42,6 +43,9 @@ export const createApp = (): Application => {
   app.use(cors());
   app.use(express.json());
   app.use(logger);
+
+  // Servir les fichiers statiques (images uploadées)
+  app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
   const userRepository = new UserRepository(prisma);
   const categoryRepository = new CategoryRepository(prisma);

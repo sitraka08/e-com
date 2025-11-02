@@ -1,0 +1,25 @@
+meta {
+  name: Set Default Payment Method
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/api/payment-methods/{{paymentMethodId}}/set-default
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("Payment method is default", function() {
+    expect(res.body.data.isDefault).to.equal(true);
+  });
+}

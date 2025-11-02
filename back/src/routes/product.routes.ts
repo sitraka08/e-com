@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { ProductController } from '../controllers';
-import { authenticate, authorize } from '../middlewares';
+import { authenticate, authorize, uploadProductImages } from '../middlewares';
 import { UserRole } from '../types';
 
 export const createProductRoutes = (productController: ProductController): Router => {
@@ -11,9 +11,9 @@ export const createProductRoutes = (productController: ProductController): Route
   router.get('/:id', productController.getProductById);
 
   router.use(authenticate, authorize(UserRole.ADMIN));
-  router.post('/', productController.createProduct);
+  router.post('/', uploadProductImages, productController.createProduct);
   router.get('/low-stock', productController.getLowStockProducts);
-  router.put('/:id', productController.updateProduct);
+  router.put('/:id', uploadProductImages, productController.updateProduct);
   router.delete('/:id', productController.deleteProduct);
   router.patch('/:id/stock', productController.updateStock);
 

@@ -1,0 +1,69 @@
+meta {
+  name: Create Product
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/products
+  body: multipartForm
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:multipart-form {
+  name: Nouveau Produit Test
+  description: Description du produit de test avec upload d'images locales
+  price: 15000
+  stock: 25
+  categoryId: {{categoryId}}
+}
+
+docs {
+  ## Upload d'images avec FormData
+
+  **IMPORTANT**: Cette requête supporte 2 modes:
+
+  ### Mode 1: Upload de fichiers locaux (FormData - ACTUEL)
+  - Utilisez Bruno UI pour ajouter des fichiers via le champ "images"
+  - Cliquez sur "+ Add File" dans l'interface Bruno
+  - Sélectionnez jusqu'à 5 images (JPEG, PNG, GIF, WebP)
+  - Taille max: 5MB par image
+  - Les images seront stockées dans `/public/uploads/products/`
+
+  ### Mode 2: URLs d'images (JSON - ALTERNATIF)
+  Changez le body type en `json` et utilisez:
+  ```json
+  {
+    "name": "Nouveau Produit",
+    "description": "Description",
+    "price": 15000,
+    "stock": 25,
+    "categoryId": 1,
+    "images": [
+      "https://images.unsplash.com/photo-xxx?w=400",
+      "https://images.unsplash.com/photo-yyy?w=400"
+    ]
+  }
+  ```
+
+  Images uploadées accessibles via:
+  `http://localhost:3000/uploads/products/nom-fichier.jpg`
+}
+
+tests {
+  test("Status is 201", function() {
+    expect(res.status).to.equal(201);
+  });
+
+  test("Product created", function() {
+    expect(res.body.data).to.have.property('id');
+    expect(res.body.data).to.have.property('name');
+  });
+
+  // Save new product ID
+  bru.setEnvVar("newProductId", res.body.data.id);
+}

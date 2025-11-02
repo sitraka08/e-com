@@ -1,0 +1,25 @@
+meta {
+  name: Get Unpaid Orders
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/api/orders/unpaid
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("Has unpaid orders array", function() {
+    expect(res.body.data).to.be.an('array');
+  });
+}

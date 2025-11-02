@@ -1,0 +1,21 @@
+meta {
+  name: Activate User
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{baseUrl}}/api/users/{{userId}}/activate
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+}

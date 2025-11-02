@@ -1,0 +1,31 @@
+meta {
+  name: Update Payment Method
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/payment-methods/{{paymentMethodId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "label": "MVola Principal",
+    "details": {
+      "phone": "+261340000002",
+      "operatorName": "Telma"
+    }
+  }
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+}

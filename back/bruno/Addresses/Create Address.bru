@@ -1,0 +1,37 @@
+meta {
+  name: Create Address
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/addresses
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "label": "Bureau",
+    "fullName": "John Doe",
+    "phone": "+261340000001",
+    "street": "456 Avenue Test",
+    "city": "Antananarivo",
+    "region": "Analamanga",
+    "postalCode": "101",
+    "isDefault": false
+  }
+}
+
+tests {
+  test("Status is 201", function() {
+    expect(res.status).to.equal(201);
+  });
+
+  // Save address ID
+  bru.setEnvVar("addressId", res.body.data.id);
+}

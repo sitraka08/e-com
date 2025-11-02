@@ -1,14 +1,37 @@
 import { Response, NextFunction } from 'express';
 import { AuthRequest } from '../middlewares';
 import { ProductService } from '../services';
-import { ApiResponse, CreateProductDTO, UpdateProductDTO, ProductFilters, PaginationParams, UpdateStockDTO } from '../types';
+import { ApiResponse, CreateProductDTO, UpdateProductDTO, ProductFilters, PaginationParams, UpdateStockDTO, ProductFormData } from '../types';
 
 export class ProductController {
   constructor(private productService: ProductService) {}
 
   createProduct = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const data: CreateProductDTO = req.body;
+      let data: CreateProductDTO;
+
+      // Vérifier si des fichiers ont été uploadés (FormData)
+      if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+        const formData = req.body as ProductFormData;
+
+        // Générer les URLs des images uploadées
+        const imageUrls = req.files.map((file: Express.Multer.File) => {
+          return `${req.protocol}://${req.get('host')}/uploads/products/${file.filename}`;
+        });
+
+        data = {
+          name: formData.name,
+          description: formData.description,
+          price: parseFloat(formData.price),
+          stock: parseInt(formData.stock),
+          categoryId: parseInt(formData.categoryId),
+          images: imageUrls,
+        };
+      } else {
+        // Utiliser les URLs d'images du body JSON
+        data = req.body;
+      }
+
       const result = await this.productService.createProduct(data);
       res.status(201).json({ success: true, data: result } as ApiResponse);
     } catch (error) {
@@ -62,7 +85,30 @@ export class ProductController {
   updateProduct = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const id = parseInt(req.params.id);
-      const data: UpdateProductDTO = req.body;
+      let data: UpdateProductDTO;
+
+      // Vérifier si des fichiers ont été uploadés (FormData)
+      if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+        const formData = req.body as Partial<ProductFormData>;
+
+        // Générer les URLs des images uploadées
+        const imageUrls = req.files.map((file: Express.Multer.File) => {
+          return `${req.protocol}://${req.get('host')}/uploads/products/${file.filename}`;
+        });
+
+        data = {
+          name: formData.name,
+          description: formData.description,
+          price: formData.price ? parseFloat(formData.price) : undefined,
+          stock: formData.stock ? parseInt(formData.stock) : undefined,
+          categoryId: formData.categoryId ? parseInt(formData.categoryId) : undefined,
+          images: imageUrls,
+        };
+      } else {
+        // Utiliser les données du body JSON
+        data = req.body;
+      }
+
       const result = await this.productService.updateProduct(id, data);
       res.status(200).json({ success: true, data: result } as ApiResponse);
     } catch (error) {

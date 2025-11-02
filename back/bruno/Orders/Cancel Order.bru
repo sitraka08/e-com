@@ -1,0 +1,25 @@
+meta {
+  name: Cancel Order
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/api/orders/{{orderId}}/cancel
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("Order is cancelled", function() {
+    expect(res.body.data.status).to.equal("CANCELLED");
+  });
+}

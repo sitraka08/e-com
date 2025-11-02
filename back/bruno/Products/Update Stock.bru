@@ -1,0 +1,27 @@
+meta {
+  name: Update Stock
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{baseUrl}}/api/products/{{productId}}/stock
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "stock": 50
+  }
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+}

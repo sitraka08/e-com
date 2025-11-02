@@ -1,0 +1,28 @@
+meta {
+  name: Update Order Status
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{baseUrl}}/api/orders/{{orderId}}/status
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "status": "CONFIRMED",
+    "estimatedDelivery": "2025-12-15T10:00:00.000Z"
+  }
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+}

@@ -1,0 +1,21 @@
+meta {
+  name: Delete Product
+  type: http
+  seq: 8
+}
+
+delete {
+  url: {{baseUrl}}/api/products/{{newProductId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+}

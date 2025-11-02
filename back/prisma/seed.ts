@@ -59,25 +59,34 @@ async function main() {
     const products = [
       {
         name: 'Smartphone XYZ Pro',
-        description: 'Excellent smartphone 128GB, écran OLED 6.5"',
+        description: 'Excellent smartphone 128GB, écran OLED 6.5", caméra 48MP, batterie 5000mAh',
         price: 29999,
-        images: JSON.stringify(['https://via.placeholder.com/300/0174D8/FFF?text=Phone']),
+        images: JSON.stringify([
+          'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400',
+          'https://images.unsplash.com/photo-1592286927505-c8c58504e3b7?w=400'
+        ]),
         stock: 50,
         categoryId: informatique.id,
       },
       {
         name: 'Laptop Ultra Performance',
-        description: 'Ordinateur portable 16GB RAM, SSD 512GB',
+        description: 'Ordinateur portable 16GB RAM, SSD 512GB, processeur Intel i7',
         price: 99999,
-        images: JSON.stringify(['https://via.placeholder.com/300/0174D8/FFF?text=Laptop']),
+        images: JSON.stringify([
+          'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400',
+          'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400'
+        ]),
         stock: 30,
         categoryId: informatique.id,
       },
       {
         name: 'T-Shirt Premium',
-        description: 'T-shirt en coton bio, coupe moderne',
+        description: 'T-shirt en coton bio, coupe moderne, disponible en plusieurs couleurs',
         price: 2999,
-        images: JSON.stringify(['https://via.placeholder.com/300/0174D8/FFF?text=TShirt']),
+        images: JSON.stringify([
+          'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400',
+          'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400'
+        ]),
         stock: 100,
         categoryId: mode.id,
       },

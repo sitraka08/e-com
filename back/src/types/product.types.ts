@@ -32,7 +32,7 @@ export interface CreateProductDTO {
   description: string;
   price: number;
   stock: number;
-  images: string[];
+  images?: string[]; // Optionnel, peut venir de l'upload de fichiers
   categoryId: number;
 }
 
@@ -41,9 +41,18 @@ export interface UpdateProductDTO {
   description?: string;
   price?: number;
   stock?: number;
-  images?: string[];
+  images?: string[]; // Optionnel, peut venir de l'upload de fichiers
   categoryId?: number;
   isActive?: boolean;
+}
+
+// Type pour les requêtes avec upload de fichiers
+export interface ProductFormData {
+  name: string;
+  description: string;
+  price: string; // Vient en string du FormData
+  stock: string; // Vient en string du FormData
+  categoryId: string; // Vient en string du FormData
 }
 
 export interface ProductFilters {

@@ -1,0 +1,21 @@
+meta {
+  name: Get Payment Method by ID
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/payment-methods/{{paymentMethodId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+}
