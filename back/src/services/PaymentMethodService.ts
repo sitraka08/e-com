@@ -41,6 +41,7 @@ export class PaymentMethodService {
 
     return {
       id: method.id,
+      userId: method.userId,
       type: method.type,
       label: method.label,
       details,

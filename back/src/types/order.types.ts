@@ -2,7 +2,8 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { AddressDTO } from './address.types';
 import { PaymentDTO } from './payment.types';
 
-export { OrderStatus } from '@prisma/client';
+import { OrderStatus } from './enums';
+export { OrderStatus };
 
 export interface OrderItem {
   id: number;

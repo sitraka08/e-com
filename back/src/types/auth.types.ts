@@ -1,4 +1,4 @@
-import { UserRole, UserStatus } from './user.types';
+import { UserRole, UserStatus } from './enums';
 
 export interface RegisterDTO {
   firstName: string;
@@ -40,6 +40,7 @@ export interface AuthResponse {
 }
 
 export interface TokenPayload {
+  id: number;
   userId: number;
   email: string;
   role: UserRole;

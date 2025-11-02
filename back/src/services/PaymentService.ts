@@ -1,5 +1,5 @@
 import { IPaymentRepository, IOrderRepository } from '../repositories';
-import { PaymentDTO, CreatePaymentDTO, ProcessPaymentDTO } from '../types';
+import { PaymentDTO, ProcessPaymentDTO } from '../types';
 
 export class PaymentService {
   constructor(
@@ -68,6 +68,7 @@ export class PaymentService {
       orderId: payment.orderId,
       paymentMethod: {
         id: payment.paymentMethod.id,
+        userId: payment.paymentMethod.userId,
         type: payment.paymentMethod.type,
         label: payment.paymentMethod.label,
         details: typeof payment.paymentMethod.details === 'string'

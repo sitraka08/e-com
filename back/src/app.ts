@@ -22,6 +22,17 @@ import {
   OrderService,
   PaymentService,
 } from './services';
+import {
+  AuthController,
+  UserController,
+  CategoryController,
+  ProductController,
+  AddressController,
+  PaymentMethodController,
+  OrderController,
+  PaymentController,
+} from './controllers';
+import { createRoutes } from './routes';
 
 const prisma = new PrismaClient();
 
@@ -47,8 +58,17 @@ export const createApp = (): Application => {
   const productService = new ProductService(productRepository, categoryRepository);
   const addressService = new AddressService(addressRepository);
   const paymentMethodService = new PaymentMethodService(paymentMethodRepository);
-  const orderService = new OrderService(orderRepository, paymentRepository, paymentMethodRepository, addressRepository);
+  const orderService = new OrderService(orderRepository);
   const paymentService = new PaymentService(paymentRepository, orderRepository);
+
+  const authController = new AuthController(authService);
+  const userController = new UserController(userService);
+  const categoryController = new CategoryController(categoryService);
+  const productController = new ProductController(productService);
+  const addressController = new AddressController(addressService);
+  const paymentMethodController = new PaymentMethodController(paymentMethodService);
+  const orderController = new OrderController(orderService);
+  const paymentController = new PaymentController(paymentService);
 
   app.get('/', (_req, res) => {
     res.json({
@@ -58,6 +78,17 @@ export const createApp = (): Application => {
       features: ['Auth JWT', 'Products', 'Orders', 'Multi-payment', 'Partial payment'],
     });
   });
+
+  app.use('/api', createRoutes({
+    authController,
+    userController,
+    categoryController,
+    productController,
+    addressController,
+    paymentMethodController,
+    orderController,
+    paymentController,
+  }));
 
   app.use(notFoundHandler);
   app.use(errorHandler);

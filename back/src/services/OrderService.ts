@@ -1,12 +1,9 @@
-import { IOrderRepository, IPaymentRepository, IPaymentMethodRepository, IAddressRepository } from '../repositories';
+import { IOrderRepository } from '../repositories';
 import { OrderDTO, CreateOrderDTO, UpdateOrderStatusDTO, OrderFilters, PaginationParams, PaginatedResponse, OrderStatsDTO, OrderItemDTO, PaymentDTO } from '../types';
 
 export class OrderService {
   constructor(
-    private orderRepository: IOrderRepository,
-    private paymentRepository: IPaymentRepository,
-    private paymentMethodRepository: IPaymentMethodRepository,
-    private addressRepository: IAddressRepository
+    private orderRepository: IOrderRepository
   ) {}
 
   async createOrder(data: CreateOrderDTO): Promise<OrderDTO> {
@@ -76,6 +73,7 @@ export class OrderService {
       orderId: payment.orderId,
       paymentMethod: {
         id: payment.paymentMethod.id,
+        userId: payment.paymentMethod.userId,
         type: payment.paymentMethod.type,
         label: payment.paymentMethod.label,
         details: typeof payment.paymentMethod.details === 'string'
@@ -93,6 +91,7 @@ export class OrderService {
 
     const address = order.address ? {
       id: order.address.id,
+      userId: order.address.userId,
       label: order.address.label,
       fullName: order.address.fullName,
       phone: order.address.phone,

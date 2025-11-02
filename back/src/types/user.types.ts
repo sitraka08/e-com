@@ -1,4 +1,5 @@
-export { UserRole, UserStatus } from '@prisma/client';
+import { UserRole, UserStatus } from './enums';
+export { UserRole, UserStatus };
 
 export interface User {
   id: number;

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 
-export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction): void => {
+export const errorHandler = (err: any, _req: Request, res: Response, _next: NextFunction): void => {
   console.error('Error:', err);
 
   const statusCode = err.statusCode || 500;
@@ -12,7 +12,7 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
   });
 };
 
-export const notFoundHandler = (req: Request, res: Response): void => {
+export const notFoundHandler = (_req: Request, res: Response): void => {
   res.status(404).json({
     success: false,
     error: 'Route not found',

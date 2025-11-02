@@ -23,6 +23,7 @@ export class AuthService {
     });
 
     const token = generateToken({
+      id: user.id,
       userId: user.id,
       email: user.email,
       role: user.role,
@@ -61,6 +62,7 @@ export class AuthService {
     await this.userRepository.updateLastLogin(user.id);
 
     const token = generateToken({
+      id: user.id,
       userId: user.id,
       email: user.email,
       role: user.role,

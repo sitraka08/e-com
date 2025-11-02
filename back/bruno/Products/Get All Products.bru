@@ -1,0 +1,26 @@
+meta {
+  name: Get All Products
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/products?page=1&limit=20
+  body: none
+  auth: none
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("Has products array", function() {
+    expect(res.body.data.data).to.be.an('array');
+  });
+
+  // Save first product ID
+  if (res.body.data.data.length > 0) {
+    bru.setEnvVar("productId", res.body.data.data[0].id);
+  }
+}

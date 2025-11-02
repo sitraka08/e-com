@@ -15,6 +15,7 @@ export interface Address {
 
 export interface AddressDTO {
   id: number;
+  userId: number;
   label: string;
   fullName: string;
   phone: string;

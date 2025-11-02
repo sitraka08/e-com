@@ -22,7 +22,7 @@ async function main() {
     console.log(`✅ Catégorie créée: ${cat.name}`);
   }
 
-  const adminPassword = await bcrypt.hash('admin123', 10);
+  const adminPassword = await bcrypt.hash('Admin123!', 10);
   const admin = await prisma.user.upsert({
     where: { email: 'admin@ecommerce.com' },
     update: {},
@@ -37,7 +37,7 @@ async function main() {
   });
   console.log('✅ Admin créé:', admin.email);
 
-  const clientPassword = await bcrypt.hash('client123', 10);
+  const clientPassword = await bcrypt.hash('Client123!', 10);
   const client = await prisma.user.upsert({
     where: { email: 'client@ecommerce.com' },
     update: {},
@@ -89,11 +89,38 @@ async function main() {
     }
   }
 
+  // Créer une adresse pour le client
+  await prisma.address.create({
+    data: {
+      userId: client.id,
+      label: 'Maison',
+      fullName: 'Marie Dupont',
+      phone: '+261340000000',
+      street: '123 Rue Example',
+      city: 'Antananarivo',
+      region: 'Analamanga',
+      postalCode: '101',
+      isDefault: true,
+    },
+  });
+  console.log('✅ Adresse créée pour le client');
+
+  // Créer une méthode de paiement pour le client
+  await prisma.paymentMethod.create({
+    data: {
+      userId: client.id,
+      type: 'MOBILE_MONEY',
+      label: 'Orange Money',
+      details: JSON.stringify({ phone: '+261340000000', operatorName: 'Orange' }),
+      isDefault: true,
+    },
+  });
+  console.log('✅ Méthode de paiement créée pour le client');
+
   console.log('\n🎉 Seeding terminé avec succès!');
   console.log('\n📝 Comptes de test créés:');
-  console.log('   Admin:    admin@ecommerce.com / admin123');
-  console.log('   Vendeur:  seller@ecommerce.com / seller123');
-  console.log('   Acheteur: buyer@ecommerce.com / buyer123');
+  console.log('   Admin:  admin@ecommerce.com / Admin123!');
+  console.log('   Client: client@ecommerce.com / Client123!');
 }
 
 main()

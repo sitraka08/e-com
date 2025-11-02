@@ -39,6 +39,7 @@ export class AddressService {
   private mapToDTO(address: any): AddressDTO {
     return {
       id: address.id,
+      userId: address.userId,
       label: address.label,
       fullName: address.fullName,
       phone: address.phone,

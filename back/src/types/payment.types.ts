@@ -1,6 +1,7 @@
 import { Decimal } from '@prisma/client/runtime/library';
 
-export { PaymentMethodType, PaymentStatus } from '@prisma/client';
+import { PaymentMethodType, PaymentStatus } from './enums';
+export { PaymentMethodType, PaymentStatus };
 
 export interface PaymentMethod {
   id: number;
@@ -15,6 +16,7 @@ export interface PaymentMethod {
 
 export interface PaymentMethodDTO {
   id: number;
+  userId: number;
   type: PaymentMethodType;
   label: string;
   details: Record<string, any>;

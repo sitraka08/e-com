@@ -1,4 +1,4 @@
-import { PrismaClient, OrderStatus } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { IOrderRepository } from './IOrderRepository';
 import { Order, CreateOrderDTO, UpdateOrderStatusDTO, OrderFilters, PaginationParams, PaginatedResponse, OrderStatsDTO } from '../types';
 import { generateOrderNumber } from '../utils';
@@ -155,7 +155,14 @@ export class OrderRepository implements IOrderRepository {
   }
 
   async cancel(id: number): Promise<Order> {
-    const order = await this.findById(id);
+    const order = await this.prisma.order.findUnique({
+      where: { id },
+      include: {
+        items: true,
+        address: true,
+        payments: { include: { paymentMethod: true } },
+      },
+    });
     if (!order) throw new Error('Order not found');
     if (order.status === 'SHIPPED' || order.status === 'DELIVERED') {
       throw new Error('Cannot cancel order that has been shipped or delivered');
