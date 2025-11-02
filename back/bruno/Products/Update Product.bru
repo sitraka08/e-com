@@ -6,7 +6,7 @@ meta {
 
 put {
   url: {{baseUrl}}/api/products/{{productId}}
-  body: multipartForm
+  body: json
   auth: bearer
 }
 
@@ -14,26 +14,22 @@ auth:bearer {
   token: {{adminToken}}
 }
 
-body:multipart-form {
-  name: Produit Mis à Jour
-  description: Description mise à jour avec nouvelles images
-  price: 18000
-  stock: 30
+body:json {
+  {
+    "name": "Produit Mis à Jour",
+    "description": "Description mise à jour",
+    "price": 18000,
+    "stock": 30
+  }
 }
 
 docs {
-  ## Update produit avec upload d'images
+  ## Mise à jour de produit
 
-  **IMPORTANT**: Cette requête supporte 2 modes:
+  **Cette requête utilise le Mode JSON par défaut.**
 
-  ### Mode 1: Upload de nouvelles images (FormData - ACTUEL)
-  - Utilisez Bruno UI pour ajouter de nouveaux fichiers via "images"
-  - Les nouvelles images remplaceront les anciennes
-  - Jusqu'à 5 images (JPEG, PNG, GIF, WebP)
-  - Taille max: 5MB par image
-
-  ### Mode 2: Update sans changer les images (JSON - ALTERNATIF)
-  Changez le body type en `json`:
+  ### Mode 1: Update sans changer les images (JSON - PAR DÉFAUT)
+  Ne pas inclure le champ "images" conserve les images existantes:
   ```json
   {
     "name": "Produit Mis à Jour",
@@ -42,9 +38,9 @@ docs {
     "stock": 30
   }
   ```
-  (Ne pas inclure "images" conserve les images existantes)
 
-  ### Mode 3: Update avec URLs d'images
+  ### Mode 2: Update avec nouvelles URLs d'images
+  Les nouvelles URLs remplaceront toutes les images existantes:
   ```json
   {
     "name": "Produit Mis à Jour",
@@ -54,6 +50,23 @@ docs {
     ]
   }
   ```
+
+  ### Mode 3: Upload de fichiers locaux (FormData)
+  Pour uploader de nouvelles images depuis votre ordinateur:
+
+  1. Changez le body type de "JSON" à "Multipart Form" dans Bruno
+  2. Ajoutez les champs à modifier (optionnels):
+     - name: Produit Mis à Jour
+     - description: Nouvelle description
+     - price: 18000
+     - stock: 30
+  3. Ajoutez des fichiers (optionnel):
+     - Cliquez sur "Add File"
+     - Name: images (important!)
+     - Sélectionnez les nouvelles images (max 5)
+     - Les nouvelles images REMPLACERONT toutes les anciennes
+
+  **Note**: Si vous n'ajoutez pas de fichiers en mode FormData, les images existantes seront conservées.
 }
 
 tests {

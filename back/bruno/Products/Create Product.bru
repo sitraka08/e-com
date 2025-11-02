@@ -6,7 +6,7 @@ meta {
 
 post {
   url: {{baseUrl}}/api/products
-  body: multipartForm
+  body: json
   auth: bearer
 }
 
@@ -14,28 +14,27 @@ auth:bearer {
   token: {{adminToken}}
 }
 
-body:multipart-form {
-  name: Nouveau Produit Test
-  description: Description du produit de test avec upload d'images locales
-  price: 15000
-  stock: 25
-  categoryId: {{categoryId}}
+body:json {
+  {
+    "name": "Nouveau Produit Test",
+    "description": "Description du produit de test",
+    "price": 15000,
+    "stock": 25,
+    "categoryId": {{categoryId}},
+    "images": [
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
+      "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400"
+    ]
+  }
 }
 
 docs {
-  ## Upload d'images avec FormData
+  ## Création de produit avec images
 
-  **IMPORTANT**: Cette requête supporte 2 modes:
+  **Cette requête utilise le Mode JSON (URLs d'images) par défaut.**
 
-  ### Mode 1: Upload de fichiers locaux (FormData - ACTUEL)
-  - Utilisez Bruno UI pour ajouter des fichiers via le champ "images"
-  - Cliquez sur "+ Add File" dans l'interface Bruno
-  - Sélectionnez jusqu'à 5 images (JPEG, PNG, GIF, WebP)
-  - Taille max: 5MB par image
-  - Les images seront stockées dans `/public/uploads/products/`
-
-  ### Mode 2: URLs d'images (JSON - ALTERNATIF)
-  Changez le body type en `json` et utilisez:
+  ### Mode 1: URLs d'images (JSON - PAR DÉFAUT)
+  Les images sont des URLs hébergées (Unsplash, Cloudinary, etc.)
   ```json
   {
     "name": "Nouveau Produit",
@@ -50,8 +49,24 @@ docs {
   }
   ```
 
-  Images uploadées accessibles via:
-  `http://localhost:3000/uploads/products/nom-fichier.jpg`
+  ### Mode 2: Upload de fichiers locaux (FormData)
+  Pour uploader des images depuis votre ordinateur:
+
+  1. Changez le body type de "JSON" à "Multipart Form" dans Bruno
+  2. Ajoutez les champs texte:
+     - name: Nouveau Produit Test
+     - description: Description
+     - price: 15000
+     - stock: 25
+     - categoryId: 1
+  3. Ajoutez des fichiers:
+     - Cliquez sur "Add File"
+     - Name: images (important!)
+     - Sélectionnez une ou plusieurs images (max 5)
+     - Formats: JPEG, PNG, GIF, WebP (max 5MB chacune)
+
+  Les images uploadées seront stockées dans `/back/public/uploads/products/` et accessibles via:
+  `http://localhost:3000/uploads/products/nom-fichier-unique.jpg`
 }
 
 tests {
