@@ -1,6 +1,6 @@
 import { IUserRepository, IOtpRepository } from '../repositories';
 import { RegisterDTO, LoginDTO, ForgotPasswordDTO, ResetPasswordDTO, AuthResponse, UserDTO } from '../types';
-import { hashPassword, comparePassword, generateToken, generateOTP, getOTPExpiryDate, isOTPExpired } from '../utils';
+import { hashPassword, comparePassword, generateToken, generateOTP, getOTPExpiryDate, isOTPExpired, ConflictError, AuthenticationError, NotFoundError, ValidationError } from '../utils';
 
 export class AuthService {
   constructor(
@@ -11,7 +11,7 @@ export class AuthService {
   async register(data: RegisterDTO): Promise<AuthResponse> {
     const existingUser = await this.userRepository.findByEmail(data.email);
     if (existingUser) {
-      throw new Error('Email already registered');
+      throw new ConflictError('Cet email est déjà utilisé');
     }
 
     const hashedPassword = await hashPassword(data.password);
@@ -47,16 +47,16 @@ export class AuthService {
   async login(data: LoginDTO): Promise<AuthResponse> {
     const user = await this.userRepository.findByEmail(data.email);
     if (!user) {
-      throw new Error('Invalid credentials');
+      throw new AuthenticationError('Email ou mot de passe incorrect');
     }
 
     const isPasswordValid = await comparePassword(data.password, user.password);
     if (!isPasswordValid) {
-      throw new Error('Invalid credentials');
+      throw new AuthenticationError('Email ou mot de passe incorrect');
     }
 
     if (user.status === 'SUSPENDED') {
-      throw new Error('Account suspended');
+      throw new AuthenticationError('Votre compte a été suspendu');
     }
 
     await this.userRepository.updateLastLogin(user.id);
@@ -86,7 +86,7 @@ export class AuthService {
   async forgotPassword(data: ForgotPasswordDTO): Promise<{ otp: string }> {
     const user = await this.userRepository.findByEmail(data.email);
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundError('Aucun compte n\'existe avec cet email');
     }
 
     const otp = generateOTP(5);
@@ -100,16 +100,16 @@ export class AuthService {
   async resetPassword(data: ResetPasswordDTO): Promise<void> {
     const otpRecord = await this.otpRepository.findByEmailAndOtp(data.email, data.otp);
     if (!otpRecord) {
-      throw new Error('Invalid or expired OTP');
+      throw new ValidationError('Code OTP invalide ou expiré');
     }
 
     if (isOTPExpired(otpRecord.expiresAt)) {
-      throw new Error('OTP has expired');
+      throw new ValidationError('Le code OTP a expiré');
     }
 
     const user = await this.userRepository.findByEmail(data.email);
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundError('Utilisateur introuvable');
     }
 
     const hashedPassword = await hashPassword(data.newPassword);
@@ -120,7 +120,7 @@ export class AuthService {
   async getProfile(userId: number): Promise<UserDTO> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundError('Utilisateur introuvable');
     }
 
     const { password, ...userWithoutPassword } = user;
