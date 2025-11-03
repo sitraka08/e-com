@@ -1,4 +1,4 @@
-import { ProductType } from "@/types/product";
+import { ProductType } from "@/types/product.types";
 import { create } from "zustand";
 
 type State = {

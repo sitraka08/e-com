@@ -3,7 +3,7 @@ import React from "react";
 import { RadioButton } from "./button/radio-button";
 import DividerDashed from "./divider-dashed";
 import { BanknoteArrowUp, LucideIcon } from "lucide-react-native";
-import { cn } from "utils/utils";
+import { cn } from "@/utils/utils";
 
 interface PayementMethodCardProps {
   checked?: boolean;

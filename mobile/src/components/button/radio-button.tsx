@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Pressable } from "react-native";
-import { cn } from "utils/utils";
+import { cn } from "@/utils/utils";
 
 interface RadioButtonProps {
   selected?: boolean;

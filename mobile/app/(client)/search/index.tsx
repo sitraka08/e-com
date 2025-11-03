@@ -1,6 +1,6 @@
 import ProductCard from "@/components/product-card";
 import TopNavigation from "@/components/top-navigation";
-import { ProductType } from "@/types/product";
+import { ProductType } from "@/types/product.types";
 import { Computer, Pizza, Shirt } from "lucide-react-native";
 import { FlatList, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";

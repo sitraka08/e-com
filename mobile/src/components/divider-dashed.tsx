@@ -1,6 +1,6 @@
 import { Text } from "react-native";
 import React from "react";
-import { cn } from "utils/utils";
+import { cn } from "@/utils/utils";
 
 interface DividerDashedProps {
   className?: string;

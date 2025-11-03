@@ -1,7 +1,7 @@
 import { View, Text, Image } from "react-native";
 import React from "react";
 import useCartStore from "@/stores/useCartStore";
-import { ProductType } from "@/types/product";
+import { ProductType } from "@/types/product.types";
 import MinusButton from "./button/MinusButton";
 import PlusButton from "./button/PlusButton";
 

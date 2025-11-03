@@ -1,38 +1,23 @@
 import React from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
-import {
-  House,
-  CircleUser,
-  Search,
-  ShoppingBag,
-  ScrollText,
-} from "lucide-react-native";
+import { House } from "lucide-react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { removeTabsByNames } from "utils/utils";
+import { removeTabsByNames } from "@/utils/utils";
+import { TabConfig } from "@/config/tab-configs";
 
-const TABS = [
-  { label: "Accueil", icon: House },
-  { label: "Recherche", icon: Search },
-  { label: "Panier", icon: ShoppingBag },
-  { label: "Commande", icon: ScrollText },
-  { label: "Profil", icon: CircleUser },
-];
+interface CustomTabBarProps extends BottomTabBarProps {
+  tabs: TabConfig[];
+  removeInTabs?: string[];
+  hiddenTabBarRoutes?: string[];
+}
 
-const removeInTabs = [
-  "cart/payement/index",
-  "profile/login/index",
-  "profile/register/index",
-  "profile/forgot-password/index",
-  "home/[id]",
-];
-const hiddenTabBarRoutes = [
-  "profile/login/index",
-  "profile/index",
-  "profile/register/index",
-  "profile/forgot-password/index",
-];
-
-export default function CustomTabBar({ state, navigation }: BottomTabBarProps) {
+export default function CustomTabBar({
+  state,
+  navigation,
+  tabs,
+  removeInTabs = [],
+  hiddenTabBarRoutes = [],
+}: CustomTabBarProps) {
   const currentRoute = state.routes[state.index].name;
   const shouldHideTabBar = hiddenTabBarRoutes.some((route) => {
     const pattern = route.replace(/\[.*?\]/g, "[^/]+");
@@ -51,8 +36,8 @@ export default function CustomTabBar({ state, navigation }: BottomTabBarProps) {
       style={styles.shadow}
     >
       {STATE.map((route, index) => {
-        const label = TABS[index]?.label ?? route.name;
-        const Icon = TABS[index]?.icon ?? House;
+        const label = tabs[index]?.label ?? route.name;
+        const Icon = tabs[index]?.icon ?? House;
         const isFocused = state.index === index;
 
         return (

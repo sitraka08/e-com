@@ -1,6 +1,6 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
-import { ProductType } from "@/types/product";
+import { ProductType } from "@/types/product.types";
 import { ShoppingCart } from "lucide-react-native";
 import useCartStore from "@/stores/useCartStore";
 import { useRouter } from "expo-router";

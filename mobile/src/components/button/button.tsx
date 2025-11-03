@@ -1,6 +1,6 @@
-import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
-import { cn } from "utils/utils";
+import { cn } from "@/utils/utils";
 
 interface ButtonProps {
   label: string;
@@ -25,9 +25,17 @@ export default function Button({
       )}
       onPress={onPress}
       activeOpacity={0.7}
+      disabled={loading}
     >
       {loading ? (
-        <ActivityIndicator color="#fff" />
+        <View className="flex flex-row items-center justify-center gap-3">
+          <ActivityIndicator color="#000" />
+          <Text
+            className={cn("font-fsemibold text-sm text-white", textClassName)}
+          >
+            {label}
+          </Text>
+        </View>
       ) : (
         <Text
           className={cn("font-fsemibold text-sm text-white", textClassName)}
