@@ -1,13 +1,19 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { OrderDTO } from '@/types';
-import OrderListItem from '@/components/admin/list-items/order-list-item';
-import OrderDetailSheet from '@/components/admin/bottom-sheets/order-detail-sheet';
-import OrderStatusSheet from '@/components/admin/bottom-sheets/order-status-sheet';
-import EmptyState from '@/components/admin/empty-state';
-import { ClipboardList } from 'lucide-react-native';
-import { useOrders } from '@/hooks/use-orders';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  RefreshControl,
+  ActivityIndicator,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { OrderDTO } from "@/types";
+import OrderListItem from "@/components/admin/list-items/order-list-item";
+import OrderDetailSheet from "@/components/admin/bottom-sheets/order-detail-sheet";
+import OrderStatusSheet from "@/components/admin/bottom-sheets/order-status-sheet";
+import EmptyState from "@/components/admin/empty-state";
+import { ClipboardList } from "lucide-react-native";
+import { useOrders } from "@/hooks/use-orders";
 
 export default function OrdersScreen() {
   const [selectedOrder, setSelectedOrder] = useState<OrderDTO | null>(null);
@@ -24,7 +30,7 @@ export default function OrdersScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView className="flex-1 bg-white">
+      <SafeAreaView className="flex-1">
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color="#0174D8" />
         </View>
@@ -33,11 +39,11 @@ export default function OrdersScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1">
       <View className="px-5 py-4 border-b border-gray-200">
         <Text className="text-2xl font-fbold text-gray-900">Commandes</Text>
         <Text className="text-sm font-fregular text-gray-600 mt-1">
-          {orders.length} commande{orders.length !== 1 ? 's' : ''}
+          {orders.length} commande{orders.length !== 1 ? "s" : ""}
         </Text>
       </View>
 

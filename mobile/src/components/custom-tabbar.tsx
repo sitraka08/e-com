@@ -48,7 +48,7 @@ export default function CustomTabBar({
                 navigation.navigate(route.name);
               }
             }}
-            className={`flex-1 items-center justify-center h-full ${isFocused ? "bg-primary rounded-xl p-1" : ""}`}
+            className={`flex-1 items-center justify-center h-full py-4 ${isFocused ? "bg-primary rounded-xl p-1" : ""}`}
           >
             <View className={`"flex items-center gap-2"`}>
               <Icon size={20} color={isFocused ? "#fff" : "#000"} />

@@ -1,7 +1,14 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { Camera, Image as ImageIcon, X } from 'lucide-react-native';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  Alert,
+} from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { Camera, Image as ImageIcon, X } from "lucide-react-native";
 
 interface ImagePickerComponentProps {
   value: string[];
@@ -19,13 +26,15 @@ export default function ImagePickerComponent({
   const [loading, setLoading] = useState(false);
 
   const requestPermissions = async () => {
-    const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
-    const { status: mediaStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const { status: cameraStatus } =
+      await ImagePicker.requestCameraPermissionsAsync();
+    const { status: mediaStatus } =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    if (cameraStatus !== 'granted' || mediaStatus !== 'granted') {
+    if (cameraStatus !== "granted" || mediaStatus !== "granted") {
       Alert.alert(
-        'Permissions requises',
-        'Nous avons besoin des permissions pour accéder à votre caméra et galerie.'
+        "Permissions requises",
+        "Nous avons besoin des permissions pour accéder à votre caméra et galerie."
       );
       return false;
     }
@@ -34,7 +43,10 @@ export default function ImagePickerComponent({
 
   const pickFromGallery = async () => {
     if (value.length >= maxImages) {
-      Alert.alert('Limite atteinte', `Vous ne pouvez ajouter que ${maxImages} images maximum.`);
+      Alert.alert(
+        "Limite atteinte",
+        `Vous ne pouvez ajouter que ${maxImages} images maximum.`
+      );
       return;
     }
 
@@ -51,12 +63,12 @@ export default function ImagePickerComponent({
       });
 
       if (!result.canceled && result.assets) {
-        const newImages = result.assets.map(asset => asset.uri);
+        const newImages = result.assets.map((asset) => asset.uri);
         onChange([...value, ...newImages]);
       }
     } catch (error) {
-      Alert.alert('Erreur', 'Impossible de sélectionner l\'image');
-      console.error('Error picking image:', error);
+      Alert.alert("Erreur", "Impossible de sélectionner l'image");
+      console.error("Error picking image:", error);
     } finally {
       setLoading(false);
     }
@@ -64,7 +76,10 @@ export default function ImagePickerComponent({
 
   const takePhoto = async () => {
     if (value.length >= maxImages) {
-      Alert.alert('Limite atteinte', `Vous ne pouvez ajouter que ${maxImages} images maximum.`);
+      Alert.alert(
+        "Limite atteinte",
+        `Vous ne pouvez ajouter que ${maxImages} images maximum.`
+      );
       return;
     }
 
@@ -85,8 +100,8 @@ export default function ImagePickerComponent({
         onChange([...value, newImage]);
       }
     } catch (error) {
-      Alert.alert('Erreur', 'Impossible de prendre une photo');
-      console.error('Error taking photo:', error);
+      Alert.alert("Erreur", "Impossible de prendre une photo");
+      console.error("Error taking photo:", error);
     } finally {
       setLoading(false);
     }
@@ -104,7 +119,11 @@ export default function ImagePickerComponent({
       </Text>
 
       {value.length > 0 && (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-3">
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          className="mb-3"
+        >
           {value.map((uri, index) => (
             <View key={index} className="mr-2 relative">
               <Image
@@ -114,7 +133,7 @@ export default function ImagePickerComponent({
               />
               <TouchableOpacity
                 onPress={() => removeImage(index)}
-                className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1"
+                className="absolute -top-0 -right-2 bg-red-500 rounded-full p-1"
               >
                 <X size={16} color="#fff" />
               </TouchableOpacity>
@@ -128,14 +147,16 @@ export default function ImagePickerComponent({
           <TouchableOpacity
             onPress={pickFromGallery}
             disabled={loading}
-            className={`flex-1 flex-row items-center justify-center py-3 px-4 rounded-xl border-2 border-dashed ${
-              loading ? 'border-gray-300 bg-gray-50' : 'border-primary bg-primary/5'
+            className={`flex-1 flex-row items-center justify-center py-3 px-4 rounded-xl border border-dashed ${
+              loading
+                ? "border-gray-300 bg-gray-50"
+                : "border-primary bg-primary/5"
             }`}
           >
-            <ImageIcon size={20} color={loading ? '#9CA3AF' : '#0174D8'} />
+            <ImageIcon size={17} color={loading ? "#9CA3AF" : "#0174D8"} />
             <Text
-              className={`ml-2 text-base font-fmedium ${
-                loading ? 'text-gray-400' : 'text-primary'
+              className={`ml-2 text-xs font-fmedium ${
+                loading ? "text-gray-400" : "text-primary"
               }`}
             >
               Galerie
@@ -145,14 +166,16 @@ export default function ImagePickerComponent({
           <TouchableOpacity
             onPress={takePhoto}
             disabled={loading}
-            className={`flex-1 flex-row items-center justify-center py-3 px-4 rounded-xl border-2 border-dashed ${
-              loading ? 'border-gray-300 bg-gray-50' : 'border-primary bg-primary/5'
+            className={`flex-1 flex-row items-center justify-center py-3 px-4 rounded-xl border border-dashed ${
+              loading
+                ? "border-gray-300 bg-gray-50"
+                : "border-primary bg-primary/5"
             }`}
           >
-            <Camera size={20} color={loading ? '#9CA3AF' : '#0174D8'} />
+            <Camera size={17} color={loading ? "#9CA3AF" : "#0174D8"} />
             <Text
-              className={`ml-2 text-base font-fmedium ${
-                loading ? 'text-gray-400' : 'text-primary'
+              className={`ml-2 text-xs font-fmedium ${
+                loading ? "text-gray-400" : "text-primary"
               }`}
             >
               Caméra

@@ -21,7 +21,10 @@ export default function Profil() {
   };
   return (
     <SafeAreaView className="flex-1 p-10 bg-primary">
-      <TopNavigation title="Accueil" onPress={() => router.replace("/home")} />
+      <TopNavigation
+        title="Accueil"
+        onPress={() => router.replace("/(admin)/users")}
+      />
       <View className="h-full w-full flex items-center pt-14 gap-3">
         <Text className="text-5xl text-white font-ffextrabold my-t">
           QitKif

@@ -1,7 +1,6 @@
 import CategoryCard from "@/components/category-card";
 import ProductCard from "@/components/product-card";
 import SearchBar from "@/components/search-bar";
-import { ProductType } from "@/types/product.types";
 import { Computer, Pizza, Shirt } from "lucide-react-native";
 import { useState } from "react";
 import { FlatList, Text, View } from "react-native";

@@ -1,19 +1,28 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ProductDTO } from '@/types';
-import ProductListItem from '@/components/admin/list-items/product-list-item';
-import ProductFormSheet from '@/components/admin/bottom-sheets/product-form-sheet';
-import ProductStockSheet from '@/components/admin/bottom-sheets/product-stock-sheet';
-import ConfirmSheet from '@/components/admin/confirm-sheet';
-import FAB from '@/components/admin/fab';
-import EmptyState from '@/components/admin/empty-state';
-import { Package } from 'lucide-react-native';
-import { useProducts, useProductMutations } from '@/hooks/use-products';
-import { useCategories } from '@/hooks/use-categories';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  RefreshControl,
+  ActivityIndicator,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ProductDTO } from "@/types";
+import ProductListItem from "@/components/admin/list-items/product-list-item";
+import ProductFormSheet from "@/components/admin/bottom-sheets/product-form-sheet";
+import ProductStockSheet from "@/components/admin/bottom-sheets/product-stock-sheet";
+import ConfirmSheet from "@/components/admin/confirm-sheet";
+import FAB from "@/components/admin/fab";
+import EmptyState from "@/components/admin/empty-state";
+import { Package } from "lucide-react-native";
+import { useProducts, useProductMutations } from "@/hooks/use-products";
+import { useCategories } from "@/hooks/use-categories";
+import TopNavigation from "@/components/top-navigation";
 
 export default function Products() {
-  const [selectedProduct, setSelectedProduct] = useState<ProductDTO | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<ProductDTO | null>(
+    null
+  );
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isStockOpen, setIsStockOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -52,28 +61,31 @@ export default function Products() {
       setIsDeleteOpen(false);
       setSelectedProduct(null);
     } catch (error) {
-      console.error('Error deleting product:', error);
+      console.error("Error deleting product:", error);
     }
   };
 
-  if (isLoading) {
-    return (
-      <SafeAreaView className="flex-1 bg-white">
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#0174D8" />
-        </View>
-      </SafeAreaView>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <SafeAreaView className="flex-1">
+  //       <View className="flex-1 items-center justify-center">
+  //         <ActivityIndicator size="large" color="#0174D8" />
+  //       </View>
+  //     </SafeAreaView>
+  //   );
+  // }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="px-5 py-4 border-b border-gray-200">
-        <Text className="text-2xl font-fbold text-gray-900">Produits</Text>
-        <Text className="text-sm font-fregular text-gray-600 mt-1">
-          {products.length} produit{products.length !== 1 ? 's' : ''}
-        </Text>
-      </View>
+    <SafeAreaView className="flex-1">
+      <TopNavigation
+        title="Produits"
+        description={
+          <Text>
+            {products.length} produit{products.length !== 1 ? "s" : ""}
+          </Text>
+        }
+        noButton={true}
+      />
 
       {products.length === 0 ? (
         <EmptyState

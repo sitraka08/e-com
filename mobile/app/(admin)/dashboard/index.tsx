@@ -1,14 +1,34 @@
-import React from 'react';
-import { View, Text, ScrollView, RefreshControl, ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import StatCard from '@/components/admin/stat-card';
-import { ShoppingCart, DollarSign, Clock, AlertTriangle } from 'lucide-react-native';
-import { useOrderStats, useOrders } from '@/hooks/use-orders';
-import { useLowStockProducts } from '@/hooks/use-products';
+import React from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  RefreshControl,
+  ActivityIndicator,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import StatCard from "@/components/admin/stat-card";
+import {
+  ShoppingCart,
+  DollarSign,
+  Clock,
+  AlertTriangle,
+} from "lucide-react-native";
+import { useOrderStats, useOrders } from "@/hooks/use-orders";
+import { useLowStockProducts } from "@/hooks/use-products";
+import TopNavigation from "@/components/top-navigation";
 
 export default function Dashboard() {
-  const { data: statsResponse, isLoading: statsLoading, refetch: refetchStats } = useOrderStats();
-  const { data: lowStockResponse, isLoading: lowStockLoading, refetch: refetchLowStock } = useLowStockProducts();
+  const {
+    data: statsResponse,
+    isLoading: statsLoading,
+    refetch: refetchStats,
+  } = useOrderStats();
+  const {
+    data: lowStockResponse,
+    isLoading: lowStockLoading,
+    refetch: refetchLowStock,
+  } = useLowStockProducts();
   const { data: ordersResponse, refetch: refetchOrders } = useOrders();
 
   const stats = statsResponse?.data;
@@ -23,7 +43,7 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <SafeAreaView className="flex-1 bg-white">
+      <SafeAreaView className="flex-1">
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color="#0174D8" />
         </View>
@@ -32,20 +52,18 @@ export default function Dashboard() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1">
+      <TopNavigation
+        title="Tableau de bord"
+        description="   Vue d'ensemble de votre boutique"
+        noButton={true}
+      />
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={isLoading} onRefresh={handleRefresh} />
         }
       >
-        <View className="px-5 py-4">
-          <Text className="text-2xl font-fbold text-gray-900">Tableau de bord</Text>
-          <Text className="text-sm font-fregular text-gray-600 mt-1">
-            Vue d'ensemble de votre boutique
-          </Text>
-        </View>
-
-        <View className="px-5 pb-4">
+        <View className="px-5 pb-4 pt-24">
           <View className="flex-row gap-3 mb-3">
             <View className="flex-1">
               <StatCard

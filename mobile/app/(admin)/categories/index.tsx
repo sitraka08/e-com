@@ -1,17 +1,25 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { CategoryDTO } from '@/types';
-import CategoryListItem from '@/components/admin/list-items/category-list-item';
-import CategoryFormSheet from '@/components/admin/bottom-sheets/category-form-sheet';
-import ConfirmSheet from '@/components/admin/confirm-sheet';
-import FAB from '@/components/admin/fab';
-import EmptyState from '@/components/admin/empty-state';
-import { FolderOpen } from 'lucide-react-native';
-import { useCategories, useCategoryMutations } from '@/hooks/use-categories';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  RefreshControl,
+  ActivityIndicator,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { CategoryDTO } from "@/types";
+import CategoryListItem from "@/components/admin/list-items/category-list-item";
+import CategoryFormSheet from "@/components/admin/bottom-sheets/category-form-sheet";
+import ConfirmSheet from "@/components/admin/confirm-sheet";
+import FAB from "@/components/admin/fab";
+import EmptyState from "@/components/admin/empty-state";
+import { FolderOpen } from "lucide-react-native";
+import { useCategories, useCategoryMutations } from "@/hooks/use-categories";
 
 export default function Categories() {
-  const [selectedCategory, setSelectedCategory] = useState<CategoryDTO | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryDTO | null>(
+    null
+  );
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
@@ -42,13 +50,13 @@ export default function Categories() {
       setIsDeleteOpen(false);
       setSelectedCategory(null);
     } catch (error) {
-      console.error('Error deleting category:', error);
+      console.error("Error deleting category:", error);
     }
   };
 
   if (isLoading) {
     return (
-      <SafeAreaView className="flex-1 bg-white">
+      <SafeAreaView className="flex-1">
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color="#0174D8" />
         </View>
@@ -57,11 +65,11 @@ export default function Categories() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1">
       <View className="px-5 py-4 border-b border-gray-200">
         <Text className="text-2xl font-fbold text-gray-900">Catégories</Text>
         <Text className="text-sm font-fregular text-gray-600 mt-1">
-          {categories.length} catégorie{categories.length !== 1 ? 's' : ''}
+          {categories.length} catégorie{categories.length !== 1 ? "s" : ""}
         </Text>
       </View>
 

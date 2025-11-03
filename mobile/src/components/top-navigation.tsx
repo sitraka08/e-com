@@ -8,8 +8,9 @@ import SearchInput from "./search-input";
 interface TopNavigationProps {
   onPress?: () => void;
   title: string;
-  description?: string;
+  description?: string | React.ReactNode;
   withIput?: boolean;
+  noButton?: boolean;
 }
 
 export default function TopNavigation({
@@ -17,17 +18,21 @@ export default function TopNavigation({
   onPress,
   description,
   withIput = false,
+  noButton = false,
 }: TopNavigationProps) {
   const router = useRouter();
   return (
     <View className="bg-primary absolute w-full top-0 rounded-b-[30px] p-6 px-10 z-50">
       <View className="flex flex-row items-center gap-4">
-        <TouchableOpacity
-          className="bg-white rounded-full p-1"
-          onPress={onPress || router.back}
-        >
-          <ArrowLeft size={20} color={COLORS.primary} />
-        </TouchableOpacity>
+        {!noButton && (
+          <TouchableOpacity
+            className="bg-white rounded-full p-1"
+            onPress={onPress || router.back}
+          >
+            <ArrowLeft size={20} color={COLORS.primary} />
+          </TouchableOpacity>
+        )}
+
         <View className="flex justify-center">
           <Text className="text-white font-fmedium text-xl">{title}</Text>
           {description && (

@@ -2,6 +2,7 @@ import { View, Text } from "react-native";
 import React from "react";
 import { Picker } from "@react-native-picker/picker";
 import { Controller, FieldValues, Path, UseFormReturn } from "react-hook-form";
+import { cn } from "@/utils/utils";
 
 export interface SelectOption {
   label: string;
@@ -15,6 +16,7 @@ interface InputSelectProps<T extends FieldValues> {
   placeholder?: string;
   className?: string;
   label?: string;
+  isAdmin?: boolean;
 }
 
 const InputSelect = <T extends FieldValues>({
@@ -24,17 +26,31 @@ const InputSelect = <T extends FieldValues>({
   placeholder = "Sélectionner...",
   className,
   label,
+  isAdmin,
 }: InputSelectProps<T>) => {
-  const { control, formState: { errors } } = form;
+  const {
+    control,
+    formState: { errors },
+  } = form;
   const error = errors[name];
 
   return (
     <View className="w-full">
       {label && (
-        <Text className="text-white text-sm font-fmedium mb-2">{label}</Text>
+        <Text
+          className={cn(
+            "text-sm font-fmedium mb-2",
+            isAdmin ? "text-zinc-800" : "text-white"
+          )}
+        >
+          {label}
+        </Text>
       )}
       <View
-        className={`w-full bg-[#ffffff46] px-3 h-14 rounded-xl flex flex-row items-center justify-between ${className}`}
+        className={cn(
+          `w-full  px-5 h-14 rounded-xl flex flex-row items-center justify-between relative ${className}`,
+          isAdmin ? "bg-[#9b999946]" : "bg-[#ffffff46]"
+        )}
       >
         <Controller
           control={control}
@@ -44,9 +60,9 @@ const InputSelect = <T extends FieldValues>({
               selectedValue={value}
               onValueChange={onChange}
               style={{
-                width: '100%',
+                width: "100%",
                 height: 56,
-                color: '#fff',
+                fontFamily: "FMedium",
               }}
               dropdownIconColor="#fff"
             >
@@ -54,14 +70,20 @@ const InputSelect = <T extends FieldValues>({
                 label={placeholder}
                 value=""
                 enabled={false}
-                style={{ color: '#DCDCF4' }}
+                style={{
+                  color: "#DCDCF4",
+                }}
+                fontFamily="FMedium"
               />
               {options.map((option) => (
                 <Picker.Item
                   key={option.value}
                   label={option.label}
                   value={option.value}
-                  style={{ color: '#000' }}
+                  style={{
+                    color: "#000",
+                  }}
+                  fontFamily="FMedium"
                 />
               ))}
             </Picker>
@@ -77,4 +99,6 @@ const InputSelect = <T extends FieldValues>({
   );
 };
 
-export default InputSelect as <T extends FieldValues>(props: InputSelectProps<T>) => React.JSX.Element;
+export default InputSelect as <T extends FieldValues>(
+  props: InputSelectProps<T>
+) => React.JSX.Element;

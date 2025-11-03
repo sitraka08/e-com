@@ -2,6 +2,7 @@ import { View, TextInput, Text, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react-native";
 import { Controller, FieldValues, Path, UseFormReturn } from "react-hook-form";
+import { cn } from "@/utils/utils";
 
 interface InputProps<T extends FieldValues> {
   form: UseFormReturn<T>;
@@ -11,6 +12,7 @@ interface InputProps<T extends FieldValues> {
   autoFocus?: boolean;
   label?: string;
   type?: "password";
+  isAdmin?: boolean;
 }
 
 const Input = <T extends FieldValues>({
@@ -21,6 +23,7 @@ const Input = <T extends FieldValues>({
   autoFocus,
   label,
   type,
+  isAdmin,
 }: InputProps<T>) => {
   const [show, setShow] = useState(false);
   const {
@@ -32,22 +35,35 @@ const Input = <T extends FieldValues>({
   return (
     <View className="w-full">
       {label && (
-        <Text className="text-white text-sm font-fmedium mb-2">{label}</Text>
+        <Text
+          className={cn(
+            "text-sm font-fmedium mb-2",
+            isAdmin ? "text-zinc-800" : "text-white"
+          )}
+        >
+          {label}
+        </Text>
       )}
       <View
-        className={`w-full bg-[#ffffff46] px-5 h-14 rounded-xl flex flex-row items-center justify-between relative ${className}`}
+        className={cn(
+          `w-full  px-5 h-14 rounded-xl flex flex-row items-center justify-between relative ${className}`,
+          isAdmin ? "bg-[#9b999946]" : "bg-[#ffffff46]"
+        )}
       >
         <Controller
           control={control}
           name={name}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              className="font-fmedium text-base w-[90%] text-white"
+              className={cn(
+                "font-fmedium text-base w-[90%] text-white",
+                isAdmin ? "text-zinc-800" : "text-white"
+              )}
               placeholder={placeholder}
               onChangeText={onChange}
               onBlur={onBlur}
               value={value as string}
-              placeholderTextColor={"#DCDCF4"}
+              placeholderTextColor={!isAdmin ? "#DCDCF4" : "#848484"}
               autoFocus={autoFocus}
               secureTextEntry={type === "password" && !show}
             />
@@ -84,4 +100,6 @@ const Input = <T extends FieldValues>({
   );
 };
 
-export default Input as <T extends FieldValues>(props: InputProps<T>) => React.JSX.Element;
+export default Input as <T extends FieldValues>(
+  props: InputProps<T>
+) => React.JSX.Element;

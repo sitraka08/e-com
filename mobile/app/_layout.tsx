@@ -32,9 +32,9 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
     const inAuthGroup = segments[0] === "(auth)";
 
     if (!isAuthenticated && !inAuthGroup) {
-      router.replace("/login");
+      // router.replace("/login");
     } else if (isAuthenticated && inAuthGroup) {
-      router.replace("/home");
+      // router.replace("/home");
     }
   }, [isAuthenticated, isLoading, segments]);
 
@@ -79,9 +79,9 @@ export default function RootLayout() {
         </View>
         <AuthGuard>
           <Stack>
+            <Stack.Screen name="(admin)" options={{ headerShown: false }} />
             <Stack.Screen name="(client)" options={{ headerShown: false }} />
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen name="(admin)" options={{ headerShown: false }} />
           </Stack>
         </AuthGuard>
       </GestureHandlerRootView>
