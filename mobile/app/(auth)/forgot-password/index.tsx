@@ -31,7 +31,7 @@ export default function ForgotPassword() {
             onPress={() => setStep(2)}
           />
           <Button
-            onPress={() => router.push("/(tabs)/profile/login")}
+            onPress={() => router.push("/(auth)/login")}
             label="Se connecter"
             className="border border-white  w-full h-14"
             textClassName="!text-white"
@@ -72,7 +72,7 @@ export default function ForgotPassword() {
             textClassName="!text-primary"
           />
           <Button
-            onPress={() => router.push("/(tabs)/profile/login")}
+            onPress={() => router.push("/(auth)/login")}
             label="Se connecter"
             className="border border-white  w-full h-14"
             textClassName="!text-white"

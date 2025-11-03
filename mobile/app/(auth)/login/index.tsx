@@ -21,16 +21,18 @@ export default function Profil() {
           label="Se connecter"
           className="!bg-white  w-full h-14 mt-12"
           textClassName="!text-primary"
+          onPress={() => router.replace("/(client)/home")}
         />
+
         <Button
-          onPress={() => router.push("/(tabs)/profile/register")}
+          onPress={() => router.push("/(auth)/register")}
           label="Créer un compte"
           className="border border-white  w-full h-14"
           textClassName="!text-white"
         />
         <Text
           className="font-fmedium text-sm underline text-white"
-          onPress={() => router.push("/(tabs)/profile/forgot-password")}
+          onPress={() => router.push("/(auth)/forgot-password")}
         >
           Mot de passe oublié ?
         </Text>

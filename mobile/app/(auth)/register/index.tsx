@@ -31,7 +31,7 @@ export default function Profil() {
             label="Se connecter"
             className="border border-white  w-full h-14"
             textClassName="!text-white"
-            onPress={() => router.push("/(tabs)/profile/login")}
+            onPress={() => router.push("/(auth)/login")}
           />
         </View>
       </ScrollView>

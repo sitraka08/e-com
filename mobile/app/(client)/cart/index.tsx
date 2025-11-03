@@ -49,7 +49,7 @@ export default function Cart() {
               <Button
                 className="mt-8"
                 label="Procéder au payement"
-                onPress={() => router.push("/(tabs)/cart/payement")}
+                onPress={() => router.push("/(client)/cart/payement")}
               />
             </View>
           }

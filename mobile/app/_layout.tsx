@@ -7,8 +7,10 @@ import "react-native-reanimated";
 import "../global.css";
 import { FONTS } from "@/constants/fonts";
 import { COLORS } from "@/constants/colors";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const queryClient = new QueryClient();
+/* eslint-disable */
 (Text as any).defaultProps = (Text as any).defaultProps || {};
 (Text as any).defaultProps.allowFontScaling = false;
 
@@ -31,17 +33,21 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <View
-        className="w-full h-12"
-        style={{
-          backgroundColor: COLORS.primary,
-        }}
-      >
-        <StatusBar style="light" />
-      </View>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
+      <GestureHandlerRootView>
+        <View
+          className="w-full h-12"
+          style={{
+            backgroundColor: COLORS.primary,
+          }}
+        >
+          <StatusBar style="light" />
+        </View>
+        <Stack>
+          <Stack.Screen name="(client)" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="(admin)" options={{ headerShown: false }} />
+        </Stack>
+      </GestureHandlerRootView>
     </QueryClientProvider>
   );
 }

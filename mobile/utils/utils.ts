@@ -1,6 +1,5 @@
-import { IP_URL } from "@/api/client";
+import { IP_URL } from "@/services/client";
 import { IMAGES } from "@/constants/image";
-import { NavigationRoute, ParamListBase } from "@react-navigation/native";
 import { clsx } from "clsx";
 
 export const filterImage = (image: any) => {
