@@ -10,11 +10,11 @@ export const CreateProductSchema = z.object({
     .min(10, 'La description doit contenir au moins 10 caractères')
     .max(2000, 'La description ne peut pas dépasser 2000 caractères'),
   price: z
-    .number()
+    .coerce.number()
     .positive('Le prix doit être supérieur à 0')
     .max(1000000000, 'Le prix est trop élevé'),
-  stock: z.number().int('Le stock doit être un nombre entier').nonnegative('Le stock ne peut pas être négatif'),
-  categoryId: z.number().int().positive('Catégorie invalide'),
+  stock: z.coerce.number().int('Le stock doit être un nombre entier').nonnegative('Le stock ne peut pas être négatif'),
+  categoryId: z.coerce.number().int().positive('Catégorie invalide'),
   images: z
     .array(
       z.string().refine(
@@ -41,16 +41,16 @@ export const UpdateProductSchema = z.object({
     .max(2000, 'La description ne peut pas dépasser 2000 caractères')
     .optional(),
   price: z
-    .number()
+    .coerce.number()
     .positive('Le prix doit être supérieur à 0')
     .max(1000000000, 'Le prix est trop élevé')
     .optional(),
   stock: z
-    .number()
+    .coerce.number()
     .int('Le stock doit être un nombre entier')
     .nonnegative('Le stock ne peut pas être négatif')
     .optional(),
-  categoryId: z.number().int().positive('Catégorie invalide').optional(),
+  categoryId: z.coerce.number().int().positive('Catégorie invalide').optional(),
   images: z
     .array(
       z.string().refine(

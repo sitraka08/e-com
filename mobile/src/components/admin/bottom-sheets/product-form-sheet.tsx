@@ -124,7 +124,7 @@ export default function ProductFormSheet({
   return (
     <BottomSheet
       ref={bottomSheetRef}
-      snapPoints={["60%"]}
+      snapPoints={["90%"]}
       enablePanDownToClose
       onClose={onClose}
       index={-1}
@@ -134,7 +134,10 @@ export default function ProductFormSheet({
         borderColor: COLORS.primary,
       }}
     >
-      <BottomSheetScrollView className="flex-1 px-5 gap-2">
+      <BottomSheetScrollView
+        className="flex-1 px-5 gap-2"
+        contentContainerStyle={{ paddingBottom: 100 }}
+      >
         <Text className="text-xl font-fbold text-primary mb-5">
           {isEditMode ? "Modifier le produit" : "Nouveau produit"}
         </Text>
@@ -161,6 +164,7 @@ export default function ProductFormSheet({
             label="Prix (Ar)"
             placeholder="0"
             isAdmin
+            keyboardType="numeric"
           />
 
           <Input
@@ -169,6 +173,7 @@ export default function ProductFormSheet({
             label="Stock"
             placeholder="0"
             isAdmin
+            keyboardType="numeric"
           />
 
           <InputSelect

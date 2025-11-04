@@ -13,6 +13,7 @@ interface InputProps<T extends FieldValues> {
   label?: string;
   type?: "password";
   isAdmin?: boolean;
+  keyboardType?: "default" | "numeric" | "email-address" | "phone-pad";
 }
 
 const Input = <T extends FieldValues>({
@@ -24,6 +25,7 @@ const Input = <T extends FieldValues>({
   label,
   type,
   isAdmin,
+  keyboardType = "default",
 }: InputProps<T>) => {
   const [show, setShow] = useState(false);
   const {
@@ -66,6 +68,7 @@ const Input = <T extends FieldValues>({
               placeholderTextColor={!isAdmin ? "#DCDCF4" : "#848484"}
               autoFocus={autoFocus}
               secureTextEntry={type === "password" && !show}
+              keyboardType={keyboardType}
             />
           )}
         />
