@@ -8,8 +8,26 @@ import { OtpInput } from "react-native-otp-entry";
 import TopNavigation from "@/components/top-navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ForgotPasswordDTO, ForgotPasswordSchema, ResetPasswordDTO, ResetPasswordSchema } from "@/types";
+import { z } from "zod";
+import {
+  ForgotPasswordDTO,
+  ForgotPasswordSchema,
+  ResetPasswordDTO,
+} from "@/types";
 import { useAuthMutation } from "@/hooks/use-auth";
+
+// Schema simplifié pour seulement le champ newPassword
+const NewPasswordSchema = z.object({
+  newPassword: z
+    .string({ message: 'Le nouveau mot de passe est requis' })
+    .min(8, 'Le mot de passe doit contenir au moins 8 caractères')
+    .refine(
+      (val) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(val),
+      'Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre'
+    ),
+});
+
+type NewPasswordForm = z.infer<typeof NewPasswordSchema>;
 
 export default function ForgotPassword() {
   const router = useRouter();
@@ -23,8 +41,8 @@ export default function ForgotPassword() {
     resolver: zodResolver(ForgotPasswordSchema),
   });
 
-  const resetForm = useForm<ResetPasswordDTO>({
-    resolver: zodResolver(ResetPasswordSchema),
+  const resetForm = useForm<NewPasswordForm>({
+    resolver: zodResolver(NewPasswordSchema),
   });
 
   const { forgotPassword, resetPassword } = useAuthMutation();
@@ -59,15 +77,23 @@ export default function ForgotPassword() {
   const handleResendOtp = () => {
     if (!canResend) return;
 
-    forgotPassword.mutate({ email }, {
-      onSuccess: () => {
-        setCountdown(60);
-        setCanResend(false);
-      },
-    });
+    forgotPassword.mutate(
+      { email },
+      {
+        onSuccess: () => {
+          setCountdown(60);
+          setCanResend(false);
+        },
+      }
+    );
   };
 
-  const submitResetPassword = (data: Pick<ResetPasswordDTO, 'newPassword'>) => {
+  const submitResetPassword = (data: NewPasswordForm) => {
+    // Validation manuelle de l'OTP
+    if (!otp || otp.length !== 5) {
+      return;
+    }
+
     const resetData: ResetPasswordDTO = {
       email,
       otp,
@@ -82,10 +108,7 @@ export default function ForgotPassword() {
 
   return (
     <SafeAreaView className="flex-1 p-10 bg-primary">
-      <TopNavigation
-        title="Accueil"
-        onPress={() => router.replace("/home")}
-      />
+      <TopNavigation title="Accueil" onPress={() => router.replace("/home")} />
       {step === 1 ? (
         <View className="h-full w-full flex items-center pt-14 gap-3">
           <Text className="text-5xl text-white font-ffextrabold my-t">
@@ -177,7 +200,6 @@ export default function ForgotPassword() {
             textClassName="!text-primary"
             onPress={resetForm.handleSubmit(submitResetPassword)}
             loading={resetPassword.isPending}
-            disabled={otp.length !== 5}
           />
           <Button
             onPress={() => router.push("/login")}

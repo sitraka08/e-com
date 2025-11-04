@@ -52,7 +52,7 @@ export const ResetPasswordSchema = z.object({
     .refine((val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val), 'Adresse email invalide'),
   otp: z
     .string({ message: 'Le code OTP est requis' })
-    .length(6, 'Le code OTP doit contenir 6 chiffres'),
+    .length(5, 'Le code OTP doit contenir 5 chiffres'),
   newPassword: z
     .string({ message: 'Le nouveau mot de passe est requis' })
     .min(8, 'Le mot de passe doit contenir au moins 8 caractères')
