@@ -105,10 +105,10 @@ export default function OrderDetailSheet({
               </View>
               <View className="flex-row justify-between mt-2">
                 <Text className="text-sm font-fregular text-gray-600">
-                  {item.priceAtOrder.toLocaleString()} Ar/unité
+                  {(item.priceAtOrder || item.unitPrice).toLocaleString()} Ar/unité
                 </Text>
                 <Text className="text-base font-fbold text-primary">
-                  {item.subtotal.toLocaleString()} Ar
+                  {(item.subtotal || item.totalPrice).toLocaleString()} Ar
                 </Text>
               </View>
             </View>
@@ -119,7 +119,7 @@ export default function OrderDetailSheet({
           <View className="flex-row justify-between mb-2">
             <Text className="text-base font-fmedium text-gray-700">Sous-total</Text>
             <Text className="text-base font-fmedium text-gray-900">
-              {((order.totalAmount || 0) - (order.deliveryFee || 0)).toLocaleString()} Ar
+              {(order.subtotal || 0).toLocaleString()} Ar
             </Text>
           </View>
           <View className="flex-row justify-between mb-2">
@@ -132,7 +132,7 @@ export default function OrderDetailSheet({
           <View className="flex-row justify-between">
             <Text className="text-lg font-fbold text-gray-900">Total</Text>
             <Text className="text-lg font-fbold text-primary">
-              {(order.totalAmount || 0).toLocaleString()} Ar
+              {(order.total || 0).toLocaleString()} Ar
             </Text>
           </View>
         </View>

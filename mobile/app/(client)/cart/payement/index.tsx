@@ -1,15 +1,41 @@
 import { SafeAreaView, ScrollView, Text, View } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "expo-router";
 import TopNavigation from "@/components/top-navigation";
 import PayementMethodCard from "@/components/payement-method-card";
 import DividerDashed from "@/components/divider-dashed";
 import Button from "@/components/button/button";
 import { BanknoteArrowUp, HandCoins, Landmark } from "lucide-react-native";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 export default function Payement() {
+  const router = useRouter();
+  const { isAuthenticated, isLoading } = useAuthStore();
   const [payementMethod, setPayementMethod] = useState<
     "MOBILE" | "CARD" | "MONEY"
   >("MONEY");
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      // Redirection vers login si non authentifié
+      router.replace("/login");
+    }
+  }, [isAuthenticated, isLoading, router]);
+
+  // Afficher un loader pendant la vérification
+  if (isLoading) {
+    return (
+      <SafeAreaView className="flex-1 items-center justify-center bg-white">
+        <Text className="text-xl font-fbold">Chargement...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  // Ne rien afficher si non authentifié (redirection en cours)
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
     <SafeAreaView className="">
       <TopNavigation

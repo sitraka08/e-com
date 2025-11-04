@@ -85,6 +85,7 @@ export default function OrderStatusSheet({
           label="Nouveau statut"
           options={statusOptions}
           placeholder="Sélectionner un statut"
+          isAdmin
         />
 
         <View className="mt-6">

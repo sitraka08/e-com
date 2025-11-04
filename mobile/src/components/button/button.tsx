@@ -8,6 +8,7 @@ interface ButtonProps {
   onPress?: () => void;
   className?: string;
   textClassName?: string;
+  disabled?: boolean;
 }
 
 export default function Button({
@@ -16,6 +17,7 @@ export default function Button({
   loading,
   onPress,
   textClassName = "",
+  disabled = false,
 }: ButtonProps) {
   return (
     <TouchableOpacity
@@ -25,7 +27,7 @@ export default function Button({
       )}
       onPress={onPress}
       activeOpacity={0.7}
-      disabled={loading}
+      disabled={loading || disabled}
     >
       {loading ? (
         <View className="flex flex-row items-center justify-center gap-3">

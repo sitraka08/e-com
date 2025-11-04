@@ -1,6 +1,5 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { authService } from "./auth.services";
 
 export const IP_URL = "http://192.168.1.117:3000";
 export const API_BASE_URL = `${IP_URL}/api`;
@@ -14,22 +13,7 @@ export const apiClient: AxiosInstance = axios.create({
   },
 });
 
-let isRefreshing = false;
-let failedQueue: {
-  resolve: (value?: unknown) => void;
-  reject: (reason?: unknown) => void;
-}[] = [];
-
-const processQueue = (error: unknown = null) => {
-  failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve();
-    }
-  });
-  failedQueue = [];
-};
+// Refresh token logic removed - using single 24h token for demo
 
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
@@ -49,50 +33,20 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
+    // Laisser passer les erreurs réseau (pas de response) pour que les composants puissent les gérer
+    if (!error.response) {
+      console.warn("Erreur réseau - Backend inaccessible:", error.message);
+      return Promise.reject(error);
+    }
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
-        })
-          .then(() => {
-            return apiClient(originalRequest);
-          })
-          .catch((err) => {
-            return Promise.reject(err);
-          });
-      }
+    // Si 401, déconnecter l'utilisateur (token expiré après 24h)
+    if (error.response?.status === 401) {
+      const { tokens, clearAuth } = useAuthStore.getState();
 
-      originalRequest._retry = true;
-      isRefreshing = true;
-
-      const { tokens, updateTokens, clearAuth } = useAuthStore.getState();
-
-      if (!tokens?.refreshToken) {
-        isRefreshing = false;
+      // Si l'utilisateur est authentifié, le déconnecter
+      if (tokens?.accessToken) {
+        console.warn("Token expiré - Déconnexion");
         await clearAuth();
-        return Promise.reject(error);
-      }
-
-      try {
-        const response = await authService.refreshToken(tokens.refreshToken);
-
-        if (response.success && response.data) {
-          await updateTokens(response.data);
-          processQueue();
-          return apiClient(originalRequest);
-        } else {
-          processQueue(error);
-          await clearAuth();
-          return Promise.reject(error);
-        }
-      } catch (refreshError) {
-        processQueue(refreshError);
-        await clearAuth();
-        return Promise.reject(refreshError);
-      } finally {
-        isRefreshing = false;
       }
     }
 

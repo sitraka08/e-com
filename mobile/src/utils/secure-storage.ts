@@ -3,15 +3,18 @@ import { AuthTokens, UserDTO } from '@/types';
 
 const KEYS = {
   ACCESS_TOKEN: 'access_token',
-  REFRESH_TOKEN: 'refresh_token',
   USER: 'user',
 };
 
 export const secureStorage = {
   async saveTokens(tokens: AuthTokens): Promise<void> {
     try {
-      await SecureStore.setItemAsync(KEYS.ACCESS_TOKEN, tokens.accessToken);
-      await SecureStore.setItemAsync(KEYS.REFRESH_TOKEN, tokens.refreshToken);
+      if (!tokens?.accessToken) {
+        throw new Error('Invalid tokens: accessToken must be provided');
+      }
+
+      const accessToken = String(tokens.accessToken);
+      await SecureStore.setItemAsync(KEYS.ACCESS_TOKEN, accessToken);
     } catch (error) {
       console.error('Error saving tokens:', error);
       throw error;
@@ -21,13 +24,12 @@ export const secureStorage = {
   async getTokens(): Promise<AuthTokens | null> {
     try {
       const accessToken = await SecureStore.getItemAsync(KEYS.ACCESS_TOKEN);
-      const refreshToken = await SecureStore.getItemAsync(KEYS.REFRESH_TOKEN);
 
-      if (!accessToken || !refreshToken) {
+      if (!accessToken) {
         return null;
       }
 
-      return { accessToken, refreshToken };
+      return { accessToken };
     } catch (error) {
       console.error('Error getting tokens:', error);
       return null;
@@ -37,7 +39,6 @@ export const secureStorage = {
   async clearTokens(): Promise<void> {
     try {
       await SecureStore.deleteItemAsync(KEYS.ACCESS_TOKEN);
-      await SecureStore.deleteItemAsync(KEYS.REFRESH_TOKEN);
     } catch (error) {
       console.error('Error clearing tokens:', error);
       throw error;

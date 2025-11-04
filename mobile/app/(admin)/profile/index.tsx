@@ -1,23 +1,29 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, Alert } from "react-native";
-import { Redirect, useRouter } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  View,
+  Text,
+  ScrollView,
+  SafeAreaView,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LogOut, User as UserIcon } from "lucide-react-native";
+import { LogOut } from "lucide-react-native";
+import { useRouter } from "expo-router";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useUserMutations } from "@/hooks/use-users";
 import { UpdateUserDTO, UpdateUserSchema } from "@/types";
 import Input from "@/components/input";
 import Button from "@/components/button/button";
+import TopNavigation from "@/components/top-navigation";
 import AvatarPicker from "@/components/admin/avatar-picker";
 import { COLORS } from "@/constants/colors";
-import TopNavigation from "@/components/top-navigation";
 
-export default function Profil() {
-  const router = useRouter();
-  const { user, isAuthenticated, clearAuth } = useAuthStore();
+export default function AdminProfilePage() {
+  const { user, clearAuth } = useAuthStore();
   const { updateUser } = useUserMutations();
+  const router = useRouter();
   const [avatar, setAvatar] = useState(user?.avatar || "");
   const [avatarError, setAvatarError] = useState("");
 
@@ -35,24 +41,17 @@ export default function Profil() {
     if (!user) return;
 
     try {
-      // Filtrer les champs vides
       const filteredData: UpdateUserDTO = {};
       if (data.firstName) filteredData.firstName = data.firstName;
       if (data.lastName) filteredData.lastName = data.lastName;
       if (data.email) filteredData.email = data.email;
       if (data.password) filteredData.password = data.password;
 
-      // TODO: Ajouter l'upload de l'avatar au backend quand disponible
-      // if (avatar && !avatar.startsWith("http")) {
-      //   await uploadAvatar(avatar);
-      // }
-
       await updateUser.mutateAsync({
         id: user.id,
         data: filteredData,
       });
 
-      // Réinitialiser le champ mot de passe
       form.setValue("password", "");
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -76,8 +75,16 @@ export default function Profil() {
     ]);
   };
 
-  if (!isAuthenticated || !user) {
-    return <Redirect href="/(auth)/login" />;
+  if (!user) {
+    return (
+      <SafeAreaView className="flex-1 bg-white">
+        <View className="flex-1 items-center justify-center">
+          <Text className="text-lg font-fmedium text-gray-500">
+            Utilisateur non connecté
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
   }
 
   return (
@@ -87,8 +94,13 @@ export default function Profil() {
         description="Gérez vos informations personnelles"
       />
 
-      <ScrollView className=" px-5 mt-16">
-        <View className="">
+      <ScrollView
+        className="flex-1 px-5 mt-12"
+        contentContainerStyle={{
+          paddingTop: 70,
+        }}
+      >
+        <View className="py-4">
           <AvatarPicker
             value={avatar}
             onChange={(newAvatar) => {
@@ -98,6 +110,7 @@ export default function Profil() {
             error={avatarError}
           />
 
+          {/* Informations personnelles */}
           <View className="mb-6">
             <Text className="text-lg font-fbold text-zinc-800 mb-4">
               Informations personnelles
@@ -130,7 +143,6 @@ export default function Profil() {
             </View>
           </View>
 
-          {/* Sécurité */}
           <View className="mb-6">
             <Text className="text-lg font-fbold text-zinc-800 mb-4">
               Sécurité
@@ -151,13 +163,19 @@ export default function Profil() {
             </Text>
           </View>
 
-          {/* Informations du compte */}
           <View className="mb-6">
             <Text className="text-lg font-fbold text-zinc-800 mb-4">
               Informations du compte
             </Text>
 
             <View className="bg-gray-50 rounded-xl p-4 gap-3">
+              <View className="flex-row justify-between">
+                <Text className="text-sm font-fmedium text-gray-600">Rôle</Text>
+                <Text className="text-sm font-fbold text-primary">
+                  {user.role === "ADMIN" ? "Administrateur" : user.role}
+                </Text>
+              </View>
+
               <View className="flex-row justify-between">
                 <Text className="text-sm font-fmedium text-gray-600">
                   Statut

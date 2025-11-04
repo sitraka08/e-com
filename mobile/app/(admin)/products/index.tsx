@@ -16,7 +16,7 @@ import FAB from "@/components/admin/fab";
 import EmptyState from "@/components/admin/empty-state";
 import { Package } from "lucide-react-native";
 import { useProducts, useProductMutations } from "@/hooks/use-products";
-import { useCategories } from "@/hooks/use-categories";
+import { STATIC_CATEGORIES } from "@/constants/categories";
 import TopNavigation from "@/components/top-navigation";
 
 export default function Products() {
@@ -28,11 +28,10 @@ export default function Products() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const { data: productsResponse, isLoading, refetch } = useProducts();
-  const { data: categoriesResponse } = useCategories();
   const { deleteProduct } = useProductMutations();
 
-  const products = productsResponse?.data || [];
-  const categories = categoriesResponse?.data || [];
+  const products = productsResponse?.data?.items || [];
+  const categories = STATIC_CATEGORIES;
 
   const handleCreate = () => {
     setSelectedProduct(null);
@@ -65,18 +64,8 @@ export default function Products() {
     }
   };
 
-  // if (isLoading) {
-  //   return (
-  //     <SafeAreaView className="flex-1">
-  //       <View className="flex-1 items-center justify-center">
-  //         <ActivityIndicator size="large" color="#0174D8" />
-  //       </View>
-  //     </SafeAreaView>
-  //   );
-  // }
-
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView className="relative">
       <TopNavigation
         title="Produits"
         description={
@@ -95,6 +84,7 @@ export default function Products() {
         />
       ) : (
         <FlatList
+          className="mt-12 h-[110%]"
           data={products}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
@@ -105,7 +95,7 @@ export default function Products() {
               onUpdateStock={() => handleUpdateStock(item)}
             />
           )}
-          contentContainerStyle={{ padding: 20 }}
+          contentContainerStyle={{ padding: 20, paddingBottom: 120 }}
           refreshControl={
             <RefreshControl refreshing={isLoading} onRefresh={refetch} />
           }

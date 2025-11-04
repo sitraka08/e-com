@@ -13,7 +13,6 @@ interface AuthActions {
   setAuth: (user: UserDTO, tokens: AuthTokens) => Promise<void>;
   clearAuth: () => Promise<void>;
   setUser: (user: UserDTO) => Promise<void>;
-  updateTokens: (tokens: AuthTokens) => Promise<void>;
   initialize: () => Promise<void>;
 }
 
@@ -60,16 +59,6 @@ export const useAuthStore = create<AuthStore>((set) => ({
       set({ user });
     } catch (error) {
       console.error('Error setting user:', error);
-      throw error;
-    }
-  },
-
-  updateTokens: async (tokens) => {
-    try {
-      await secureStorage.saveTokens(tokens);
-      set({ tokens });
-    } catch (error) {
-      console.error('Error updating tokens:', error);
       throw error;
     }
   },

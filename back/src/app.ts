@@ -22,6 +22,7 @@ import {
   PaymentMethodService,
   OrderService,
   PaymentService,
+  EmailService,
 } from './services';
 import {
   AuthController,
@@ -56,7 +57,8 @@ export const createApp = (): Application => {
   const paymentRepository = new PaymentRepository(prisma);
   const otpRepository = new OtpRepository(prisma);
 
-  const authService = new AuthService(userRepository, otpRepository);
+  const emailService = new EmailService();
+  const authService = new AuthService(userRepository, otpRepository, emailService);
   const userService = new UserService(userRepository);
   const categoryService = new CategoryService(categoryRepository);
   const productService = new ProductService(productRepository, categoryRepository);

@@ -16,11 +16,11 @@ tests {
   });
 
   test("Has products array", function() {
-    expect(res.body.data.data).to.be.an('array');
+    expect(res.body.data.items).to.be.an('array');
   });
 
   // Save first product ID
-  if (res.body.data.data.length > 0) {
-    bru.setEnvVar("productId", res.body.data.data[0].id);
+  if (res.body.data.items.length > 0) {
+    bru.setEnvVar("productId", res.body.data.items[0].id);
   }
 }

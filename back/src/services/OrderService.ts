@@ -14,10 +14,10 @@ export class OrderService {
   async getAllOrders(filters?: OrderFilters, pagination?: PaginationParams): Promise<PaginatedResponse<OrderDTO>> {
     const result = await this.orderRepository.findAll(filters, pagination);
 
-    const ordersDTO = result.data.map((order: any) => this.mapToDTO(order));
+    const ordersDTO = result.items.map((order: any) => this.mapToDTO(order));
 
     return {
-      data: ordersDTO,
+      items: ordersDTO,
       pagination: result.pagination,
     };
   }
@@ -58,15 +58,33 @@ export class OrderService {
   }
 
   private mapToDTO(order: any): OrderDTO {
-    const items: OrderItemDTO[] = order.items?.map((item: any) => ({
-      id: item.id,
-      productId: item.productId,
-      productName: item.productName,
-      productImage: item.productImage,
-      quantity: item.quantity,
-      priceAtPurchase: Number(item.priceAtPurchase),
-      subtotal: Number(item.subtotal),
-    })) || [];
+    const items: OrderItemDTO[] = order.items?.map((item: any) => {
+      const images = typeof item.product?.images === 'string'
+        ? JSON.parse(item.product.images)
+        : item.product?.images || [];
+
+      return {
+        id: item.id,
+        productId: item.productId,
+        productName: item.productName,
+        productImage: item.productImage,
+        quantity: item.quantity,
+        priceAtPurchase: Number(item.priceAtPurchase),
+        subtotal: Number(item.subtotal),
+        product: item.product ? {
+          id: item.product.id,
+          name: item.product.name,
+          description: item.product.description,
+          price: Number(item.product.price),
+          stock: item.product.stock,
+          images,
+          categoryId: item.product.categoryId,
+          isActive: item.product.isActive,
+          createdAt: item.product.createdAt,
+          updatedAt: item.product.updatedAt,
+        } : undefined,
+      };
+    }) || [];
 
     const payments: PaymentDTO[] = order.payments?.map((payment: any) => ({
       id: payment.id,

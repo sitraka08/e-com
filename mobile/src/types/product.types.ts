@@ -68,7 +68,7 @@ export type UpdateProductDTO = z.infer<typeof UpdateProductSchema>;
 export const UpdateStockSchema = z.object({
   quantity: z.number().int().positive('La quantité doit être supérieure à 0'),
   operation: z.enum(['add', 'subtract', 'set'], {
-    errorMap: () => ({ message: 'Opération invalide (add, subtract, set)' }),
+    message: 'Opération invalide (add, subtract, set)',
   }),
 });
 

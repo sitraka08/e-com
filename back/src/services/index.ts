@@ -6,3 +6,4 @@ export * from './AddressService';
 export * from './PaymentMethodService';
 export * from './OrderService';
 export * from './PaymentService';
+export * from './EmailService';

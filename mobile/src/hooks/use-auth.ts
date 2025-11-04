@@ -19,7 +19,12 @@ export const useAuthMutation = () => {
     mutationFn: authService.login,
     onSuccessCallback: async (response) => {
       if (response.data) {
+        console.log(response.data);
         await setAuth(response.data.user, response.data.tokens);
+        if (response.data.user.role === "ADMIN") {
+          router.replace("/(admin)/dashboard");
+          return;
+        }
         router.replace("/home");
       }
     },

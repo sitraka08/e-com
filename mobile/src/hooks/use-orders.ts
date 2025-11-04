@@ -1,12 +1,30 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { orderService } from "@/services/order.services";
-import { OrderDTO, UpdateOrderStatusDTO } from "@/types";
+import { OrderDTO, UpdateOrderStatusDTO, PaginatedResponse } from "@/types";
 import { makeMutation, useSimpleQuery } from "@/utils/tanstaq";
+import useDebounced from "./useDebounced";
 
-export const useOrders = () => {
-  return useSimpleQuery({
-    queryKey: ["orders"],
-    queryFn: orderService.getAll,
+interface UseOrdersParams {
+  page?: string;
+  search?: string;
+  limit?: string;
+}
+
+export const useOrders = ({
+  page = "1",
+  search = "",
+  limit = "10",
+}: UseOrdersParams = {}) => {
+  const debouncedSearch = useDebounced(search, 300);
+
+  return useSimpleQuery<PaginatedResponse<OrderDTO>>({
+    queryKey: ["orders", debouncedSearch, page, limit],
+    queryFn: () =>
+      orderService.getAll({
+        page,
+        search: debouncedSearch,
+        limit,
+      }),
   });
 };
 

@@ -14,6 +14,7 @@ import UserActionSheet from "@/components/admin/bottom-sheets/user-action-sheet"
 import EmptyState from "@/components/admin/empty-state";
 import { Users } from "lucide-react-native";
 import { useUsers } from "@/hooks/use-users";
+import TopNavigation from "@/components/top-navigation";
 
 export default function UsersScreen() {
   const [selectedUser, setSelectedUser] = useState<UserDTO | null>(null);
@@ -44,13 +45,16 @@ export default function UsersScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1">
-      <View className="px-5 py-4 border-b border-gray-200">
-        <Text className="text-2xl font-fbold text-gray-900">Utilisateurs</Text>
-        <Text className="text-sm font-fregular text-gray-600 mt-1">
-          {users.length} utilisateur{users.length !== 1 ? "s" : ""}
-        </Text>
-      </View>
+    <SafeAreaView>
+      <TopNavigation
+        title="Utilisateurs"
+        description={
+          <Text>
+            {users.length} utilisateur{users.length !== 1 ? "s" : ""}
+          </Text>
+        }
+        noButton={true}
+      />
 
       {users.length === 0 ? (
         <EmptyState
@@ -60,6 +64,7 @@ export default function UsersScreen() {
         />
       ) : (
         <FlatList
+          className="h-[110%] mt-12"
           data={users}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
@@ -69,7 +74,7 @@ export default function UsersScreen() {
               onActions={() => handleActions(item)}
             />
           )}
-          contentContainerStyle={{ padding: 20 }}
+          contentContainerStyle={{ padding: 20, paddingBottom: 80 }}
           refreshControl={
             <RefreshControl refreshing={isLoading} onRefresh={refetch} />
           }

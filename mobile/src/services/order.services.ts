@@ -3,18 +3,22 @@ import {
   ApiResponse,
   OrderDTO,
   UpdateOrderStatusDTO,
+  PaginatedResponse,
+  OrderStatsDTO,
 } from '@/types';
 
-interface OrderStats {
-  totalOrders: number;
-  totalRevenue: number;
-  pendingOrders: number;
-  completedOrders: number;
+export interface QueryParams {
+  page?: string;
+  search?: string;
+  limit?: string;
 }
 
 export const orderService = {
-  async getAll(): Promise<ApiResponse<OrderDTO[]>> {
-    const response = await apiClient.get('/orders');
+  async getAll(params?: QueryParams): Promise<ApiResponse<PaginatedResponse<OrderDTO>>> {
+    const queryString = params
+      ? `?${new URLSearchParams(params as Record<string, string>).toString()}`
+      : "";
+    const response = await apiClient.get(`/orders${queryString}`);
     return response.data;
   },
 
@@ -33,7 +37,7 @@ export const orderService = {
     return response.data;
   },
 
-  async getStats(): Promise<ApiResponse<OrderStats>> {
+  async getStats(): Promise<ApiResponse<OrderStatsDTO>> {
     const response = await apiClient.get('/orders/stats');
     return response.data;
   },

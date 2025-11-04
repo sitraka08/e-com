@@ -2,22 +2,23 @@ import CartCard from "@/components/cart-card";
 import TopNavigation from "@/components/top-navigation";
 import { FlatList, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { PRODUCTS } from "../home";
 import DividerDashed from "@/components/divider-dashed";
 import Button from "@/components/button/button";
 import { useRouter } from "expo-router";
+import useCartStore from "@/stores/useCartStore";
 
 export default function Cart() {
   const router = useRouter();
+  const { cart } = useCartStore();
   return (
     <SafeAreaView className="">
       <TopNavigation
         title="Mon panier"
-        description=" Retrouve ici tous tes produits préférés. Ton panier t’attend pour le paiement !"
+        description=" Retrouve ici tous tes produits préférés. Ton panier t'attend pour le paiement !"
       />
       <View className="flex px-5 h-screen">
         <FlatList
-          data={PRODUCTS}
+          data={cart}
           keyExtractor={(item) => item.id.toString()}
           numColumns={1}
           showsVerticalScrollIndicator={false}

@@ -5,9 +5,18 @@ import {
   UpdateUserDTO,
 } from '@/types';
 
+export interface QueryParams {
+  page?: string;
+  search?: string;
+  limit?: string;
+}
+
 export const userService = {
-  async getAll(): Promise<ApiResponse<UserDTO[]>> {
-    const response = await apiClient.get('/users');
+  async getAll(params?: QueryParams): Promise<ApiResponse<UserDTO[]>> {
+    const queryString = params
+      ? `?${new URLSearchParams(params as Record<string, string>).toString()}`
+      : "";
+    const response = await apiClient.get(`/users${queryString}`);
     return response.data;
   },
 

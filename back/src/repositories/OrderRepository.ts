@@ -82,7 +82,7 @@ export class OrderRepository implements IOrderRepository {
     return this.prisma.order.findUnique({
       where: { id },
       include: {
-        items: true,
+        items: { include: { product: true } },
         address: true,
         payments: { include: { paymentMethod: true } },
         user: { select: { id: true, firstName: true, lastName: true, email: true } },
@@ -94,7 +94,7 @@ export class OrderRepository implements IOrderRepository {
     return this.prisma.order.findUnique({
       where: { orderNumber },
       include: {
-        items: true,
+        items: { include: { product: true } },
         address: true,
         payments: { include: { paymentMethod: true } },
       },
@@ -116,13 +116,13 @@ export class OrderRepository implements IOrderRepository {
     const limit = pagination?.limit || 10;
     const skip = (page - 1) * limit;
 
-    const [data, total] = await Promise.all([
+    const [items, total] = await Promise.all([
       this.prisma.order.findMany({
         where,
         skip,
         take: limit,
         include: {
-          items: true,
+          items: { include: { product: true } },
           address: true,
           payments: { include: { paymentMethod: true } },
         },
@@ -132,7 +132,7 @@ export class OrderRepository implements IOrderRepository {
     ]);
 
     return {
-      data,
+      items,
       pagination: {
         page,
         limit,
@@ -249,7 +249,7 @@ export class OrderRepository implements IOrderRepository {
         status: { notIn: ['CANCELLED'] },
       },
       include: {
-        items: true,
+        items: { include: { product: true } },
         address: true,
         payments: { include: { paymentMethod: true } },
         user: { select: { id: true, firstName: true, lastName: true, email: true } },

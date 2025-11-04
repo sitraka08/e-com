@@ -1,9 +1,11 @@
-import { ProductType } from "@/types/product.types";
+import { ProductDTO } from "@/types";
 import { create } from "zustand";
 
+type CartItem = ProductDTO & { quantity: number };
+
 type State = {
-  cart: ProductType[];
-  addItem: (v: ProductType) => void;
+  cart: CartItem[];
+  addItem: (v: ProductDTO) => void;
   removeItem: (id: number) => void;
   clearCart: () => void;
   getTotal: () => number;
@@ -15,7 +17,7 @@ type State = {
 const useCartStore = create<State>((set, get) => ({
   cart: [],
 
-  addItem: (product: ProductType) =>
+  addItem: (product: ProductDTO) =>
     set((state) => {
       const exists = state.cart.some((item) => item.id === product.id);
       return exists

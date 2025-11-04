@@ -5,13 +5,35 @@ import {
   CreateProductDTO,
   UpdateProductDTO,
   UpdateStockDTO,
+  PaginatedResponse,
 } from "@/types";
 import { makeMutation, useSimpleQuery } from "@/utils/tanstaq";
+import useDebounced from "./useDebounced";
 
-export const useProducts = () => {
-  return useSimpleQuery({
-    queryKey: ["products"],
-    queryFn: productService.getAll,
+interface UseProductsParams {
+  page?: string;
+  search?: string;
+  limit?: string;
+  categoryId?: string;
+}
+
+export const useProducts = ({
+  page = "1",
+  search = "",
+  limit = "10",
+  categoryId,
+}: UseProductsParams = {}) => {
+  const debouncedSearch = useDebounced(search, 300);
+
+  return useSimpleQuery<PaginatedResponse<ProductDTO>>({
+    queryKey: ["products", debouncedSearch, page, limit, categoryId ?? "all"],
+    queryFn: () =>
+      productService.getAll({
+        page,
+        search: debouncedSearch,
+        limit,
+        categoryId,
+      }),
   });
 };
 

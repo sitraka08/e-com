@@ -77,6 +77,7 @@ export default function UserFormSheet({
           name="firstName"
           label="Prénom"
           placeholder="Prénom"
+          isAdmin
         />
 
         <Input
@@ -85,6 +86,7 @@ export default function UserFormSheet({
           label="Nom"
           placeholder="Nom"
           className="mt-3"
+          isAdmin
         />
 
         <Input
@@ -93,6 +95,7 @@ export default function UserFormSheet({
           label="Email"
           placeholder="email@example.com"
           className="mt-3"
+          isAdmin
         />
 
         <View className="mt-6 mb-4">

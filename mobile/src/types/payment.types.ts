@@ -2,13 +2,13 @@ import { z } from 'zod';
 
 export const CreatePaymentMethodSchema = z.object({
   type: z.enum(['MOBILE_MONEY', 'CREDIT_CARD', 'BANK_TRANSFER', 'CASH_ON_DELIVERY'], {
-    errorMap: () => ({ message: 'Type de paiement invalide' }),
+    message: 'Type de paiement invalide',
   }),
   label: z
     .string()
     .min(2, 'Le libellé doit contenir au moins 2 caractères')
     .max(100, 'Le libellé ne peut pas dépasser 100 caractères'),
-  details: z.record(z.any()).default({}),
+  details: z.record(z.string(), z.any()).default({}),
   isDefault: z.boolean().default(false),
 });
 
@@ -20,7 +20,7 @@ export const UpdatePaymentMethodSchema = z.object({
     .min(2, 'Le libellé doit contenir au moins 2 caractères')
     .max(100, 'Le libellé ne peut pas dépasser 100 caractères')
     .optional(),
-  details: z.record(z.any()).optional(),
+  details: z.record(z.string(), z.any()).optional(),
   isDefault: z.boolean().optional(),
 });
 

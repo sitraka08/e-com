@@ -1,11 +1,13 @@
 import { IUserRepository, IOtpRepository } from '../repositories';
 import { RegisterDTO, LoginDTO, ForgotPasswordDTO, ResetPasswordDTO, AuthResponse, UserDTO } from '../types';
 import { hashPassword, comparePassword, generateToken, generateOTP, getOTPExpiryDate, isOTPExpired, ConflictError, AuthenticationError, NotFoundError, ValidationError } from '../utils';
+import { EmailService } from './EmailService';
 
 export class AuthService {
   constructor(
     private userRepository: IUserRepository,
-    private otpRepository: IOtpRepository
+    private otpRepository: IOtpRepository,
+    private emailService: EmailService
   ) {}
 
   async register(data: RegisterDTO): Promise<AuthResponse> {
@@ -83,7 +85,7 @@ export class AuthService {
     };
   }
 
-  async forgotPassword(data: ForgotPasswordDTO): Promise<{ otp: string }> {
+  async forgotPassword(data: ForgotPasswordDTO): Promise<{ message: string }> {
     const user = await this.userRepository.findByEmail(data.email);
     if (!user) {
       throw new NotFoundError('Aucun compte n\'existe avec cet email');
@@ -94,7 +96,15 @@ export class AuthService {
 
     await this.otpRepository.create(user.id, data.email, otp, expiresAt);
 
-    return { otp };
+    try {
+      const userName = `${user.firstName} ${user.lastName}`;
+      await this.emailService.sendOTPEmail(data.email, otp, userName);
+
+      return { message: 'Code de vérification envoyé par email' };
+    } catch (error) {
+      console.error('Failed to send OTP email:', error);
+      throw new Error('Impossible d\'envoyer l\'email. Veuillez réessayer plus tard.');
+    }
   }
 
   async resetPassword(data: ResetPasswordDTO): Promise<void> {

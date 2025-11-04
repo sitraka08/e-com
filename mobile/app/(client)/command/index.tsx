@@ -2,12 +2,13 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TopNavigation from "@/components/top-navigation";
 import { FlatList, Text, View } from "react-native";
-import { PRODUCTS } from "../home";
 import DividerDashed from "@/components/divider-dashed";
 import CartCard from "@/components/cart-card";
 import Button from "@/components/button/button";
+import useCartStore from "@/stores/useCartStore";
 
 export default function Command() {
+  const { cart } = useCartStore();
   return (
     <SafeAreaView className="">
       <TopNavigation
@@ -16,7 +17,7 @@ export default function Command() {
       />
       <View className="flex px-5 h-screen">
         <FlatList
-          data={PRODUCTS}
+          data={cart}
           keyExtractor={(item) => item.id.toString()}
           numColumns={1}
           showsVerticalScrollIndicator={false}

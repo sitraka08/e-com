@@ -42,7 +42,7 @@ export class ProductRepository implements IProductRepository {
     const limit = pagination?.limit || 10;
     const skip = (page - 1) * limit;
 
-    const [data, total] = await Promise.all([
+    const [items, total] = await Promise.all([
       this.prisma.product.findMany({
         where,
         skip,
@@ -54,7 +54,7 @@ export class ProductRepository implements IProductRepository {
     ]);
 
     return {
-      data,
+      items,
       pagination: {
         page,
         limit,

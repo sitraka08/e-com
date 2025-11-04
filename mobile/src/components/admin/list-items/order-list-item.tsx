@@ -93,7 +93,7 @@ export default function OrderListItem({ order, onViewDetails }: OrderListItemPro
               {formatDate(order.createdAt)}
             </Text>
             <Text className="text-lg font-fbold text-primary">
-              {order.totalAmount.toLocaleString()} Ar
+              {order.total.toLocaleString()} Ar
             </Text>
           </View>
         </View>

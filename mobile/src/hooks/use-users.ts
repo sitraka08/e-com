@@ -2,11 +2,29 @@ import { useQueryClient } from "@tanstack/react-query";
 import { userService } from "@/services/user.services";
 import { UserDTO, UpdateUserDTO } from "@/types";
 import { makeMutation, useSimpleQuery } from "@/utils/tanstaq";
+import useDebounced from "./useDebounced";
 
-export const useUsers = () => {
-  return useSimpleQuery({
-    queryKey: ["users"],
-    queryFn: userService.getAll,
+interface UseUsersParams {
+  page?: string;
+  search?: string;
+  limit?: string;
+}
+
+export const useUsers = ({
+  page = "1",
+  search = "",
+  limit = "10",
+}: UseUsersParams = {}) => {
+  const debouncedSearch = useDebounced(search, 300);
+
+  return useSimpleQuery<UserDTO[]>({
+    queryKey: ["users", debouncedSearch, page, limit],
+    queryFn: () =>
+      userService.getAll({
+        page,
+        search: debouncedSearch,
+        limit,
+      }),
   });
 };
 

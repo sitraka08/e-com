@@ -1,14 +1,16 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
-import { ProductType } from "@/types/product.types";
+import { ProductDTO } from "@/types";
 import { ShoppingCart } from "lucide-react-native";
 import useCartStore from "@/stores/useCartStore";
 import { useRouter } from "expo-router";
 
-export default function ProductCard(product: ProductType) {
-  const { image, name, price } = product;
+export default function ProductCard(product: ProductDTO) {
+  const { images, name, price } = product;
   const { addItem } = useCartStore();
   const router = useRouter();
+
+  console.log("ANATINY");
 
   return (
     <TouchableOpacity
@@ -18,7 +20,7 @@ export default function ProductCard(product: ProductType) {
     >
       <View className="flex w-full h-[140px] items-center justify-center bg-[#0000001a] rounded-2xl p-5">
         <Image
-          source={{ uri: image }}
+          source={{ uri: images[0] }}
           className="w-full h-full rounded-xl"
           resizeMode="cover"
         />

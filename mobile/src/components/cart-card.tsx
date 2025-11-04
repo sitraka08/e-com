@@ -1,18 +1,25 @@
 import { View, Text, Image } from "react-native";
 import React from "react";
 import useCartStore from "@/stores/useCartStore";
-import { ProductType } from "@/types/product.types";
 import MinusButton from "./button/MinusButton";
 import PlusButton from "./button/PlusButton";
 
-const CartCard = ({ image, price, quantity = 1, id, name }: ProductType) => {
+type CartItem = {
+  id: number;
+  name: string;
+  price: number;
+  images: string[];
+  quantity: number;
+};
+
+const CartCard = ({ images, price, quantity = 1, id, name }: CartItem) => {
   const { incrementQuantity, decrementQuantity } = useCartStore();
   return (
     <View className="my-2 flex flex-row items-center justify-between gap-3">
       <View className="flex-row items-center w-[70%] gap-2">
         <View className="items-center justify-center bg-[#bdc9d1] rounded-xl p-2">
           <Image
-            source={typeof image === "string" ? { uri: image } : image}
+            source={{ uri: images[0] }}
             resizeMode="cover"
             className="h-16 w-16 rounded"
           />

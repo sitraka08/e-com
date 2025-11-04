@@ -28,9 +28,9 @@ export const CLIENT_TABS: TabConfig[] = [
 export const ADMIN_TABS: TabConfig[] = [
   { label: "Dashboard", icon: BarChart3 },
   { label: "Produits", icon: Package },
-  { label: "Catégories", icon: FolderOpen },
   { label: "Utilisateurs", icon: Users },
   { label: "Commandes", icon: ClipboardList },
+  { label: "Profil", icon: CircleUser },
 ];
 
 export const CLIENT_REMOVE_IN_TABS = [
@@ -43,7 +43,7 @@ export const CLIENT_REMOVE_IN_TABS = [
 
 export const CLIENT_HIDDEN_TABBAR_ROUTES = [
   "profile/login/index",
-  "profile/index",
+  // "profile/index",
   "profile/register/index",
   "profile/forgot-password/index",
 ];

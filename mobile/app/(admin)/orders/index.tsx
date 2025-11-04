@@ -14,6 +14,7 @@ import OrderStatusSheet from "@/components/admin/bottom-sheets/order-status-shee
 import EmptyState from "@/components/admin/empty-state";
 import { ClipboardList } from "lucide-react-native";
 import { useOrders } from "@/hooks/use-orders";
+import TopNavigation from "@/components/top-navigation";
 
 export default function OrdersScreen() {
   const [selectedOrder, setSelectedOrder] = useState<OrderDTO | null>(null);
@@ -21,7 +22,7 @@ export default function OrdersScreen() {
   const [isStatusOpen, setIsStatusOpen] = useState(false);
 
   const { data: ordersResponse, isLoading, refetch } = useOrders();
-  const orders = ordersResponse?.data || [];
+  const orders = ordersResponse?.data?.items || [];
 
   const handleViewDetails = (order: OrderDTO) => {
     setSelectedOrder(order);
@@ -39,13 +40,16 @@ export default function OrdersScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1">
-      <View className="px-5 py-4 border-b border-gray-200">
-        <Text className="text-2xl font-fbold text-gray-900">Commandes</Text>
-        <Text className="text-sm font-fregular text-gray-600 mt-1">
-          {orders.length} commande{orders.length !== 1 ? "s" : ""}
-        </Text>
-      </View>
+    <SafeAreaView>
+      <TopNavigation
+        title="Commandes"
+        description={
+          <Text>
+            {orders.length} commande{orders.length !== 1 ? "s" : ""}
+          </Text>
+        }
+        noButton={true}
+      />
 
       {orders.length === 0 ? (
         <EmptyState
@@ -55,6 +59,7 @@ export default function OrdersScreen() {
         />
       ) : (
         <FlatList
+          className="h-[110%] mt-12"
           data={orders}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
@@ -63,7 +68,7 @@ export default function OrdersScreen() {
               onViewDetails={() => handleViewDetails(item)}
             />
           )}
-          contentContainerStyle={{ padding: 20 }}
+          contentContainerStyle={{ padding: 20, paddingBottom: 80 }}
           refreshControl={
             <RefreshControl refreshing={isLoading} onRefresh={refetch} />
           }

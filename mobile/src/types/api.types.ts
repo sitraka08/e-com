@@ -12,10 +12,12 @@ export type PaginationParams = {
 
 export type PaginatedResponse<T = unknown> = {
   items: T[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
 };
 
 export type SearchParams = {
@@ -37,6 +39,7 @@ export type UserDTO = {
   email: string;
   role: UserRole;
   status: UserStatus;
+  avatar?: string;
   createdAt: string | Date;
   updatedAt: string | Date;
 };
@@ -94,25 +97,33 @@ export type OrderItemDTO = {
   id: number;
   orderId: number;
   productId: number;
+  product: ProductDTO;
   productName?: string;
   productImage?: string;
   quantity: number;
+  price: number;
   unitPrice: number;
   totalPrice: number;
+  priceAtOrder?: number;
+  subtotal?: number;
 };
 
 export type OrderDTO = {
   id: number;
   orderNumber: string;
   userId: number;
+  user?: UserDTO;
   addressId: number;
   address?: AddressDTO;
   status: OrderStatus;
-  itemsTotal: number;
+  subtotal: number;
   deliveryFee: number;
-  totalAmount: number;
-  paidAmount: number;
+  total: number;
+  totalPaid: number;
+  balance: number;
   items: OrderItemDTO[];
+  payments?: PaymentDTO[];
+  estimatedDelivery?: Date | null;
   createdAt: string | Date;
   updatedAt: string | Date;
 };
@@ -131,7 +142,6 @@ export type PaymentDTO = {
 
 export type AuthTokens = {
   accessToken: string;
-  refreshToken: string;
 };
 
 export type AuthResponse = {
@@ -140,11 +150,13 @@ export type AuthResponse = {
 };
 
 export type OrderStatsDTO = {
-  total: number;
-  pending: number;
-  confirmed: number;
-  shipped: number;
-  delivered: number;
-  cancelled: number;
+  totalOrders: number;
+  pendingOrders: number;
+  confirmedOrders: number;
+  shippedOrders: number;
+  deliveredOrders: number;
+  cancelledOrders: number;
   totalRevenue: number;
+  unpaidOrders: number;
+  unpaidAmount: number;
 };

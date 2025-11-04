@@ -25,14 +25,14 @@ export class ProductService {
     const result = await this.productRepository.findAll(filters, pagination);
 
     const productsDTO = await Promise.all(
-      result.data.map(async (product: any) => {
+      result.items.map(async (product: any) => {
         const category = await this.categoryRepository.findById(product.categoryId);
         return this.mapToDTO(product, category?.name);
       })
     );
 
     return {
-      data: productsDTO,
+      items: productsDTO,
       pagination: result.pagination,
     };
   }
@@ -50,14 +50,14 @@ export class ProductService {
     const result = await this.productRepository.search(query, pagination);
 
     const productsDTO = await Promise.all(
-      result.data.map(async (product: any) => {
+      result.items.map(async (product: any) => {
         const category = await this.categoryRepository.findById(product.categoryId);
         return this.mapToDTO(product, category?.name);
       })
     );
 
     return {
-      data: productsDTO,
+      items: productsDTO,
       pagination: result.pagination,
     };
   }

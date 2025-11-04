@@ -18,7 +18,7 @@ const queryClient = new QueryClient();
 (Text as any).defaultProps.allowFontScaling = false;
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading, initialize } = useAuthStore();
+  const { isAuthenticated, isLoading, initialize, user } = useAuthStore();
   const segments = useSegments();
   const router = useRouter();
 
@@ -30,13 +30,33 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
     if (isLoading) return;
 
     const inAuthGroup = segments[0] === "(auth)";
+    const inClientGroup = segments[0] === "(client)";
+    const inAdminGroup = segments[0] === "(admin)";
 
-    if (!isAuthenticated && !inAuthGroup) {
-      // router.replace("/login");
-    } else if (isAuthenticated && inAuthGroup) {
-      // router.replace("/home");
+    // Rediriger les utilisateurs authentifiés hors de la page d'auth
+    if (isAuthenticated && inAuthGroup) {
+      // Rediriger selon le rôle
+      if (user?.role === "ADMIN") {
+        router.replace("/dashboard");
+      } else {
+        router.replace("/home");
+      }
     }
-  }, [isAuthenticated, isLoading, segments]);
+
+    // Bloquer l'accès admin aux routes client
+    if (isAuthenticated && inClientGroup) {
+      if (user?.role === "ADMIN") {
+        router.replace("/dashboard");
+      }
+    }
+
+    // Bloquer l'accès client aux routes admin
+    if (isAuthenticated && inAdminGroup) {
+      if (user?.role !== "ADMIN") {
+        router.replace("/home");
+      }
+    }
+  }, [isAuthenticated, isLoading, segments, user]);
 
   if (isLoading) {
     return (
@@ -79,8 +99,8 @@ export default function RootLayout() {
         </View>
         <AuthGuard>
           <Stack>
-            <Stack.Screen name="(admin)" options={{ headerShown: false }} />
             <Stack.Screen name="(client)" options={{ headerShown: false }} />
+            <Stack.Screen name="(admin)" options={{ headerShown: false }} />
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           </Stack>
         </AuthGuard>

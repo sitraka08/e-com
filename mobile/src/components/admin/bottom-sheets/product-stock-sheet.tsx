@@ -81,6 +81,7 @@ export default function ProductStockSheet({
           label="Opération"
           options={operationOptions}
           placeholder="Sélectionner une opération"
+          isAdmin
         />
 
         <Input
@@ -89,6 +90,7 @@ export default function ProductStockSheet({
           label="Quantité"
           placeholder="0"
           className="mt-3"
+          isAdmin
         />
 
         <View className="mt-6">
