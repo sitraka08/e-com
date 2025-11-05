@@ -12,7 +12,6 @@ import OrderListItem from "@/components/admin/list-items/order-list-item";
 import OrderDetailSheet from "@/components/admin/bottom-sheets/order-detail-sheet";
 import OrderStatusSheet from "@/components/admin/bottom-sheets/order-status-sheet";
 import EmptyState from "@/components/admin/empty-state";
-import { ClipboardList } from "lucide-react-native";
 import { useOrders } from "@/hooks/use-orders";
 import TopNavigation from "@/components/top-navigation";
 
@@ -53,7 +52,6 @@ export default function OrdersScreen() {
 
       {orders.length === 0 ? (
         <EmptyState
-          icon={ClipboardList}
           title="Aucune commande"
           message="Aucune commande n'a été passée"
         />

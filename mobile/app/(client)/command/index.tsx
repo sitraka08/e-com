@@ -51,7 +51,7 @@ export default function Command() {
 
   if (isError) {
     return (
-      <SafeAreaView className="flex-1 bg-white">
+      <SafeAreaView className="">
         <TopNavigation
           title="Mes Commandes"
           description="Retrouve la liste de tes commandes"
@@ -68,50 +68,47 @@ export default function Command() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="">
       <TopNavigation
         title="Mes Commandes"
         description="Retrouve la liste de tes commandes"
       />
-      <View className="flex-1 px-5">
-        <FlatList
-          data={orders}
-          keyExtractor={(item) => item.id.toString()}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingBottom: 20,
-            paddingTop: 70,
-          }}
-          renderItem={({ item }) => <OrderCard order={item} />}
-          ListEmptyComponent={
-            <View className="items-center justify-center py-20">
-              <ShoppingBag size={64} color="#D1D5DB" strokeWidth={1.5} />
-              <Text className="font-fbold text-xl text-gray-800 mt-6 mb-2">
-                Aucune commande
-              </Text>
-              <Text className="font-fregular text-gray-600 text-center px-8">
-                Vous n'avez pas encore passé de commande. Commencez vos achats
-                dès maintenant !
-              </Text>
-            </View>
-          }
-          refreshControl={
-            <RefreshControl
-              refreshing={isLoading}
-              onRefresh={handleRefresh}
-              colors={["#0174D8"]}
-              tintColor="#0174D8"
-            />
-          }
-        />
-        {pagination && pagination.totalPages > 1 && (
-          <View className="py-4 flex flex-row justify-center items-center">
-            <Text className="font-fmedium text-gray-600">
-              Page {pagination.page} sur {pagination.totalPages}
+
+      <FlatList
+        className="mt-12 h-[110%]"
+        data={orders}
+        keyExtractor={(item) => item.id.toString()}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ padding: 20, paddingBottom: 120 }}
+        renderItem={({ item }) => <OrderCard order={item} />}
+        ListEmptyComponent={
+          <View className="items-center justify-center py-20">
+            <ShoppingBag size={64} color="#D1D5DB" strokeWidth={1.5} />
+            <Text className="font-fbold text-xl text-gray-800 mt-6 mb-2">
+              Aucune commande
+            </Text>
+            <Text className="font-fregular text-gray-600 text-center px-8">
+              Vous n'avez pas encore passé de commande. Commencez vos achats dès
+              maintenant !
             </Text>
           </View>
-        )}
-      </View>
+        }
+        refreshControl={
+          <RefreshControl
+            refreshing={isLoading}
+            onRefresh={handleRefresh}
+            colors={["#0174D8"]}
+            tintColor="#0174D8"
+          />
+        }
+      />
+      {pagination && pagination.totalPages > 1 && (
+        <View className="py-4 flex flex-row justify-center items-center">
+          <Text className="font-fmedium text-gray-600">
+            Page {pagination.page} sur {pagination.totalPages}
+          </Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 }

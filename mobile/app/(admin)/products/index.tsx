@@ -72,7 +72,6 @@ export default function Products() {
 
       {products.length === 0 ? (
         <EmptyState
-          icon={Package}
           title="Aucun produit"
           message="Commencez par créer votre premier produit"
         />
