@@ -1,6 +1,9 @@
 import { ProductDTO } from "@/types";
 import { create } from "zustand";
 
+// Configuration des frais de livraison (en Ariary)
+export const DELIVERY_FEE = 3000;
+
 type CartItem = ProductDTO & { quantity: number };
 
 type State = {
@@ -50,7 +53,7 @@ const useCartStore = create<State>((set, get) => ({
       (acc, item) => acc + +item.price * +item.quantity,
       0
     );
-    return Number((total + 3000).toFixed(2));
+    return Number((total + DELIVERY_FEE).toFixed(2));
   },
   incrementQuantity: (id) =>
     set((state) => ({

@@ -1,4 +1,10 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ToastAndroid,
+} from "react-native";
 import React from "react";
 import { ProductDTO } from "@/types";
 import { ShoppingCart } from "lucide-react-native";
@@ -9,8 +15,6 @@ export default function ProductCard(product: ProductDTO) {
   const { images, name, price } = product;
   const { addItem } = useCartStore();
   const router = useRouter();
-
-  console.log("ANATINY");
 
   return (
     <TouchableOpacity
@@ -31,7 +35,14 @@ export default function ProductCard(product: ProductDTO) {
       </View>
       <TouchableOpacity
         className="absolute bottom-5 right-5 rounded-full border p-2 bg-secondary border-[#8d8d8d48]"
-        onPress={() => addItem(product)}
+        onPress={() => {
+          addItem(product);
+          ToastAndroid.showWithGravity(
+            `Produit ajouté au panier`,
+            ToastAndroid.SHORT,
+            ToastAndroid.CENTER
+          );
+        }}
       >
         <ShoppingCart size={16} />
       </TouchableOpacity>

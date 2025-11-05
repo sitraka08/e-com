@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { orderService } from "@/services/order.services";
-import { OrderDTO, UpdateOrderStatusDTO, PaginatedResponse } from "@/types";
+import { OrderDTO, UpdateOrderStatusDTO, PaginatedResponse, CreateOrderDTO } from "@/types";
 import { makeMutation, useSimpleQuery } from "@/utils/tanstaq";
 import useDebounced from "./useDebounced";
 
@@ -46,6 +46,15 @@ export const useOrderStats = () => {
 export const useOrderMutations = () => {
   const queryClient = useQueryClient();
 
+  const createOrder = makeMutation<CreateOrderDTO, OrderDTO>({
+    queryKey: ["create-order"],
+    mutationFn: (data) => orderService.create(data),
+    onSuccessCallback: () => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["order-stats"] });
+    },
+  });
+
   const updateOrderStatus = makeMutation<
     { id: number; data: UpdateOrderStatusDTO },
     OrderDTO
@@ -59,6 +68,7 @@ export const useOrderMutations = () => {
   });
 
   return {
+    createOrder,
     updateOrderStatus,
   };
 };

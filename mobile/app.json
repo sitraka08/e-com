@@ -1,10 +1,11 @@
 {
   "expo": {
-    "name": "e-commerce",
-    "slug": "e-commerce",
+    "name": "Qitkif",
+    "slug": "Qitkif",
     "version": "1.0.0",
     "orientation": "portrait",
-    "scheme": "e-commerce",
+    "scheme": "Qitkif",
+    "icon": "assets/icons/adaptive-icon.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -12,9 +13,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "assets/icons/adaptive-icon.png",
+        "monochromeImage": "assets/icons/adaptive-icon.png",
+        "backgroundColor": "#ecedee"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.sitraka08.polestage"
     },
     "web": {
       "bundler": "metro",
@@ -25,10 +29,14 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "backgroundColor": "#0174D8",
+          "image": "assets/icons/splash-icon-light.png",
+          "dark": {
+            "image": "assets/icons/splash-icon-light.png",
+            "backgroundColor": "#0174D8"
+          },
           "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "resizeMode": "contain"
         }
       ]
     ],

@@ -18,7 +18,6 @@ import Input from "@/components/input";
 import Button from "@/components/button/button";
 import TopNavigation from "@/components/top-navigation";
 import AvatarPicker from "@/components/admin/avatar-picker";
-import { COLORS } from "@/constants/colors";
 
 export default function AdminProfilePage() {
   const { user, clearAuth } = useAuthStore();

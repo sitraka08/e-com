@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  RefreshControl,
-  ActivityIndicator,
-} from "react-native";
+import { Text, FlatList, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ProductDTO } from "@/types";
 import ProductListItem from "@/components/admin/list-items/product-list-item";

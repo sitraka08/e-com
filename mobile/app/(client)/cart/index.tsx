@@ -5,11 +5,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import DividerDashed from "@/components/divider-dashed";
 import Button from "@/components/button/button";
 import { useRouter } from "expo-router";
-import useCartStore from "@/stores/useCartStore";
+import useCartStore, { DELIVERY_FEE } from "@/stores/useCartStore";
+import EmptyState from "@/components/admin/empty-state";
 
 export default function Cart() {
   const router = useRouter();
-  const { cart } = useCartStore();
+  const { cart, getTotal, getTotalPayd } = useCartStore();
+  const subtotal = getTotal();
+  const total = getTotalPayd();
   return (
     <SafeAreaView className="">
       <TopNavigation
@@ -17,44 +20,54 @@ export default function Cart() {
         description=" Retrouve ici tous tes produits préférés. Ton panier t'attend pour le paiement !"
       />
       <View className="flex px-5 h-screen">
-        <FlatList
-          data={cart}
-          keyExtractor={(item) => item.id.toString()}
-          numColumns={1}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingBottom: 120,
-            paddingTop: 70,
-          }}
-          renderItem={({ item }) => (
-            <View>
-              <DividerDashed />
-              <CartCard {...item} />
-            </View>
-          )}
-          ListFooterComponent={
-            <View className="bg-[#fff] w-full  p-5 rounded-xl border-2 border-primary">
-              <View className="flex flex-row justify-between">
-                <Text className="font-fmedium ">Sous-total</Text>
-                <Text className="font-fbold ">2000 Ar</Text>
+        {cart.length > 0 ? (
+          <FlatList
+            data={cart}
+            keyExtractor={(item) => item.id.toString()}
+            numColumns={1}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+              paddingBottom: 120,
+              paddingTop: 70,
+            }}
+            renderItem={({ item }) => (
+              <View>
+                <DividerDashed />
+                <CartCard {...item} />
               </View>
-              <View className="flex flex-row justify-between">
-                <Text className="font-fmedium ">Livraison</Text>
-                <Text className="font-fbold ">3000 Ar</Text>
+            )}
+            ListFooterComponent={
+              <View className="bg-[#fff] w-full  p-5 rounded-xl border-2 border-primary">
+                <View className="flex flex-row justify-between">
+                  <Text className="font-fmedium ">Sous-total</Text>
+                  <Text className="font-fbold ">
+                    {subtotal.toLocaleString()} Ar
+                  </Text>
+                </View>
+                <View className="flex flex-row justify-between">
+                  <Text className="font-fmedium ">Livraison</Text>
+                  <Text className="font-fbold ">
+                    {DELIVERY_FEE.toLocaleString()} Ar
+                  </Text>
+                </View>
+                <DividerDashed className="!border-[#000]" />
+                <View className="flex flex-row justify-between">
+                  <Text className="font-fbold  text-xl">Total</Text>
+                  <Text className="font-fbold  text-xl">
+                    {total.toLocaleString()} Ar
+                  </Text>
+                </View>
+                <Button
+                  className="mt-8"
+                  label="Procéder au payement"
+                  onPress={() => router.push("/(client)/cart/payement")}
+                />
               </View>
-              <DividerDashed className="!border-[#000]" />
-              <View className="flex flex-row justify-between">
-                <Text className="font-fbold  text-xl">Total</Text>
-                <Text className="font-fbold  text-xl">2000 Ar</Text>
-              </View>
-              <Button
-                className="mt-8"
-                label="Procéder au payement"
-                onPress={() => router.push("/(client)/cart/payement")}
-              />
-            </View>
-          }
-        />
+            }
+          />
+        ) : (
+          <EmptyState title="Panier" message="Votre panier est vide" />
+        )}
       </View>
     </SafeAreaView>
   );

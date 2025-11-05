@@ -5,6 +5,7 @@ import {
   UpdateOrderStatusDTO,
   PaginatedResponse,
   OrderStatsDTO,
+  CreateOrderDTO,
 } from '@/types';
 
 export interface QueryParams {
@@ -14,6 +15,11 @@ export interface QueryParams {
 }
 
 export const orderService = {
+  async create(data: CreateOrderDTO): Promise<ApiResponse<OrderDTO>> {
+    const response = await apiClient.post('/orders', data);
+    return response.data;
+  },
+
   async getAll(params?: QueryParams): Promise<ApiResponse<PaginatedResponse<OrderDTO>>> {
     const queryString = params
       ? `?${new URLSearchParams(params as Record<string, string>).toString()}`

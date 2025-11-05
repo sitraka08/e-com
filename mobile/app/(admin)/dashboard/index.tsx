@@ -32,15 +32,11 @@ export default function Dashboard() {
     refetch: refetchLowStock,
   } = useLowStockProducts();
   const { data: ordersResponse, refetch: refetchOrders } = useOrders();
-  const { data: productsResponse } = useProducts();
 
   const stats = statsResponse?.data;
   const lowStockProducts = lowStockResponse?.data || [];
   const recentOrders = (ordersResponse?.data?.items || [])?.slice(0, 5) || [];
   const allOrders = ordersResponse?.data?.items || [];
-  const allProducts = productsResponse?.data?.items || [];
-
-  const isLoading = statsLoading || lowStockLoading;
 
   const revenueData = useMemo(() => {
     const last7Days = Array.from({ length: 7 }, (_, i) => {

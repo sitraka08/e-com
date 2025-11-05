@@ -2,7 +2,7 @@ import { IP_URL } from "@/services/client";
 import { IMAGES } from "@/constants/image";
 import { clsx } from "clsx";
 
-export const filterImage = (image: any) => {
+export const filterImage = (image: string | null | undefined) => {
   if (
     image !== null &&
     image !== "" &&
@@ -38,8 +38,8 @@ export type TabItem = {
 };
 
 export const removeTabsByNames = (
-  tabs: any,
+  tabs: TabItem[],
   namesToRemove: string[]
 ): TabItem[] => {
-  return tabs.filter((tab: any) => !namesToRemove.includes(tab.name));
+  return tabs.filter((tab: TabItem) => !namesToRemove.includes(tab.name));
 };

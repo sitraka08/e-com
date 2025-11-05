@@ -15,7 +15,12 @@ import { useProducts } from "@/hooks/use-products";
 
 export default function Home() {
   const [category, setCategory] = useState<string>();
-  const { data: products, isLoading, error, refetch } = useProducts({
+  const {
+    data: products,
+    isLoading,
+    error,
+    refetch,
+  } = useProducts({
     categoryId: category,
   });
 
@@ -99,7 +104,7 @@ export const CATEGORIES = [
   {
     id: 1,
     name: "Électronique",
-    title: "Électronique",
+    title: "Tech",
     icon: Computer,
   },
   {
