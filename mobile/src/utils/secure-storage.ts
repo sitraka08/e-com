@@ -1,9 +1,10 @@
 import * as SecureStore from 'expo-secure-store';
-import { AuthTokens, UserDTO } from '@/types';
+import { AuthTokens, UserDTO, SellerRequestInfo } from '@/types';
 
 const KEYS = {
   ACCESS_TOKEN: 'access_token',
   USER: 'user',
+  SELLER_REQUEST: 'seller_request',
 };
 
 export const secureStorage = {
@@ -76,8 +77,40 @@ export const secureStorage = {
     }
   },
 
+  async saveSellerRequest(sellerRequest: SellerRequestInfo): Promise<void> {
+    try {
+      await SecureStore.setItemAsync(KEYS.SELLER_REQUEST, JSON.stringify(sellerRequest));
+    } catch (error) {
+      console.error('Error saving seller request:', error);
+      throw error;
+    }
+  },
+
+  async getSellerRequest(): Promise<SellerRequestInfo | null> {
+    try {
+      const sellerRequestString = await SecureStore.getItemAsync(KEYS.SELLER_REQUEST);
+      if (!sellerRequestString) {
+        return null;
+      }
+      return JSON.parse(sellerRequestString) as SellerRequestInfo;
+    } catch (error) {
+      console.error('Error getting seller request:', error);
+      return null;
+    }
+  },
+
+  async removeSellerRequest(): Promise<void> {
+    try {
+      await SecureStore.deleteItemAsync(KEYS.SELLER_REQUEST);
+    } catch (error) {
+      console.error('Error removing seller request:', error);
+      throw error;
+    }
+  },
+
   async clearAll(): Promise<void> {
     await this.clearTokens();
     await this.clearUser();
+    await this.removeSellerRequest();
   },
 };

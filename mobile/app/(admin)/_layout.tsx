@@ -51,6 +51,7 @@ export default function AdminLayout() {
         }}
       >
         <Tabs.Screen name="dashboard/index" />
+        <Tabs.Screen name="categories/index" />
         <Tabs.Screen name="products/index" />
         <Tabs.Screen name="users/index" />
         <Tabs.Screen name="orders/index" />

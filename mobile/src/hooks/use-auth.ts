@@ -19,12 +19,31 @@ export const useAuthMutation = () => {
     mutationFn: authService.login,
     onSuccessCallback: async (response) => {
       if (response.data) {
-        console.log(response.data);
-        await setAuth(response.data.user, response.data.tokens);
+        await setAuth(
+          response.data.user,
+          response.data.tokens,
+          response.data.sellerRequest
+        );
+
+        // Si admin, rediriger vers dashboard admin
         if (response.data.user.role === "ADMIN") {
           router.replace("/(admin)/dashboard");
           return;
         }
+
+        // Si vendeur avec demande en attente, rediriger vers pending-approval
+        if (response.data.sellerRequest?.status === "PENDING") {
+          router.replace("/(seller)/pending-approval");
+          return;
+        }
+
+        // Si vendeur approuvé, rediriger vers dashboard vendeur
+        if (response.data.user.role === "SELLER") {
+          router.replace("/(seller)/dashboard");
+          return;
+        }
+
+        // Sinon, rediriger vers home (client)
         router.replace("/home");
       }
     },
@@ -35,7 +54,19 @@ export const useAuthMutation = () => {
     mutationFn: authService.register,
     onSuccessCallback: async (response) => {
       if (response.data) {
-        await setAuth(response.data.user, response.data.tokens);
+        await setAuth(
+          response.data.user,
+          response.data.tokens,
+          response.data.sellerRequest
+        );
+
+        // Si inscription vendeur avec demande en attente
+        if (response.data.sellerRequest?.status === "PENDING") {
+          router.replace("/(seller)/pending-approval");
+          return;
+        }
+
+        // Sinon, rediriger vers home
         router.replace("/home");
       }
     },

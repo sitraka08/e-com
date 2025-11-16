@@ -6,3 +6,8 @@ export * from './product.types';
 export * from './address.types';
 export * from './payment.types';
 export * from './order.types';
+export * from './seller.types';
+export * from './favorite.types';
+export * from './savedCart.types';
+export * from './admin.types';
+export * from './enums';

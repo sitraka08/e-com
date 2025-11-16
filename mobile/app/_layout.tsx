@@ -32,28 +32,39 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
     const inAuthGroup = segments[0] === "(auth)";
     const inClientGroup = segments[0] === "(client)";
     const inAdminGroup = segments[0] === "(admin)";
+    const inSellerGroup = segments[0] === "(seller)";
 
-    // Rediriger les utilisateurs authentifiés hors de la page d'auth
     if (isAuthenticated && inAuthGroup) {
-      // Rediriger selon le rôle
       if (user?.role === "ADMIN") {
         router.replace("/dashboard");
+      } else if (user?.role === "SELLER") {
+        router.replace("/(seller)/dashboard");
       } else {
         router.replace("/home");
       }
     }
 
-    // Bloquer l'accès admin aux routes client
     if (isAuthenticated && inClientGroup) {
       if (user?.role === "ADMIN") {
         router.replace("/dashboard");
+      } else if (user?.role === "SELLER") {
+        router.replace("/(seller)/dashboard");
       }
     }
 
-    // Bloquer l'accès client aux routes admin
     if (isAuthenticated && inAdminGroup) {
       if (user?.role !== "ADMIN") {
         router.replace("/home");
+      }
+    }
+
+    if (isAuthenticated && inSellerGroup) {
+      if (user?.role !== "SELLER") {
+        if (user?.role === "ADMIN") {
+          router.replace("/dashboard");
+        } else {
+          router.replace("/home");
+        }
       }
     }
   }, [isAuthenticated, isLoading, segments, user]);
@@ -100,6 +111,7 @@ export default function RootLayout() {
         <AuthGuard>
           <Stack>
             <Stack.Screen name="(client)" options={{ headerShown: false }} />
+            <Stack.Screen name="(seller)" options={{ headerShown: false }} />
             <Stack.Screen name="(admin)" options={{ headerShown: false }} />
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           </Stack>

@@ -12,6 +12,10 @@ import {
   OrderRepository,
   PaymentRepository,
   OtpRepository,
+  SellerRepository,
+  SellerRequestRepository,
+  FavoriteRepository,
+  SavedCartRepository,
 } from './repositories';
 import {
   AuthService,
@@ -23,6 +27,10 @@ import {
   OrderService,
   PaymentService,
   EmailService,
+  SellerService,
+  FavoriteService,
+  SavedCartService,
+  AdminService,
 } from './services';
 import {
   AuthController,
@@ -33,6 +41,10 @@ import {
   PaymentMethodController,
   OrderController,
   PaymentController,
+  SellerController,
+  FavoriteController,
+  SavedCartController,
+  AdminController,
 } from './controllers';
 import { createRoutes } from './routes';
 
@@ -56,16 +68,24 @@ export const createApp = (): Application => {
   const orderRepository = new OrderRepository(prisma);
   const paymentRepository = new PaymentRepository(prisma);
   const otpRepository = new OtpRepository(prisma);
+  const sellerRepository = new SellerRepository(prisma);
+  const sellerRequestRepository = new SellerRequestRepository(prisma);
+  const favoriteRepository = new FavoriteRepository(prisma);
+  const savedCartRepository = new SavedCartRepository(prisma);
 
   const emailService = new EmailService();
-  const authService = new AuthService(userRepository, otpRepository, emailService);
+  const authService = new AuthService(userRepository, otpRepository, emailService, sellerRequestRepository);
   const userService = new UserService(userRepository);
   const categoryService = new CategoryService(categoryRepository);
-  const productService = new ProductService(productRepository, categoryRepository);
+  const productService = new ProductService(productRepository, categoryRepository, sellerRepository);
   const addressService = new AddressService(addressRepository);
   const paymentMethodService = new PaymentMethodService(paymentMethodRepository);
   const orderService = new OrderService(orderRepository);
   const paymentService = new PaymentService(paymentRepository, orderRepository);
+  const sellerService = new SellerService(sellerRepository, sellerRequestRepository, userRepository, prisma);
+  const favoriteService = new FavoriteService(favoriteRepository, productRepository);
+  const savedCartService = new SavedCartService(savedCartRepository);
+  const adminService = new AdminService(userRepository, productRepository, orderRepository, sellerRepository, prisma);
 
   const authController = new AuthController(authService);
   const userController = new UserController(userService);
@@ -75,6 +95,10 @@ export const createApp = (): Application => {
   const paymentMethodController = new PaymentMethodController(paymentMethodService);
   const orderController = new OrderController(orderService);
   const paymentController = new PaymentController(paymentService);
+  const sellerController = new SellerController(sellerService);
+  const favoriteController = new FavoriteController(favoriteService);
+  const savedCartController = new SavedCartController(savedCartService);
+  const adminController = new AdminController(adminService);
 
   app.get('/', (_req, res) => {
     res.json({
@@ -94,6 +118,10 @@ export const createApp = (): Application => {
     paymentMethodController,
     orderController,
     paymentController,
+    sellerController,
+    favoriteController,
+    savedCartController,
+    adminController,
   }));
 
   app.use(notFoundHandler);

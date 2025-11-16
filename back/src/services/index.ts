@@ -7,3 +7,7 @@ export * from './PaymentMethodService';
 export * from './OrderService';
 export * from './PaymentService';
 export * from './EmailService';
+export * from './SellerService';
+export * from './FavoriteService';
+export * from './SavedCartService';
+export * from './AdminService';

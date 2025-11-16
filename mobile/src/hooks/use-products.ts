@@ -28,9 +28,9 @@ export const useProducts = ({
   return useSimpleQuery<PaginatedResponse<ProductDTO>>({
     queryKey: ["products", debouncedSearch, page, limit, categoryId ?? "all"],
     queryFn: () =>
-      productService.getAll({
+      productService.search({
         page,
-        search: debouncedSearch,
+        q: debouncedSearch,
         limit,
         categoryId,
       }),

@@ -27,8 +27,8 @@ export const createFakeArray = (length: number) => {
     .map((_, index) => ({ id: String(index) }));
 };
 
-export function cn(...inputs: string[]) {
-  return clsx(inputs);
+export function cn(...inputs: (string | undefined)[]) {
+  return clsx(inputs.filter(Boolean));
 }
 
 export type TabItem = {

@@ -11,7 +11,8 @@ export const errorHandler = (err: any, _req: Request, res: Response, _next: Next
 
     res.status(statusCode).json({
       success: false,
-      error: message,
+      message: message,
+      error: message, // Gardé pour rétrocompatibilité
     });
     return;
   }
@@ -19,6 +20,7 @@ export const errorHandler = (err: any, _req: Request, res: Response, _next: Next
   // Erreur inconnue - 500
   res.status(500).json({
     success: false,
+    message: 'Erreur interne du serveur',
     error: 'Erreur interne du serveur',
   });
 };
@@ -26,6 +28,7 @@ export const errorHandler = (err: any, _req: Request, res: Response, _next: Next
 export const notFoundHandler = (_req: Request, res: Response): void => {
   res.status(404).json({
     success: false,
+    message: 'Route introuvable',
     error: 'Route introuvable',
   });
 };

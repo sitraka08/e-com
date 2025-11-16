@@ -5,9 +5,10 @@ import { Pencil, Trash2, Package } from 'lucide-react-native';
 
 interface ProductListItemProps {
   product: ProductDTO;
-  onEdit: () => void;
-  onDelete: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
   onUpdateStock: () => void;
+  readOnly?: boolean;
 }
 
 export default function ProductListItem({
@@ -15,6 +16,7 @@ export default function ProductListItem({
   onEdit,
   onDelete,
   onUpdateStock,
+  readOnly = false,
 }: ProductListItemProps) {
   const isLowStock = product.stock < 10;
 
@@ -60,20 +62,24 @@ export default function ProductListItem({
           <Package size={16} color="#3B82F6" />
           <Text className="text-blue-600 font-fmedium text-xs ml-1">Stock</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={onEdit}
-          className="flex-1 bg-gray-50 rounded-lg p-2 flex-row items-center justify-center"
-        >
-          <Pencil size={16} color="#6B7280" />
-          <Text className="text-gray-700 font-fmedium text-xs ml-1">Modifier</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={onDelete}
-          className="flex-1 bg-red-50 rounded-lg p-2 flex-row items-center justify-center"
-        >
-          <Trash2 size={16} color="#EF4444" />
-          <Text className="text-red-600 font-fmedium text-xs ml-1">Supprimer</Text>
-        </TouchableOpacity>
+        {!readOnly && onEdit && (
+          <TouchableOpacity
+            onPress={onEdit}
+            className="flex-1 bg-gray-50 rounded-lg p-2 flex-row items-center justify-center"
+          >
+            <Pencil size={16} color="#6B7280" />
+            <Text className="text-gray-700 font-fmedium text-xs ml-1">Modifier</Text>
+          </TouchableOpacity>
+        )}
+        {!readOnly && onDelete && (
+          <TouchableOpacity
+            onPress={onDelete}
+            className="flex-1 bg-red-50 rounded-lg p-2 flex-row items-center justify-center"
+          >
+            <Trash2 size={16} color="#EF4444" />
+            <Text className="text-red-600 font-fmedium text-xs ml-1">Supprimer</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );

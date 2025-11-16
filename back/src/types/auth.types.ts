@@ -1,10 +1,13 @@
-import { UserRole, UserStatus } from './enums';
+import { UserRole, UserStatus, SellerRequestStatus } from './enums';
 
 export interface RegisterDTO {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
+  isSeller?: boolean;
+  storeName?: string;
+  storeDescription?: string;
 }
 
 export interface LoginDTO {
@@ -27,6 +30,14 @@ export interface AuthTokens {
   refreshToken?: string;
 }
 
+export interface SellerRequestInfo {
+  id: number;
+  storeName: string;
+  storeDescription: string;
+  status: SellerRequestStatus;
+  createdAt: Date;
+}
+
 export interface AuthResponse {
   user: {
     id: number;
@@ -37,6 +48,7 @@ export interface AuthResponse {
     status: UserStatus;
   };
   tokens: AuthTokens;
+  sellerRequest?: SellerRequestInfo;
 }
 
 export interface TokenPayload {

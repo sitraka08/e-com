@@ -15,6 +15,7 @@ type State = {
   getTotalPayd: () => number;
   incrementQuantity: (id: number) => void;
   decrementQuantity: (id: number) => void;
+  getTotalCart: () => number;
 };
 
 const useCartStore = create<State>((set, get) => ({
@@ -72,6 +73,7 @@ const useCartStore = create<State>((set, get) => ({
         )
         .filter((item) => item.quantity > 0),
     })),
+  getTotalCart: () => get().cart.length,
 }));
 
 export default useCartStore;

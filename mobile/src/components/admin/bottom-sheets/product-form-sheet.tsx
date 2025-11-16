@@ -41,7 +41,7 @@ export default function ProductFormSheet({
   const form = useForm<Omit<CreateProductDTO | UpdateProductDTO, "images">>({
     resolver: zodResolver(
       isEditMode ? UpdateProductSchema : CreateProductSchema
-    ),
+    ) as any,
     defaultValues: isEditMode
       ? {
           name: product.name,

@@ -9,6 +9,7 @@ interface ButtonProps {
   className?: string;
   textClassName?: string;
   disabled?: boolean;
+  variant?: "destructive" | "normal";
 }
 
 export default function Button({
@@ -18,7 +19,22 @@ export default function Button({
   onPress,
   textClassName = "",
   disabled = false,
+  variant,
 }: ButtonProps) {
+  if (variant === "destructive") {
+    return (
+      <TouchableOpacity
+        onPress={onPress}
+        activeOpacity={0.7}
+        disabled={loading || disabled}
+        className="flex-row items-center justify-center py-4 px-4 rounded-2xl border-2 border-red-500 bg-red-50 mb-8"
+      >
+        <Text className="ml-2 text-base font-fsemibold text-red-500">
+          {label}
+        </Text>
+      </TouchableOpacity>
+    );
+  }
   return (
     <TouchableOpacity
       className={cn(

@@ -8,8 +8,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginDTO, LoginSchema } from "@/types";
 import { useAuthMutation } from "@/hooks/use-auth";
+import { useState } from "react";
 
 export default function Profil() {
+  const [error, setError] = useState<string | undefined>();
   const router = useRouter();
   const form = useForm<LoginDTO>({
     resolver: zodResolver(LoginSchema),
@@ -17,7 +19,12 @@ export default function Profil() {
   const { login } = useAuthMutation();
 
   const submitAction = (data: LoginDTO) => {
-    login.mutate(data);
+    setError(undefined);
+    login.mutate(data, {
+      onError(error) {
+        setError(error.message);
+      },
+    });
   };
   return (
     <SafeAreaView className="flex-1 p-10 bg-primary">
@@ -41,6 +48,14 @@ export default function Profil() {
           label="Mot de passe"
           type="password"
         />
+
+        {error && (
+          <View className="bg-[#ec0707ab] w-full rounded-lg">
+            <Text className=" text-xs !text-white text-center p-1 font-fmedium mt-1">
+              {error as string}
+            </Text>
+          </View>
+        )}
         <Button
           label="Se connecter"
           className="!bg-white  w-full h-14 mt-12"

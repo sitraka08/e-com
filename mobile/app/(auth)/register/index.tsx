@@ -8,16 +8,22 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterDTO, RegisterSchema } from "@/types";
 import { useAuthMutation } from "@/hooks/use-auth";
+import { Checkbox } from "@/components/checkbox";
+import { useState } from "react";
 
 export default function Register() {
   const router = useRouter();
+  const [isSeller, setIsSeller] = useState(false);
   const form = useForm<RegisterDTO>({
     resolver: zodResolver(RegisterSchema),
+    defaultValues: {
+      isSeller: false,
+    },
   });
   const { register } = useAuthMutation();
 
   const submitAction = (data: RegisterDTO) => {
-    register.mutate(data);
+    register.mutate({ ...data, isSeller });
   };
 
   return (
@@ -58,6 +64,31 @@ export default function Register() {
             label="Mot de passe"
             type="password"
           />
+
+          <View className="w-full mt-2">
+            <Checkbox
+              checked={isSeller}
+              onPress={() => setIsSeller(!isSeller)}
+              label="Je souhaite devenir vendeur"
+            />
+          </View>
+
+          {isSeller && (
+            <>
+              <Input
+                form={form}
+                name="storeName"
+                label="Nom du magasin"
+                placeholder="Mon Magasin"
+              />
+              <Input
+                form={form}
+                name="storeDescription"
+                label="Description du magasin"
+                placeholder="Description de votre magasin..."
+              />
+            </>
+          )}
 
           <Button
             label="Créer un compte"

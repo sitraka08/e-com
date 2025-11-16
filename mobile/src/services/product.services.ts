@@ -10,27 +10,34 @@ import {
 
 export interface QueryParams {
   page?: string;
-  search?: string;
+  q?: string;
   limit?: string;
   categoryId?: string;
 }
 
 export const productService = {
-  async getAll(params?: QueryParams): Promise<ApiResponse<PaginatedResponse<ProductDTO>>> {
+  async getAll(
+    params?: QueryParams
+  ): Promise<ApiResponse<PaginatedResponse<ProductDTO>>> {
     const queryString = params
       ? `?${new URLSearchParams(params as Record<string, string>).toString()}`
       : "";
-    const response = await apiClient.get(`/products${queryString}`);
+
+    const response = await apiClient.get(`/products/search${queryString}`);
+    return response.data;
+  },
+  async search(
+    params?: QueryParams
+  ): Promise<ApiResponse<PaginatedResponse<ProductDTO>>> {
+    const queryString = params
+      ? `?${new URLSearchParams(params as Record<string, string>).toString()}`
+      : "";
+    const response = await apiClient.get(`/products/search${queryString}`);
     return response.data;
   },
 
   async getById(id: number): Promise<ApiResponse<ProductDTO>> {
     const response = await apiClient.get(`/products/${id}`);
-    return response.data;
-  },
-
-  async search(query: string): Promise<ApiResponse<ProductDTO[]>> {
-    const response = await apiClient.get(`/products/search?q=${query}`);
     return response.data;
   },
 

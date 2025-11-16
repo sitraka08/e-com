@@ -118,8 +118,8 @@ export const useCustomMutation = <TData, TResponse = void>(
         ToastAndroid.LONG,
         ToastAndroid.CENTER
       );
-
       console.error("Mutation Error:", res);
+      return res;
     },
   });
 };
@@ -132,9 +132,7 @@ interface QueryConfig<TResponse> {
   retry?: boolean;
 }
 
-export const useSimpleQuery = <TResponse>(
-  config: QueryConfig<TResponse>
-) => {
+export const useSimpleQuery = <TResponse>(config: QueryConfig<TResponse>) => {
   const {
     queryKey,
     queryFn,

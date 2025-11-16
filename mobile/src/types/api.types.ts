@@ -26,11 +26,21 @@ export type SearchParams = {
   limit?: number;
 };
 
-export type UserRole = 'CLIENT' | 'ADMIN';
-export type UserStatus = 'ACTIVE' | 'SUSPENDED' | 'PENDING';
-export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
-export type PaymentStatus = 'PENDING' | 'COMPLETED' | 'FAILED' | 'REFUNDED';
-export type PaymentMethodType = 'MOBILE_MONEY' | 'CREDIT_CARD' | 'BANK_TRANSFER' | 'CASH_ON_DELIVERY';
+export type UserRole = "CLIENT" | "SELLER" | "ADMIN";
+export type UserStatus = "ACTIVE" | "SUSPENDED" | "PENDING_VALIDATION";
+export type OrderStatus =
+  | "PENDING"
+  | "CONFIRMED"
+  | "SHIPPED"
+  | "DELIVERED"
+  | "CANCELLED";
+export type PaymentStatus = "PENDING" | "COMPLETED" | "FAILED" | "REFUNDED";
+export type PaymentMethodType =
+  | "MOBILE_MONEY"
+  | "CREDIT_CARD"
+  | "BANK_TRANSFER"
+  | "CASH_ON_DELIVERY";
+export type SellerRequestStatus = "PENDING" | "APPROVED" | "REJECTED";
 
 export type UserDTO = {
   id: number;
@@ -62,6 +72,9 @@ export type ProductDTO = {
   images: string[];
   categoryId: number;
   categoryName?: string;
+  sellerId: number | null;
+  sellerName?: string;
+  sellerStoreName?: string;
   isActive: boolean;
   createdAt: string | Date;
   updatedAt: string | Date;
@@ -144,9 +157,18 @@ export type AuthTokens = {
   accessToken: string;
 };
 
+export type SellerRequestInfo = {
+  id: number;
+  storeName: string;
+  storeDescription: string;
+  status: SellerRequestStatus;
+  createdAt: string | Date;
+};
+
 export type AuthResponse = {
   user: UserDTO;
   tokens: AuthTokens;
+  sellerRequest?: SellerRequestInfo;
 };
 
 export type OrderStatsDTO = {
@@ -159,4 +181,126 @@ export type OrderStatsDTO = {
   totalRevenue: number;
   unpaidOrders: number;
   unpaidAmount: number;
+};
+
+// Seller Types
+export type SellerDTO = {
+  id: number;
+  userId: number;
+  storeName: string;
+  storeDescription: string | null;
+  storeLogo: string | null;
+  commissionRate: number;
+  isApproved: boolean;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+};
+
+export type SellerWithUserDTO = SellerDTO & {
+  user: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+};
+
+export type CreateSellerRequestDTO = {
+  storeName: string;
+  storeDescription: string;
+  businessRegistration?: string;
+};
+
+export type UpdateSellerDTO = {
+  storeName?: string;
+  storeDescription?: string | null;
+  storeLogo?: string | null;
+};
+
+export type SellerRequestDTO = {
+  id: number;
+  userId: number;
+  storeName: string;
+  storeDescription: string;
+  businessRegistration: string | null;
+  status: SellerRequestStatus;
+  rejectionReason: string | null;
+  reviewedBy: number | null;
+  reviewedAt: string | Date | null;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+};
+
+export type SellerRequestWithUserDTO = SellerRequestDTO & {
+  user: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+};
+
+export type ApproveSellerRequestDTO = {
+  commissionRate?: number;
+};
+
+export type RejectSellerRequestDTO = {
+  rejectionReason: string;
+};
+
+export type SellerStatsDTO = {
+  totalProducts: number;
+  activeProducts: number;
+  totalOrders: number;
+  totalRevenue: number;
+  totalCommission: number;
+  pendingOrders: number;
+};
+
+export type UpdateCommissionRateDTO = {
+  commissionRate: number;
+};
+
+// Favorite Types
+export type FavoriteDTO = {
+  id: number;
+  userId: number;
+  productId: number;
+  createdAt: string | Date;
+};
+
+export type FavoriteWithProductDTO = FavoriteDTO & {
+  product: ProductDTO;
+};
+
+export type AddFavoriteDTO = {
+  productId: number;
+};
+
+// SavedCart Types
+export type CartItem = {
+  productId: number;
+  quantity: number;
+  productName?: string;
+  productPrice?: number;
+  productImage?: string;
+};
+
+export type SavedCartDTO = {
+  id: number;
+  userId: number;
+  name: string;
+  items: CartItem[];
+  createdAt: string | Date;
+  updatedAt: string | Date;
+};
+
+export type CreateSavedCartDTO = {
+  name: string;
+  items: CartItem[];
+};
+
+export type UpdateSavedCartDTO = {
+  name?: string;
+  items?: CartItem[];
 };

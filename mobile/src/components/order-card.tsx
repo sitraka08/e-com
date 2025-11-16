@@ -28,6 +28,12 @@ const statusConfig = {
     textColor: "text-purple-700",
     borderColor: "border-purple-300",
   },
+  PROCESSING: {
+    label: "En cours",
+    bgColor: "bg-purple-100",
+    textColor: "text-purple-700",
+    borderColor: "border-purple-300",
+  },
   DELIVERED: {
     label: "Livrée",
     bgColor: "bg-green-100",
@@ -48,6 +54,8 @@ export default function OrderCard({ order, onPress }: OrderCardProps) {
   const firstImage = order.items?.[0]?.product?.images?.[0];
   const itemCount = order.items?.length || 0;
 
+  console.log(status, "status");
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -66,9 +74,7 @@ export default function OrderCard({ order, onPress }: OrderCardProps) {
         <View
           className={`px-3 py-1 rounded-full border ${status.borderColor} ${status.bgColor}`}
         >
-          <Text className={`font-fmedium text-xs ${status.textColor}`}>
-            {status.label}
-          </Text>
+          <Text className={`font-fmedium text-xs`}>{status.label}</Text>
         </View>
       </View>
 
@@ -86,7 +92,10 @@ export default function OrderCard({ order, onPress }: OrderCardProps) {
             {itemCount} {itemCount > 1 ? "articles" : "article"}
           </Text>
           {order.items?.[0] && (
-            <Text className="font-fregular text-xs text-gray-500 mt-1" numberOfLines={1}>
+            <Text
+              className="font-fregular text-xs text-gray-500 mt-1"
+              numberOfLines={1}
+            >
               {order.items[0].product?.name}
               {itemCount > 1 && ` et ${itemCount - 1} autre(s)`}
             </Text>
@@ -111,9 +120,7 @@ export default function OrderCard({ order, onPress }: OrderCardProps) {
         )}
         {order.balance === 0 && order.totalPaid > 0 && (
           <View className="bg-green-50 px-3 py-1 rounded-full border border-green-200">
-            <Text className="font-fmedium text-xs text-green-700">
-              Payé
-            </Text>
+            <Text className="font-fmedium text-xs text-green-700">Payé</Text>
           </View>
         )}
       </View>

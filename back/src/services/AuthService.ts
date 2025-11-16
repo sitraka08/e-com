@@ -1,4 +1,4 @@
-import { IUserRepository, IOtpRepository } from '../repositories';
+import { IUserRepository, IOtpRepository, ISellerRequestRepository } from '../repositories';
 import { RegisterDTO, LoginDTO, ForgotPasswordDTO, ResetPasswordDTO, AuthResponse, UserDTO } from '../types';
 import { hashPassword, comparePassword, generateToken, generateOTP, getOTPExpiryDate, isOTPExpired, ConflictError, AuthenticationError, NotFoundError, ValidationError } from '../utils';
 import { EmailService } from './EmailService';
@@ -7,7 +7,8 @@ export class AuthService {
   constructor(
     private userRepository: IUserRepository,
     private otpRepository: IOtpRepository,
-    private emailService: EmailService
+    private emailService: EmailService,
+    private sellerRequestRepository?: ISellerRequestRepository
   ) {}
 
   async register(data: RegisterDTO): Promise<AuthResponse> {
@@ -19,10 +20,21 @@ export class AuthService {
     const hashedPassword = await hashPassword(data.password);
 
     const user = await this.userRepository.create({
-      ...data,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
       password: hashedPassword,
       role: 'CLIENT',
     });
+
+    // If user wants to become a seller, create seller request
+    let sellerRequest;
+    if (data.isSeller && data.storeName && data.storeDescription && this.sellerRequestRepository) {
+      sellerRequest = await this.sellerRequestRepository.create(user.id, {
+        storeName: data.storeName,
+        storeDescription: data.storeDescription,
+      });
+    }
 
     const token = generateToken({
       id: user.id,
@@ -31,7 +43,7 @@ export class AuthService {
       role: user.role,
     });
 
-    return {
+    const response: AuthResponse = {
       user: {
         id: user.id,
         firstName: user.firstName,
@@ -44,6 +56,19 @@ export class AuthService {
         accessToken: token,
       },
     };
+
+    // Add seller request info if exists
+    if (sellerRequest) {
+      response.sellerRequest = {
+        id: sellerRequest.id,
+        storeName: sellerRequest.storeName,
+        storeDescription: sellerRequest.storeDescription,
+        status: sellerRequest.status,
+        createdAt: sellerRequest.createdAt,
+      };
+    }
+
+    return response;
   }
 
   async login(data: LoginDTO): Promise<AuthResponse> {
@@ -70,7 +95,7 @@ export class AuthService {
       role: user.role,
     });
 
-    return {
+    const response: AuthResponse = {
       user: {
         id: user.id,
         firstName: user.firstName,
@@ -83,6 +108,25 @@ export class AuthService {
         accessToken: token,
       },
     };
+
+    // Check if user has a pending or approved seller request
+    if (this.sellerRequestRepository) {
+      const sellerRequests = await this.sellerRequestRepository.findByUserId(user.id);
+      // Get the most recent seller request (they should only have one, but we take the last one just in case)
+      const latestRequest = sellerRequests[sellerRequests.length - 1];
+
+      if (latestRequest) {
+        response.sellerRequest = {
+          id: latestRequest.id,
+          storeName: latestRequest.storeName,
+          storeDescription: latestRequest.storeDescription,
+          status: latestRequest.status,
+          createdAt: latestRequest.createdAt,
+        };
+      }
+    }
+
+    return response;
   }
 
   async forgotPassword(data: ForgotPasswordDTO): Promise<{ message: string }> {

@@ -9,9 +9,19 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useProducts } from "@/hooks/use-products";
+import { useState } from "react";
+import EmptyState from "@/components/admin/empty-state";
 
 export default function Search() {
-  const { data: products, isLoading, error, refetch } = useProducts();
+  const [search, setSearch] = useState("");
+  const {
+    data: products,
+    isLoading,
+    error,
+    refetch,
+  } = useProducts({
+    search,
+  });
 
   const renderContent = () => {
     if (isLoading) {
@@ -53,13 +63,24 @@ export default function Search() {
             <ProductCard {...item} />
           </View>
         )}
+        ListEmptyComponent={
+          <EmptyState
+            className="mt-10"
+            title="Produit"
+            message="Essayez avec un autre terme de recherche"
+          />
+        }
       />
     );
   };
 
   return (
     <SafeAreaView className="flex-1">
-      <TopNavigation title="Recherche" withIput />
+      <TopNavigation
+        title="Recherche"
+        withIput
+        onChange={(v) => setSearch(v)}
+      />
       <View className="mt-24 p-5 h-full flex gap-4">{renderContent()}</View>
     </SafeAreaView>
   );

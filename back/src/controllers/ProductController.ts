@@ -32,7 +32,7 @@ export class ProductController {
         data = req.body;
       }
 
-      const result = await this.productService.createProduct(data);
+      const result = await this.productService.createProduct(data, req.user?.id, req.user?.role);
       res.status(201).json({ success: true, data: result } as ApiResponse);
     } catch (error) {
       next(error);
@@ -109,7 +109,7 @@ export class ProductController {
         data = req.body;
       }
 
-      const result = await this.productService.updateProduct(id, data);
+      const result = await this.productService.updateProduct(id, data, req.user?.id, req.user?.role);
       res.status(200).json({ success: true, data: result } as ApiResponse);
     } catch (error) {
       next(error);
@@ -119,7 +119,7 @@ export class ProductController {
   deleteProduct = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const id = parseInt(req.params.id);
-      await this.productService.deleteProduct(id);
+      await this.productService.deleteProduct(id, req.user?.id, req.user?.role);
       res.status(200).json({ success: true, message: 'Produit supprimé' } as ApiResponse);
     } catch (error) {
       next(error);
