@@ -13,6 +13,7 @@ interface InputProps<T extends FieldValues> {
   label?: string;
   type?: "password";
   isAdmin?: boolean;
+  variant?: "auth" | "sheet";
   keyboardType?: "default" | "numeric" | "email-address" | "phone-pad";
 }
 
@@ -25,6 +26,7 @@ const Input = <T extends FieldValues>({
   label,
   type,
   isAdmin,
+  variant = "auth",
   keyboardType = "default",
 }: InputProps<T>) => {
   const [show, setShow] = useState(false);
@@ -34,13 +36,15 @@ const Input = <T extends FieldValues>({
   } = form;
   const error = errors[name];
 
+  const isSheet = variant === "sheet";
+
   return (
     <View className="w-full">
       {label && (
         <Text
           className={cn(
             "text-sm font-fmedium mb-2",
-            isAdmin ? "text-zinc-800" : "text-white"
+            isSheet ? "text-gray-700" : isAdmin ? "text-zinc-800" : "text-white"
           )}
         >
           {label}
@@ -48,8 +52,12 @@ const Input = <T extends FieldValues>({
       )}
       <View
         className={cn(
-          `w-full  px-5 h-14 rounded-xl flex flex-row items-center justify-between relative ${className}`,
-          isAdmin ? "bg-[#9b999946]" : "bg-[#ffffff46]"
+          `w-full px-5 h-14 rounded-xl flex flex-row items-center justify-between relative ${className}`,
+          isSheet
+            ? "bg-white border border-gray-300"
+            : isAdmin
+            ? "bg-[#9b999946]"
+            : "bg-[#ffffff46]"
         )}
       >
         <Controller
@@ -58,14 +66,14 @@ const Input = <T extends FieldValues>({
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               className={cn(
-                "font-fmedium text-base w-[90%] text-white",
-                isAdmin ? "text-zinc-800" : "text-white"
+                "font-fregular text-base w-[90%]",
+                isSheet ? "text-gray-900" : isAdmin ? "text-zinc-800" : "text-white"
               )}
               placeholder={placeholder}
               onChangeText={onChange}
               onBlur={onBlur}
-              value={value as string}
-              placeholderTextColor={!isAdmin ? "#DCDCF4" : "#848484"}
+              value={value ? String(value) : ""}
+              placeholderTextColor={isSheet ? "#9CA3AF" : !isAdmin ? "#DCDCF4" : "#848484"}
               autoFocus={autoFocus}
               secureTextEntry={type === "password" && !show}
               keyboardType={keyboardType}
@@ -80,7 +88,7 @@ const Input = <T extends FieldValues>({
                   setShow(false);
                 }}
               >
-                <Eye color="#fff" size={20} />
+                <Eye color={isSheet ? "#000" : "#fff"} size={20} />
               </TouchableOpacity>
             ) : (
               <TouchableOpacity
@@ -88,7 +96,7 @@ const Input = <T extends FieldValues>({
                   setShow(true);
                 }}
               >
-                <EyeOff color="#fff" size={20} />
+                <EyeOff color={isSheet ? "#000" : "#fff"} size={20} />
               </TouchableOpacity>
             )}
           </>

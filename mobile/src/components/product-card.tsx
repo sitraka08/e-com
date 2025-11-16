@@ -46,8 +46,8 @@ export default function ProductCard(product: ProductDTO) {
       </View>
       <TouchableOpacity
         className={cn(
-          "absolute top-5 right-5 rounded-full border p-2 bg-[#f7d7d7] border-[#ce0f0f48]",
-          isFavorite(product.id) ? "bg-[#c05050]" : ""
+          "absolute top-5 right-5 rounded-full border p-2  border-[#ce0f0f48]",
+          isFavorite(product.id) ? "bg-[#c05050]" : "bg-[#f7d7d7]"
         )}
         onPress={() => {
           toggleFavorite();

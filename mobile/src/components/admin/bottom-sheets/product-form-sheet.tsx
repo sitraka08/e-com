@@ -124,7 +124,7 @@ export default function ProductFormSheet({
   return (
     <BottomSheet
       ref={bottomSheetRef}
-      snapPoints={["90%"]}
+      snapPoints={["70%"]}
       enablePanDownToClose
       onClose={onClose}
       index={-1}

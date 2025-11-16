@@ -1,6 +1,6 @@
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import React from "react";
-import { RadioButton } from "./button/radio-button";
+import RadioButton from "./button/radio-button";
 import DividerDashed from "./divider-dashed";
 import { BanknoteArrowUp, LucideIcon } from "lucide-react-native";
 import { cn } from "@/utils/utils";

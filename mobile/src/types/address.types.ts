@@ -28,8 +28,8 @@ export const CreateAddressSchema = z.object({
   postalCode: z
     .string()
     .max(20, 'Le code postal ne peut pas dépasser 20 caractères')
-    .nullable()
-    .optional(),
+    .optional()
+    .transform(val => val || null),
   isDefault: z.boolean().default(false),
 });
 
@@ -69,8 +69,8 @@ export const UpdateAddressSchema = z.object({
   postalCode: z
     .string()
     .max(20, 'Le code postal ne peut pas dépasser 20 caractères')
-    .nullable()
-    .optional(),
+    .optional()
+    .transform(val => val || null),
   isDefault: z.boolean().optional(),
 });
 

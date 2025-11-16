@@ -26,7 +26,7 @@ export default function TopNavigation({
 }: TopNavigationProps) {
   const router = useRouter();
   return (
-    <View className="bg-primary absolute w-full top-0 rounded-b-[30px] p-6 px-10 z-50">
+    <View className="bg-primary absolute w-full top-0 rounded-b-[30px] p-6 px-10 z-10">
       <View className="flex flex-row items-center gap-4">
         {!noButton && (
           <TouchableOpacity

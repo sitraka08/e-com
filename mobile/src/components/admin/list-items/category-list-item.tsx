@@ -1,7 +1,8 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text } from "react-native";
 import { CategoryDTO } from "@/types";
 import { Pencil, Trash2 } from "lucide-react-native";
+import { Button } from "../../button";
 
 interface CategoryListItemProps {
   category: CategoryDTO;
@@ -33,20 +34,24 @@ export default function CategoryListItem({
       </View>
 
       <View className="flex-row mt-3 gap-2">
-        <TouchableOpacity
+        <Button
+          label="Modifier"
+          variant="action"
+          actionColor="gray"
+          size="sm"
+          iconLeft={<Pencil size={16} color="#6B7280" />}
           onPress={onEdit}
-          className="flex-1 bg-gray-50 rounded-lg p-2 flex-row items-center justify-center"
-        >
-          <Pencil size={16} color="#6B7280" />
-          <Text className="text-gray-700 font-fmedium text-xs ml-1">Modifier</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
+          className="flex-1 p-2"
+        />
+        <Button
+          label="Supprimer"
+          variant="action"
+          actionColor="red"
+          size="sm"
+          iconLeft={<Trash2 size={16} color="#EF4444" />}
           onPress={onDelete}
-          className="flex-1 bg-red-50 rounded-lg p-2 flex-row items-center justify-center"
-        >
-          <Trash2 size={16} color="#EF4444" />
-          <Text className="text-red-600 font-fmedium text-xs ml-1">Supprimer</Text>
-        </TouchableOpacity>
+          className="flex-1 p-2"
+        />
       </View>
     </View>
   );

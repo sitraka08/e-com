@@ -9,13 +9,15 @@ import {
   Lock,
   ChevronRight,
   User as UserIcon,
+  LucideIcon,
 } from "lucide-react-native";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { COLORS } from "@/constants/colors";
 import TopNavigation from "@/components/top-navigation";
+import { Button } from "@/components/button";
 
 interface MenuItem {
-  icon: any;
+  icon: LucideIcon;
   label: string;
   route: string;
   color?: string;
@@ -145,15 +147,13 @@ export default function Profil() {
           })}
         </View>
 
-        <TouchableOpacity
+        <Button
+          label="Se déconnecter"
+          variant="destructive"
+          iconLeft={<LogOut size={20} color="#EF4444" />}
           onPress={handleLogout}
-          className="flex-row items-center justify-center py-4 px-4 rounded-2xl border-2 border-red-500 bg-red-50 mb-8"
-        >
-          <LogOut size={20} color="#EF4444" />
-          <Text className="ml-2 text-base font-fbold text-red-500">
-            Se déconnecter
-          </Text>
-        </TouchableOpacity>
+          className="mb-8"
+        />
       </ScrollView>
     </SafeAreaView>
   );

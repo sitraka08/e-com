@@ -5,12 +5,12 @@ import {
   Text,
   View,
   ActivityIndicator,
-  TouchableOpacity,
   ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import TopNavigation from "@/components/top-navigation";
+import { Button } from "@/components/button";
 
 export default function SellerProfile() {
   const router = useRouter();
@@ -111,13 +111,12 @@ export default function SellerProfile() {
           </View>
         </View>
 
-        <TouchableOpacity
+        <Button
+          label="Déconnexion"
+          variant="destructive"
+          iconLeft={<LogOut size={20} color="#EF4444" />}
           onPress={handleLogout}
-          className="bg-red-50 rounded-xl p-4 flex-row items-center justify-center gap-2"
-        >
-          <LogOut size={20} color="#DC2626" />
-          <Text className="text-red-600 font-fsemibold">Déconnexion</Text>
-        </TouchableOpacity>
+        />
       </ScrollView>
     </SafeAreaView>
   );

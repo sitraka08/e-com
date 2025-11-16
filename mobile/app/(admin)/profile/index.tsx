@@ -4,7 +4,6 @@ import {
   Text,
   ScrollView,
   SafeAreaView,
-  TouchableOpacity,
   Alert,
 } from "react-native";
 import { useForm } from "react-hook-form";
@@ -15,7 +14,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { useUserMutations } from "@/hooks/use-users";
 import { UpdateUserDTO, UpdateUserSchema } from "@/types";
 import Input from "@/components/input";
-import Button from "@/components/button/button";
+import { Button } from "@/components/button";
 import TopNavigation from "@/components/top-navigation";
 import AvatarPicker from "@/components/admin/avatar-picker";
 
@@ -221,15 +220,12 @@ export default function AdminProfilePage() {
               textClassName="!text-white"
             />
 
-            <TouchableOpacity
+            <Button
+              label="Se déconnecter"
+              variant="destructive"
+              iconLeft={<LogOut size={20} color="#EF4444" />}
               onPress={handleLogout}
-              className="flex-row items-center justify-center py-4 px-4 rounded-xl border-2 border-red-500 bg-red-50"
-            >
-              <LogOut size={20} color="#EF4444" />
-              <Text className="ml-2 text-base font-fbold text-red-500">
-                Se déconnecter
-              </Text>
-            </TouchableOpacity>
+            />
           </View>
         </View>
       </ScrollView>

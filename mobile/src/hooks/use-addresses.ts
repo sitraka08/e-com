@@ -1,11 +1,19 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addressService } from "@/services/address.services";
-import { AddressDTO } from "@/types";
+import { AddressDTO, CreateAddressDTO, ApiResponse } from "@/types";
+import { useSimpleQuery } from "@/utils/tanstaq";
 
 export const useAddresses = () => {
-  return useQuery({
+  return useSimpleQuery({
     queryKey: ["addresses"],
     queryFn: addressService.getAll,
+  });
+};
+
+export const useDefaultAddress = () => {
+  return useSimpleQuery({
+    queryKey: ["addresses", "default"],
+    queryFn: addressService.getDefault,
   });
 };
 
@@ -13,10 +21,21 @@ export const useAddressMutations = () => {
   const queryClient = useQueryClient();
 
   const createAddress = useMutation({
-    mutationFn: (data: Omit<AddressDTO, "id" | "userId" | "createdAt" | "updatedAt" | "isDefault">) =>
+    mutationFn: (data: CreateAddressDTO) =>
       addressService.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["addresses"] });
+    onSuccess: (response) => {
+      queryClient.setQueryData(
+        ["addresses"],
+        (oldData?: ApiResponse<AddressDTO[]>) => ({
+          ...oldData,
+          success: true,
+          data: [...(oldData?.data || []), response.data],
+        })
+      );
+
+      if (response.data?.isDefault) {
+        queryClient.setQueryData(["addresses", "default"], response);
+      }
     },
   });
 
@@ -25,6 +44,7 @@ export const useAddressMutations = () => {
       addressService.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["addresses"] });
+      queryClient.invalidateQueries({ queryKey: ["addresses", "default"] });
     },
   });
 
@@ -32,6 +52,7 @@ export const useAddressMutations = () => {
     mutationFn: (id: number) => addressService.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["addresses"] });
+      queryClient.invalidateQueries({ queryKey: ["addresses", "default"] });
     },
   });
 
@@ -39,6 +60,7 @@ export const useAddressMutations = () => {
     mutationFn: (id: number) => addressService.setDefault(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["addresses"] });
+      queryClient.invalidateQueries({ queryKey: ["addresses", "default"] });
     },
   });
 

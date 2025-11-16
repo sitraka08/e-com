@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, TextInput } from "react-native";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { CategoryDTO } from "@/types";
 import { useCategoryMutations } from "@/hooks/use-categories";
 import { COLORS } from "@/constants/colors";
+import { Button } from "../../button";
 
 interface CategoryFormSheetProps {
   isOpen: boolean;
@@ -161,27 +162,21 @@ export default function CategoryFormSheet({
         </View>
 
         <View className="flex-row gap-3">
-          <TouchableOpacity
+          <Button
+            label="Annuler"
             onPress={onClose}
-            className="flex-1 bg-gray-100 rounded-lg p-4"
+            variant="ghost"
             disabled={isLoading}
-          >
-            <Text className="text-gray-700 font-fbold text-center">Annuler</Text>
-          </TouchableOpacity>
+            className="flex-1"
+          />
 
-          <TouchableOpacity
+          <Button
+            label={isEditing ? "Mettre à jour" : "Créer"}
             onPress={handleSubmit}
-            className="flex-1 bg-primary rounded-lg p-4"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text className="text-white font-fbold text-center">
-                {isEditing ? "Mettre à jour" : "Créer"}
-              </Text>
-            )}
-          </TouchableOpacity>
+            variant="primary"
+            loading={isLoading}
+            className="flex-1"
+          />
         </View>
       </BottomSheetScrollView>
     </BottomSheet>

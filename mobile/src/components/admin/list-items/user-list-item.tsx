@@ -1,7 +1,8 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text } from "react-native";
 import { UserDTO } from "@/types";
 import { Pencil, MoreVertical } from "lucide-react-native";
+import { Button } from "../../button";
 
 interface UserListItemProps {
   user: UserDTO;
@@ -96,24 +97,24 @@ export default function UserListItem({
       </View>
 
       <View className="flex-row mt-3 gap-2">
-        <TouchableOpacity
+        <Button
+          label="Modifier"
+          variant="action"
+          actionColor="gray"
+          size="sm"
+          iconLeft={<Pencil size={16} color="#6B7280" />}
           onPress={onEdit}
-          className="flex-1 bg-gray-50 rounded-lg p-3 flex-row items-center justify-center"
-        >
-          <Pencil size={16} color="#6B7280" />
-          <Text className="text-gray-700 font-fmedium text-sm ml-1">
-            Modifier
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
+          className="flex-1 p-3"
+        />
+        <Button
+          label="Actions"
+          variant="action"
+          actionColor="blue"
+          size="sm"
+          iconLeft={<MoreVertical size={16} color="#3B82F6" />}
           onPress={onActions}
-          className="flex-1 bg-blue-50 rounded-lg p-3 flex-row items-center justify-center"
-        >
-          <MoreVertical size={16} color="#3B82F6" />
-          <Text className="text-blue-600 font-fmedium text-sm ml-1">
-            Actions
-          </Text>
-        </TouchableOpacity>
+          className="flex-1 p-3"
+        />
       </View>
     </View>
   );

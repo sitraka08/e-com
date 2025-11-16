@@ -58,17 +58,20 @@ export default function Profil() {
         )}
         <Button
           label="Se connecter"
-          className="!bg-white  w-full h-14 mt-12"
-          textClassName="!text-primary"
+          variant="secondary"
+          fullWidth
+          className="h-14 mt-12"
           onPress={form.handleSubmit(submitAction)}
           loading={login.isPending}
         />
 
         <Button
-          onPress={() => router.push("/(auth)/register")}
           label="Créer un compte"
-          className="border border-white  w-full h-14"
+          variant="outline"
+          fullWidth
+          className="h-14 border-white"
           textClassName="!text-white"
+          onPress={() => router.push("/(auth)/register")}
         />
         <Text
           className="font-fmedium text-sm underline text-white"

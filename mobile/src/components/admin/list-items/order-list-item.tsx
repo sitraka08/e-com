@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 import { OrderDTO } from '@/types';
 import { Eye } from 'lucide-react-native';
+import { Button } from '../../button';
 
 interface OrderListItemProps {
   order: OrderDTO;
@@ -99,13 +100,15 @@ export default function OrderListItem({ order, onViewDetails }: OrderListItemPro
         </View>
       </View>
 
-      <TouchableOpacity
+      <Button
+        label="Voir les détails"
+        variant="action"
+        actionColor="blue"
+        size="sm"
+        iconLeft={<Eye size={16} color="#3B82F6" />}
         onPress={onViewDetails}
-        className="mt-3 bg-blue-50 rounded-lg p-3 flex-row items-center justify-center"
-      >
-        <Eye size={16} color="#3B82F6" />
-        <Text className="text-blue-600 font-fmedium text-sm ml-1">Voir les détails</Text>
-      </TouchableOpacity>
+        className="mt-3 p-3"
+      />
     </View>
   );
 }

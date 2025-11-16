@@ -92,14 +92,17 @@ export default function Register() {
 
           <Button
             label="Créer un compte"
-            className="!bg-white  w-full h-14 mt-5"
-            textClassName="!text-primary"
+            variant="secondary"
+            fullWidth
+            className="h-14 mt-5"
             onPress={form.handleSubmit(submitAction)}
             loading={register.isPending}
           />
           <Button
             label="Se connecter"
-            className="border border-white  w-full h-14"
+            variant="outline"
+            fullWidth
+            className="h-14 border-white"
             textClassName="!text-white"
             onPress={() => router.push("/login")}
           />

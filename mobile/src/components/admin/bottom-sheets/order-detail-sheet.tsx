@@ -40,7 +40,7 @@ export default function OrderDetailSheet({
   return (
     <BottomSheet
       ref={bottomSheetRef}
-      snapPoints={['90%']}
+      snapPoints={['70%']}
       enablePanDownToClose
       onClose={onClose}
       index={-1}
