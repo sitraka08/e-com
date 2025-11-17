@@ -204,7 +204,7 @@ export default function Payement() {
         <ScrollView
           className="h-full"
           contentContainerStyle={{
-            paddingBottom: 350,
+            paddingBottom: 600,
           }}
           showsVerticalScrollIndicator={false}
         >

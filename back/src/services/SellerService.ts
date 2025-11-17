@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { ISellerRepository, ISellerRequestRepository, IUserRepository } from '../repositories';
+import { ISellerRepository, ISellerRequestRepository, IOrderRepository } from '../repositories';
 import {
   SellerDTO,
   SellerWithUserDTO,
@@ -13,13 +13,19 @@ import {
   UpdateCommissionRateDTO,
   UserRole,
   SellerRequestStatus,
+  OrderFilters,
+  PaginationParams,
+  PaginatedResponse,
+  Order,
+  UpdateOrderStatusDTO,
+  OrderStatus,
 } from '../types';
 
 export class SellerService {
   constructor(
     private sellerRepository: ISellerRepository,
     private sellerRequestRepository: ISellerRequestRepository,
-    private userRepository: IUserRepository,
+    private orderRepository: IOrderRepository,
     private prisma: PrismaClient
   ) {}
 
@@ -68,6 +74,37 @@ export class SellerService {
     return this.mapRequestToDTO(latestRequest);
   }
 
+  async approveSeller(sellerId: number, data?: UpdateCommissionRateDTO): Promise<SellerDTO> {
+    const seller = await this.sellerRepository.findById(sellerId);
+    if (!seller) {
+      throw new Error('Seller not found');
+    }
+
+    if (seller.isApproved) {
+      throw new Error('Seller is already approved');
+    }
+
+    return await this.prisma.$transaction(async (tx) => {
+      const updateData: any = { isApproved: true };
+
+      if (data?.commissionRate) {
+        updateData.commissionRate = data.commissionRate;
+      }
+
+      const updatedSeller = await tx.seller.update({
+        where: { id: sellerId },
+        data: updateData,
+      });
+
+      await tx.user.update({
+        where: { id: seller.userId },
+        data: { status: 'ACTIVE' }
+      });
+
+      return this.mapToDTO(updatedSeller) as SellerDTO;
+    });
+  }
+
   async approveSellerRequest(requestId: number, adminId: number, data?: ApproveSellerRequestDTO): Promise<SellerDTO> {
     const request = await this.sellerRequestRepository.findById(requestId);
     if (!request) {
@@ -78,31 +115,66 @@ export class SellerService {
       throw new Error('Request has already been processed');
     }
 
-    // Check if user already has seller account
     const existingSeller = await this.sellerRepository.findByUserId(request.userId);
     if (existingSeller) {
       throw new Error('User already has a seller account');
     }
 
-    // Update request status
-    await this.sellerRequestRepository.updateStatus(requestId, 'APPROVED', adminId);
+    return await this.prisma.$transaction(async (tx) => {
+      await tx.sellerRequest.update({
+        where: { id: requestId },
+        data: {
+          status: 'APPROVED',
+          reviewedBy: adminId,
+          reviewedAt: new Date(),
+        },
+      });
 
-    // Create seller account
-    const seller = await this.sellerRepository.create(
-      request.userId,
-      request.storeName,
-      request.storeDescription
-    );
+      const seller = await tx.seller.create({
+        data: {
+          userId: request.userId,
+          storeName: request.storeName,
+          storeDescription: request.storeDescription,
+          commissionRate: data?.commissionRate || 0.10,
+          isApproved: false,
+        },
+      });
 
-    // Update commission rate if provided
-    if (data?.commissionRate) {
-      await this.sellerRepository.updateCommissionRate(seller.id, { commissionRate: data.commissionRate });
+      await tx.user.update({
+        where: { id: request.userId },
+        data: {
+          role: UserRole.SELLER,
+          status: 'ACTIVE'
+        },
+      });
+
+      return this.mapToDTO(seller) as SellerDTO;
+    });
+  }
+
+  async rejectSeller(sellerId: number, _reason?: string): Promise<void> {
+    const seller = await this.sellerRepository.findById(sellerId);
+    if (!seller) {
+      throw new Error('Seller not found');
     }
 
-    // Update user role to SELLER
-    await this.userRepository.update(request.userId, { role: UserRole.SELLER });
+    if (seller.isApproved) {
+      throw new Error('Cannot reject an approved seller');
+    }
 
-    return this.mapToDTO(seller) as SellerDTO;
+    await this.prisma.$transaction(async (tx) => {
+      await tx.user.update({
+        where: { id: seller.userId },
+        data: {
+          role: UserRole.CLIENT,
+          status: 'ACTIVE'
+        },
+      });
+
+      await tx.seller.delete({
+        where: { id: sellerId },
+      });
+    });
   }
 
   async rejectSellerRequest(requestId: number, adminId: number, data: RejectSellerRequestDTO): Promise<SellerRequestDTO> {
@@ -264,6 +336,68 @@ export class SellerService {
         totalPages: Math.ceil(total / limit),
       },
     };
+  }
+
+  async getMyOrders(userId: number, filters?: OrderFilters, pagination?: PaginationParams): Promise<PaginatedResponse<Order>> {
+    const seller = await this.sellerRepository.findByUserId(userId);
+    if (!seller) {
+      throw new Error('Seller account not found');
+    }
+
+    return this.orderRepository.findBySellerId(seller.id, filters, pagination);
+  }
+
+  async getOrderById(userId: number, orderId: number): Promise<Order> {
+    const seller = await this.sellerRepository.findByUserId(userId);
+    if (!seller) {
+      throw new Error('Seller account not found');
+    }
+
+    const order = await this.orderRepository.findById(orderId);
+    if (!order) {
+      throw new Error('Order not found');
+    }
+
+    // Verify seller has items in this order
+    const hasSellerItems = (order as any).items?.some((item: any) => item.sellerId === seller.id);
+    if (!hasSellerItems) {
+      throw new Error('You do not have permission to view this order');
+    }
+
+    return order;
+  }
+
+  async updateOrderStatus(userId: number, orderId: number, data: UpdateOrderStatusDTO): Promise<Order> {
+    // 1. Get seller from userId
+    const seller = await this.sellerRepository.findByUserId(userId);
+    if (!seller) {
+      throw new Error('Seller account not found');
+    }
+
+    // 2. Get order and verify seller has items in it
+    const order = await this.orderRepository.findById(orderId);
+    if (!order) {
+      throw new Error('Order not found');
+    }
+
+    const hasSellerItems = (order as any).items?.some((item: any) => item.sellerId === seller.id);
+    if (!hasSellerItems) {
+      throw new Error('You do not have permission to update this order');
+    }
+
+    // 3. Validate that sellers can only set certain statuses
+    const allowedStatuses: OrderStatus[] = ['CONFIRMED', 'PROCESSING', 'SHIPPED'];
+    if (!allowedStatuses.includes(data.status as OrderStatus)) {
+      throw new Error(`Sellers cannot set order status to ${data.status}`);
+    }
+
+    // 4. Validate status flow - cannot update delivered or cancelled orders
+    if (order.status === 'DELIVERED' || order.status === 'CANCELLED') {
+      throw new Error('Cannot update status of delivered or cancelled orders');
+    }
+
+    // 5. Update order status
+    return await this.orderRepository.update(orderId, data);
   }
 
   // Helper methods

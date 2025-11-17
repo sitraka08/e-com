@@ -9,6 +9,7 @@ import {
   RejectSellerRequestDTO,
   UpdateCommissionRateDTO,
   SellerRequestStatus,
+  UpdateOrderStatusDTO,
 } from '../types';
 
 export class SellerController {
@@ -160,6 +161,89 @@ export class SellerController {
 
       const result = await this.sellerService.getSellerProducts(userId, page, limit);
       res.status(200).json({ success: true, data: result } as ApiResponse);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getPendingSellers = async (_req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const result = await this.sellerService.getAllSellers({ isApproved: false });
+      res.status(200).json({ success: true, data: result } as ApiResponse);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  approveSeller = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const sellerId = parseInt(req.params.id);
+      const data: UpdateCommissionRateDTO | undefined = req.body;
+
+      const result = await this.sellerService.approveSeller(sellerId, data);
+      res.status(200).json({ success: true, data: result, message: 'Seller approved successfully' } as ApiResponse);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  rejectSeller = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const sellerId = parseInt(req.params.id);
+      const reason = req.body.reason;
+
+      await this.sellerService.rejectSeller(sellerId, reason);
+      res.status(200).json({ success: true, message: 'Seller rejected successfully' } as ApiResponse);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getMyOrders = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = req.user!.id;
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const status = req.query.status as string | undefined;
+
+      const filters = status ? { status: status as any } : undefined;
+      const pagination = { page, limit };
+
+      const result = await this.sellerService.getMyOrders(userId, filters, pagination);
+      res.status(200).json({ success: true, data: result } as ApiResponse);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getOrderById = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      console.log('🔍 getOrderById called with params:', req.params);
+      console.log('🔍 User ID:', req.user?.id);
+      const userId = req.user!.id;
+      const orderId = parseInt(req.params.id);
+      console.log('🔍 Order ID parsed:', orderId);
+
+      const result = await this.sellerService.getOrderById(userId, orderId);
+      res.status(200).json({ success: true, data: result } as ApiResponse);
+    } catch (error) {
+      console.error('❌ Error in getOrderById:', error);
+      next(error);
+    }
+  };
+
+  updateOrderStatus = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = req.user!.id;
+      const orderId = parseInt(req.params.id);
+      const data: UpdateOrderStatusDTO = req.body;
+
+      const result = await this.sellerService.updateOrderStatus(userId, orderId, data);
+      res.status(200).json({
+        success: true,
+        data: result,
+        message: 'Order status updated successfully'
+      } as ApiResponse);
     } catch (error) {
       next(error);
     }

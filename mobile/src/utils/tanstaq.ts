@@ -118,7 +118,7 @@ export const useCustomMutation = <TData, TResponse = void>(
         ToastAndroid.LONG,
         ToastAndroid.CENTER
       );
-      console.error("Mutation Error:", res);
+      // console.error("Mutation Error:", res);
       return res;
     },
   });

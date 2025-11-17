@@ -1,21 +1,24 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { OrderDTO } from '@/types';
-import { Eye } from 'lucide-react-native';
+import { Eye, Edit } from 'lucide-react-native';
 import { Button } from '../../button';
 
 interface OrderListItemProps {
   order: OrderDTO;
   onViewDetails: () => void;
+  onUpdateStatus?: () => void;
 }
 
-export default function OrderListItem({ order, onViewDetails }: OrderListItemProps) {
+export default function OrderListItem({ order, onViewDetails, onUpdateStatus }: OrderListItemProps) {
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case 'PENDING':
         return 'bg-orange-100';
       case 'CONFIRMED':
         return 'bg-blue-100';
+      case 'PROCESSING':
+        return 'bg-indigo-100';
       case 'SHIPPED':
         return 'bg-purple-100';
       case 'DELIVERED':
@@ -33,6 +36,8 @@ export default function OrderListItem({ order, onViewDetails }: OrderListItemPro
         return 'text-orange-700';
       case 'CONFIRMED':
         return 'text-blue-700';
+      case 'PROCESSING':
+        return 'text-indigo-700';
       case 'SHIPPED':
         return 'text-purple-700';
       case 'DELIVERED':
@@ -50,6 +55,8 @@ export default function OrderListItem({ order, onViewDetails }: OrderListItemPro
         return 'En attente';
       case 'CONFIRMED':
         return 'Confirmée';
+      case 'PROCESSING':
+        return 'En traitement';
       case 'SHIPPED':
         return 'Expédiée';
       case 'DELIVERED':
@@ -100,15 +107,28 @@ export default function OrderListItem({ order, onViewDetails }: OrderListItemPro
         </View>
       </View>
 
-      <Button
-        label="Voir les détails"
-        variant="action"
-        actionColor="blue"
-        size="sm"
-        iconLeft={<Eye size={16} color="#3B82F6" />}
-        onPress={onViewDetails}
-        className="mt-3 p-3"
-      />
+      <View className="flex-row gap-2 mt-3">
+        <Button
+          label="Voir les détails"
+          variant="action"
+          actionColor="blue"
+          size="sm"
+          iconLeft={<Eye size={16} color="#3B82F6" />}
+          onPress={onViewDetails}
+          className="flex-1 p-3"
+        />
+        {onUpdateStatus && (
+          <Button
+            label="Statut"
+            variant="action"
+            actionColor="gray"
+            size="sm"
+            iconLeft={<Edit size={16} color="#6B7280" />}
+            onPress={onUpdateStatus}
+            className="flex-1 p-3"
+          />
+        )}
+      </View>
     </View>
   );
 }

@@ -11,7 +11,7 @@ export class SellerRepository implements ISellerRepository {
         userId,
         storeName,
         storeDescription,
-        isApproved: true, // Auto-approved after admin approval of request
+        isApproved: false,
       },
     });
   }

@@ -1,10 +1,10 @@
 import * as SecureStore from 'expo-secure-store';
-import { AuthTokens, UserDTO, SellerRequestInfo } from '@/types';
+import { AuthTokens, UserDTO, SellerDTO } from '@/types';
 
 const KEYS = {
   ACCESS_TOKEN: 'access_token',
   USER: 'user',
-  SELLER_REQUEST: 'seller_request',
+  SELLER: 'seller',
 };
 
 export const secureStorage = {
@@ -77,33 +77,33 @@ export const secureStorage = {
     }
   },
 
-  async saveSellerRequest(sellerRequest: SellerRequestInfo): Promise<void> {
+  async saveSeller(seller: SellerDTO): Promise<void> {
     try {
-      await SecureStore.setItemAsync(KEYS.SELLER_REQUEST, JSON.stringify(sellerRequest));
+      await SecureStore.setItemAsync(KEYS.SELLER, JSON.stringify(seller));
     } catch (error) {
-      console.error('Error saving seller request:', error);
+      console.error('Error saving seller:', error);
       throw error;
     }
   },
 
-  async getSellerRequest(): Promise<SellerRequestInfo | null> {
+  async getSeller(): Promise<SellerDTO | null> {
     try {
-      const sellerRequestString = await SecureStore.getItemAsync(KEYS.SELLER_REQUEST);
-      if (!sellerRequestString) {
+      const sellerString = await SecureStore.getItemAsync(KEYS.SELLER);
+      if (!sellerString) {
         return null;
       }
-      return JSON.parse(sellerRequestString) as SellerRequestInfo;
+      return JSON.parse(sellerString) as SellerDTO;
     } catch (error) {
-      console.error('Error getting seller request:', error);
+      console.error('Error getting seller:', error);
       return null;
     }
   },
 
-  async removeSellerRequest(): Promise<void> {
+  async removeSeller(): Promise<void> {
     try {
-      await SecureStore.deleteItemAsync(KEYS.SELLER_REQUEST);
+      await SecureStore.deleteItemAsync(KEYS.SELLER);
     } catch (error) {
-      console.error('Error removing seller request:', error);
+      console.error('Error removing seller:', error);
       throw error;
     }
   },
@@ -111,6 +111,6 @@ export const secureStorage = {
   async clearAll(): Promise<void> {
     await this.clearTokens();
     await this.clearUser();
-    await this.removeSellerRequest();
+    await this.removeSeller();
   },
 };

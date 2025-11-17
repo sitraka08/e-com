@@ -34,7 +34,7 @@ export const CreateOrderSchema = z.object({
 export type CreateOrderDTO = z.infer<typeof CreateOrderSchema>;
 
 export const UpdateOrderStatusSchema = z.object({
-  status: z.enum(['PENDING', 'CONFIRMED', 'SHIPPED', 'DELIVERED', 'CANCELLED'], {
+  status: z.enum(['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'], {
     message: 'Statut de commande invalide',
   }),
 });

@@ -9,8 +9,8 @@ import {
 import React, { useState } from "react";
 import TopNavigation from "@/components/top-navigation";
 import DividerDashed from "@/components/divider-dashed";
-import MinusButton from "@/components/button/MinusButton";
-import PlusButton from "@/components/button/PlusButton";
+import MinusButton from "@/components/button/minus-button";
+import PlusButton from "@/components/button/plus-button";
 import Button from "@/components/button/button";
 import { useLocalSearchParams } from "expo-router";
 import { useProducts } from "@/hooks/use-products";

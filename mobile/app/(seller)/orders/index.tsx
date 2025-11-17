@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,36 +7,37 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { OrderDTO } from "@/types";
+import { router } from "expo-router";
+import { OrderDTO, UpdateOrderStatusDTO } from "@/types";
 import OrderListItem from "@/components/admin/list-items/order-list-item";
-import OrderDetailSheet from "@/components/admin/bottom-sheets/order-detail-sheet";
 import OrderStatusSheet from "@/components/admin/bottom-sheets/order-status-sheet";
 import EmptyState from "@/components/admin/empty-state";
-import { useOrders } from "@/hooks/use-orders";
-import { useAuthStore } from "@/stores/useAuthStore";
+import { useSellerOrders, useSellerMutations } from "@/hooks/useSeller";
 import TopNavigation from "@/components/top-navigation";
 
 export default function SellerOrders() {
   const [selectedOrder, setSelectedOrder] = useState<OrderDTO | null>(null);
-  const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isStatusOpen, setIsStatusOpen] = useState(false);
 
-  const { user } = useAuthStore();
-  const { data: ordersResponse, isLoading, refetch } = useOrders();
+  const { data: ordersResponse, isLoading, refetch } = useSellerOrders();
+  const { updateOrderStatus } = useSellerMutations();
 
-  const sellerOrders = useMemo(() => {
-    if (!ordersResponse?.data?.items || !user) return [];
-
-    return ordersResponse.data.items.filter((order) => {
-      return order.items.some((item) => {
-        return item.product.sellerId !== null;
-      });
-    });
-  }, [ordersResponse?.data?.items, user]);
+  const sellerOrders = ordersResponse?.data?.items || [];
 
   const handleViewDetails = (order: OrderDTO) => {
+    router.push(`/(seller)/orders/${order.id}`);
+  };
+
+  const handleUpdateStatus = (order: OrderDTO) => {
     setSelectedOrder(order);
-    setIsDetailOpen(true);
+    setIsStatusOpen(true);
+  };
+
+  const handleStatusUpdate = async (
+    orderId: number,
+    data: UpdateOrderStatusDTO
+  ) => {
+    await updateOrderStatus.mutateAsync({ orderId, data });
   };
 
   if (isLoading) {
@@ -75,23 +76,15 @@ export default function SellerOrders() {
             <OrderListItem
               order={item}
               onViewDetails={() => handleViewDetails(item)}
+              onUpdateStatus={() => handleUpdateStatus(item)}
             />
           )}
-          contentContainerStyle={{ padding: 20, paddingBottom: 80 }}
+          contentContainerStyle={{ padding: 20, paddingBottom: 200 }}
           refreshControl={
             <RefreshControl refreshing={isLoading} onRefresh={refetch} />
           }
         />
       )}
-
-      <OrderDetailSheet
-        isOpen={isDetailOpen}
-        onClose={() => {
-          setIsDetailOpen(false);
-          setSelectedOrder(null);
-        }}
-        order={selectedOrder || undefined}
-      />
 
       <OrderStatusSheet
         isOpen={isStatusOpen}
@@ -100,6 +93,8 @@ export default function SellerOrders() {
           setSelectedOrder(null);
         }}
         order={selectedOrder || undefined}
+        role="SELLER"
+        onUpdate={handleStatusUpdate}
       />
     </SafeAreaView>
   );

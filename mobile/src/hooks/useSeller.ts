@@ -9,7 +9,9 @@ import {
   ProductDTO,
   PaginatedResponse,
   SellerDTO,
+  OrderDTO,
 } from "@/types/api.types";
+import { UpdateOrderStatusDTO } from "@/types/order.types";
 import { makeMutation, useSimpleQuery } from "@/utils/tanstaq";
 
 export const useSellerProfile = () => {
@@ -40,6 +42,20 @@ export const useSellerRequest = () => {
   });
 };
 
+export const useSellerOrders = (params?: { page?: number; limit?: number; status?: string }) => {
+  return useSimpleQuery<PaginatedResponse<OrderDTO>>({
+    queryKey: ["seller", "orders", JSON.stringify(params || {})],
+    queryFn: () => sellerServices.getSellerOrders(params),
+  });
+};
+
+export const useSellerOrder = (orderId: number) => {
+  return useSimpleQuery<OrderDTO>({
+    queryKey: ["seller", "order", orderId],
+    queryFn: () => sellerServices.getSellerOrder(orderId),
+  });
+};
+
 export const useSellerMutations = () => {
   const queryClient = useQueryClient();
 
@@ -59,8 +75,21 @@ export const useSellerMutations = () => {
     },
   });
 
+  const updateOrderStatus = makeMutation<
+    { orderId: number; data: UpdateOrderStatusDTO },
+    OrderDTO
+  >({
+    queryKey: ["update-seller-order-status"],
+    mutationFn: ({ orderId, data }) => sellerServices.updateOrderStatus(orderId, data),
+    onSuccessCallback: () => {
+      queryClient.invalidateQueries({ queryKey: ["seller", "orders"] });
+      queryClient.invalidateQueries({ queryKey: ["seller", "stats"] });
+    },
+  });
+
   return {
     submitRequest,
     updateProfile,
+    updateOrderStatus,
   };
 };

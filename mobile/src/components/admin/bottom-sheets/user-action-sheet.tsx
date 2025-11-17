@@ -98,24 +98,19 @@ export default function UserActionSheet({
         enablePanDownToClose
         onClose={onClose}
         index={-1}
-        backgroundStyle={{ backgroundColor: "#fff" }}
+        backgroundStyle={{
+          backgroundColor: "#edf4fc",
+          borderWidth: 1,
+          borderColor: "#0174D8",
+        }}
       >
-        <BottomSheetView className="flex-1 px-5">
-          <Text className="text-2xl font-fbold text-gray-900 mb-5">
+        <BottomSheetView
+          className="flex-1 px-5 gap-2"
+          style={{ paddingBottom: 100 }}
+        >
+          <Text className="text-xl font-fbold text-primary mb-5">
             Actions utilisateur
           </Text>
-
-          {user?.status === "PENDING_VALIDATION" && (
-            <TouchableOpacity
-              onPress={() => setConfirmAction("validate")}
-              className="flex-row items-center p-4 bg-green-50 rounded-xl mb-3"
-            >
-              <UserCheck size={24} color="#10B981" />
-              <Text className="text-green-700 font-fmedium text-base ml-3">
-                Valider l'utilisateur
-              </Text>
-            </TouchableOpacity>
-          )}
 
           {user?.status === "PENDING_VALIDATION" && (
             <TouchableOpacity

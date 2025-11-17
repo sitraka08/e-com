@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Text, TextInput } from "react-native";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import Button from "@/components/button/button";
 import { CategoryDTO } from "@/types";
 import { useCategoryMutations } from "@/hooks/use-categories";
 import { COLORS } from "@/constants/colors";
-import { Button } from "../../button";
 
 interface CategoryFormSheetProps {
   isOpen: boolean;
@@ -18,14 +18,12 @@ export default function CategoryFormSheet({
   category,
 }: CategoryFormSheetProps) {
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const { createCategory, updateCategory } = useCategoryMutations();
+  const isEditMode = !!category;
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const { createCategory, updateCategory } = useCategoryMutations();
-  const isEditing = !!category;
-  const isLoading = createCategory.isPending || updateCategory.isPending;
 
   useEffect(() => {
     if (isOpen) {
@@ -60,7 +58,7 @@ export default function CategoryFormSheet({
 
   const handleNameChange = (value: string) => {
     setName(value);
-    if (!isEditing || !slug) {
+    if (!isEditMode || !slug) {
       setSlug(generateSlug(value));
     }
   };
@@ -71,7 +69,8 @@ export default function CategoryFormSheet({
     if (!name.trim()) newErrors.name = "Le nom est requis";
     if (!slug.trim()) newErrors.slug = "Le slug est requis";
     if (slug && !/^[a-z0-9-]+$/.test(slug)) {
-      newErrors.slug = "Le slug doit contenir uniquement des lettres minuscules, chiffres et tirets";
+      newErrors.slug =
+        "Le slug doit contenir uniquement des lettres minuscules, chiffres et tirets";
     }
 
     setErrors(newErrors);
@@ -88,7 +87,7 @@ export default function CategoryFormSheet({
         description: description.trim() || undefined,
       };
 
-      if (isEditing && category) {
+      if (isEditMode && category) {
         await updateCategory.mutateAsync({ id: category.id, data });
       } else {
         await createCategory.mutateAsync(data);
@@ -115,15 +114,17 @@ export default function CategoryFormSheet({
       }}
     >
       <BottomSheetScrollView
-        className="flex-1 px-5"
-        contentContainerStyle={{ paddingBottom: 40 }}
+        className="flex-1 px-5 gap-2"
+        contentContainerStyle={{ paddingBottom: 100 }}
       >
         <Text className="text-xl font-fbold text-primary mb-5">
-          {isEditing ? "Modifier la catégorie" : "Nouvelle catégorie"}
+          {isEditMode ? "Modifier la catégorie" : "Nouvelle catégorie"}
         </Text>
 
         <View className="mb-4">
-          <Text className="text-sm font-fmedium text-gray-700 mb-2">Nom *</Text>
+          <Text className="text-sm font-fmedium text-gray-700 mb-2">
+            Nom *
+          </Text>
           <TextInput
             value={name}
             onChangeText={handleNameChange}
@@ -136,7 +137,9 @@ export default function CategoryFormSheet({
         </View>
 
         <View className="mb-4">
-          <Text className="text-sm font-fmedium text-gray-700 mb-2">Slug *</Text>
+          <Text className="text-sm font-fmedium text-gray-700 mb-2">
+            Slug *
+          </Text>
           <TextInput
             value={slug}
             onChangeText={setSlug}
@@ -149,7 +152,9 @@ export default function CategoryFormSheet({
         </View>
 
         <View className="mb-6">
-          <Text className="text-sm font-fmedium text-gray-700 mb-2">Description</Text>
+          <Text className="text-sm font-fmedium text-gray-700 mb-2">
+            Description
+          </Text>
           <TextInput
             value={description}
             onChangeText={setDescription}
@@ -161,21 +166,13 @@ export default function CategoryFormSheet({
           />
         </View>
 
-        <View className="flex-row gap-3">
+        <View className="mb-4">
           <Button
-            label="Annuler"
-            onPress={onClose}
-            variant="ghost"
-            disabled={isLoading}
-            className="flex-1"
-          />
-
-          <Button
-            label={isEditing ? "Mettre à jour" : "Créer"}
+            label={isEditMode ? "Mettre à jour" : "Créer"}
             onPress={handleSubmit}
-            variant="primary"
-            loading={isLoading}
-            className="flex-1"
+            loading={createCategory.isPending || updateCategory.isPending}
+            className="!bg-primary w-full h-14"
+            textClassName="!text-white"
           />
         </View>
       </BottomSheetScrollView>

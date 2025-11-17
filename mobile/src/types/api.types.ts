@@ -168,7 +168,7 @@ export type SellerRequestInfo = {
 export type AuthResponse = {
   user: UserDTO;
   tokens: AuthTokens;
-  sellerRequest?: SellerRequestInfo;
+  seller?: SellerDTO;
 };
 
 export type OrderStatsDTO = {

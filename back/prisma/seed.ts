@@ -592,16 +592,20 @@ async function main() {
     const orderItems = [];
     let subtotal = 0;
 
+    // Filter products with sellerId
+    const productsWithSeller = createdProducts.filter(p => p.sellerId !== null);
+
     for (let j = 0; j < numItems; j++) {
       const product =
-        createdProducts[Math.floor(Math.random() * createdProducts.length)];
+        productsWithSeller[Math.floor(Math.random() * productsWithSeller.length)];
       const quantity = Math.floor(Math.random() * 3) + 1;
       const price = parseFloat(product.price.toString());
       const itemSubtotal = price * quantity;
       subtotal += itemSubtotal;
 
       orderItems.push({
-        productId: product.id,
+        product: { connect: { id: product.id } },
+        seller: { connect: { id: product.sellerId! } },
         productName: product.name,
         productImage: JSON.parse(product.images)[0],
         quantity,

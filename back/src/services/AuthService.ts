@@ -1,4 +1,4 @@
-import { IUserRepository, IOtpRepository, ISellerRequestRepository } from '../repositories';
+import { IUserRepository, IOtpRepository, ISellerRepository } from '../repositories';
 import { RegisterDTO, LoginDTO, ForgotPasswordDTO, ResetPasswordDTO, AuthResponse, UserDTO } from '../types';
 import { hashPassword, comparePassword, generateToken, generateOTP, getOTPExpiryDate, isOTPExpired, ConflictError, AuthenticationError, NotFoundError, ValidationError } from '../utils';
 import { EmailService } from './EmailService';
@@ -8,7 +8,7 @@ export class AuthService {
     private userRepository: IUserRepository,
     private otpRepository: IOtpRepository,
     private emailService: EmailService,
-    private sellerRequestRepository?: ISellerRequestRepository
+    private sellerRepository?: ISellerRepository
   ) {}
 
   async register(data: RegisterDTO): Promise<AuthResponse> {
@@ -24,16 +24,12 @@ export class AuthService {
       lastName: data.lastName,
       email: data.email,
       password: hashedPassword,
-      role: 'CLIENT',
+      role: data.isSeller ? 'SELLER' : 'CLIENT',
     });
 
-    // If user wants to become a seller, create seller request
-    let sellerRequest;
-    if (data.isSeller && data.storeName && data.storeDescription && this.sellerRequestRepository) {
-      sellerRequest = await this.sellerRequestRepository.create(user.id, {
-        storeName: data.storeName,
-        storeDescription: data.storeDescription,
-      });
+    let seller;
+    if (data.isSeller && data.storeName && data.storeDescription && this.sellerRepository) {
+      seller = await this.sellerRepository.create(user.id, data.storeName, data.storeDescription);
     }
 
     const token = generateToken({
@@ -57,14 +53,17 @@ export class AuthService {
       },
     };
 
-    // Add seller request info if exists
-    if (sellerRequest) {
-      response.sellerRequest = {
-        id: sellerRequest.id,
-        storeName: sellerRequest.storeName,
-        storeDescription: sellerRequest.storeDescription,
-        status: sellerRequest.status,
-        createdAt: sellerRequest.createdAt,
+    if (seller) {
+      response.seller = {
+        id: seller.id,
+        userId: seller.userId,
+        storeName: seller.storeName,
+        storeDescription: seller.storeDescription,
+        storeLogo: seller.storeLogo,
+        commissionRate: seller.commissionRate,
+        isApproved: seller.isApproved,
+        createdAt: seller.createdAt,
+        updatedAt: seller.updatedAt,
       };
     }
 
@@ -109,19 +108,20 @@ export class AuthService {
       },
     };
 
-    // Check if user has a pending or approved seller request
-    if (this.sellerRequestRepository) {
-      const sellerRequests = await this.sellerRequestRepository.findByUserId(user.id);
-      // Get the most recent seller request (they should only have one, but we take the last one just in case)
-      const latestRequest = sellerRequests[sellerRequests.length - 1];
+    if (this.sellerRepository && user.role === 'SELLER') {
+      const seller = await this.sellerRepository.findByUserId(user.id);
 
-      if (latestRequest) {
-        response.sellerRequest = {
-          id: latestRequest.id,
-          storeName: latestRequest.storeName,
-          storeDescription: latestRequest.storeDescription,
-          status: latestRequest.status,
-          createdAt: latestRequest.createdAt,
+      if (seller) {
+        response.seller = {
+          id: seller.id,
+          userId: seller.userId,
+          storeName: seller.storeName,
+          storeDescription: seller.storeDescription,
+          storeLogo: seller.storeLogo,
+          commissionRate: seller.commissionRate,
+          isApproved: seller.isApproved,
+          createdAt: seller.createdAt,
+          updatedAt: seller.updatedAt,
         };
       }
     }

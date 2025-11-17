@@ -74,7 +74,7 @@ export const createApp = (): Application => {
   const savedCartRepository = new SavedCartRepository(prisma);
 
   const emailService = new EmailService();
-  const authService = new AuthService(userRepository, otpRepository, emailService, sellerRequestRepository);
+  const authService = new AuthService(userRepository, otpRepository, emailService, sellerRepository);
   const userService = new UserService(userRepository);
   const categoryService = new CategoryService(categoryRepository);
   const productService = new ProductService(productRepository, categoryRepository, sellerRepository);
@@ -82,7 +82,7 @@ export const createApp = (): Application => {
   const paymentMethodService = new PaymentMethodService(paymentMethodRepository);
   const orderService = new OrderService(orderRepository);
   const paymentService = new PaymentService(paymentRepository, orderRepository);
-  const sellerService = new SellerService(sellerRepository, sellerRequestRepository, userRepository, prisma);
+  const sellerService = new SellerService(sellerRepository, sellerRequestRepository, orderRepository, prisma);
   const favoriteService = new FavoriteService(favoriteRepository, productRepository);
   const savedCartService = new SavedCartService(savedCartRepository);
   const adminService = new AdminService(userRepository, productRepository, orderRepository, sellerRepository, prisma);

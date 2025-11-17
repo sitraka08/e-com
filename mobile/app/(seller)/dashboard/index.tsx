@@ -22,7 +22,6 @@ export default function SellerDashboard() {
   const { data, isLoading, error, refetch } = useSellerStats();
   const stats = data?.data;
 
-  // Données pour le graphique de revenu (simulé sur 7 jours)
   const revenueData = useMemo(() => {
     if (!stats?.totalRevenue) return [];
 

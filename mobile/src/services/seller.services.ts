@@ -9,7 +9,9 @@ import type {
   SellerStatsDTO,
   ProductDTO,
   PaginatedResponse,
+  OrderDTO,
 } from '@/types/api.types';
+import type { UpdateOrderStatusDTO } from '@/types/order.types';
 
 export const sellerServices = {
   async submitSellerRequest(data: CreateSellerRequestDTO): Promise<ApiResponse<SellerRequestDTO>> {
@@ -44,5 +46,20 @@ export const sellerServices = {
     } catch (error) {
       return { success: false, data: null };
     }
+  },
+
+  async getSellerOrders(params?: { page?: number; limit?: number; status?: string }): Promise<ApiResponse<PaginatedResponse<OrderDTO>>> {
+    const response = await apiClient.get('/sellers/me/orders', { params });
+    return response.data;
+  },
+
+  async getSellerOrder(orderId: number): Promise<ApiResponse<OrderDTO>> {
+    const response = await apiClient.get(`/sellers/me/orders/${orderId}`);
+    return response.data;
+  },
+
+  async updateOrderStatus(orderId: number, data: UpdateOrderStatusDTO): Promise<ApiResponse<OrderDTO>> {
+    const response = await apiClient.patch(`/sellers/me/orders/${orderId}/status`, data);
+    return response.data;
   },
 };

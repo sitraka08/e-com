@@ -8,32 +8,25 @@ import {
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useEffect } from "react";
 import { View, Text } from "react-native";
+import PendingApprovalComponent from "@/components/seller/pending-approval-component";
 
 function SellerGuard({ children }: { children: React.ReactNode }) {
-  const { user, sellerRequest, isLoading } = useAuthStore();
+  const { user, seller, isLoading } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
     if (isLoading) return;
 
-    // Si l'utilisateur n'est pas connecté, rediriger vers login
     if (!user) {
       router.replace("/login");
       return;
     }
 
-    // Si l'utilisateur a une demande vendeur en attente, rediriger vers pending-approval
-    if (sellerRequest?.status === "PENDING") {
-      router.replace("/(seller)/pending-approval");
-      return;
-    }
-
-    // Si l'utilisateur n'est pas vendeur, rediriger vers login
     if (user.role !== "SELLER") {
       router.replace("/login");
       return;
     }
-  }, [user, sellerRequest, isLoading, router]);
+  }, [user, isLoading, router]);
 
   if (isLoading) {
     return (
@@ -43,13 +36,12 @@ function SellerGuard({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // Permettre l'accès à pending-approval même si le rôle n'est pas SELLER
-  if (sellerRequest?.status === "PENDING") {
-    return <>{children}</>;
-  }
-
   if (user?.role !== "SELLER") {
     return null;
+  }
+
+  if (seller && !seller.isApproved) {
+    return <PendingApprovalComponent />;
   }
 
   return <>{children}</>;
@@ -64,14 +56,13 @@ export default function SellerLayout() {
             {...props}
             tabs={SELLER_TABS}
             removeInTabs={SELLER_REMOVE_IN_TABS}
-            hiddenTabBarRoutes={[...SELLER_HIDDEN_TABBAR_ROUTES, "pending-approval"]}
+            hiddenTabBarRoutes={SELLER_HIDDEN_TABBAR_ROUTES}
           />
         )}
         screenOptions={{
           headerShown: false,
         }}
       >
-        <Tabs.Screen name="pending-approval" />
         <Tabs.Screen name="dashboard/index" />
         <Tabs.Screen name="products/index" />
         <Tabs.Screen name="orders/index" />

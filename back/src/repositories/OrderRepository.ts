@@ -21,7 +21,8 @@ export class OrderRepository implements IOrderRepository {
         const subtotal = Number(priceAtPurchase) * item.quantity;
 
         return {
-          productId: item.productId,
+          product: { connect: { id: item.productId } },
+          seller: { connect: { id: product.sellerId! } },
           productName: product.name,
           productImage: JSON.parse(product.images)[0] || '',
           quantity: item.quantity,
@@ -256,5 +257,52 @@ export class OrderRepository implements IOrderRepository {
       },
       orderBy: { createdAt: 'desc' },
     });
+  }
+
+  async findBySellerId(sellerId: number, filters?: OrderFilters, pagination?: PaginationParams): Promise<PaginatedResponse<Order>> {
+    const where: any = {
+      items: {
+        some: {
+          sellerId: sellerId,
+        },
+      },
+    };
+
+    if (filters?.status) where.status = filters.status;
+    if (filters?.startDate || filters?.endDate) {
+      where.createdAt = {};
+      if (filters.startDate) where.createdAt.gte = filters.startDate;
+      if (filters.endDate) where.createdAt.lte = filters.endDate;
+    }
+
+    const page = pagination?.page || 1;
+    const limit = pagination?.limit || 10;
+    const skip = (page - 1) * limit;
+
+    const [items, total] = await Promise.all([
+      this.prisma.order.findMany({
+        where,
+        skip,
+        take: limit,
+        include: {
+          items: { include: { product: true } },
+          address: true,
+          payments: { include: { paymentMethod: true } },
+          user: { select: { id: true, firstName: true, lastName: true, email: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.order.count({ where }),
+    ]);
+
+    return {
+      items,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 }

@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import Button from "@/components/button/button";
 import { PaymentMethodDTO, PaymentMethodType } from "@/types";
 import { usePaymentMethodMutations } from "@/hooks/use-payment-methods";
 import { COLORS } from "@/constants/colors";
-import { Button } from "../../button";
 
 interface PaymentMethodFormSheetProps {
   isOpen: boolean;
@@ -147,10 +147,10 @@ export default function PaymentMethodFormSheet({
       }}
     >
       <BottomSheetScrollView
-        className="flex-1 px-5"
-        contentContainerStyle={{ paddingBottom: 40 }}
+        className="flex-1 px-5 gap-2"
+        contentContainerStyle={{ paddingBottom: 100 }}
       >
-        <Text className="text-xl font-fbold text-primary mb-4">
+        <Text className="text-xl font-fbold text-primary mb-5">
           {isEditing ? "Modifier le moyen de paiement" : "Nouveau moyen de paiement"}
         </Text>
 
@@ -257,21 +257,13 @@ export default function PaymentMethodFormSheet({
           </>
         )}
 
-        <View className="flex-row gap-3 mt-2">
-          <Button
-            label="Annuler"
-            onPress={onClose}
-            variant="ghost"
-            disabled={isLoading}
-            className="flex-1"
-          />
-
+        <View className="mb-4">
           <Button
             label={isEditing ? "Mettre à jour" : "Ajouter"}
             onPress={handleSubmit}
-            variant="primary"
             loading={isLoading}
-            className="flex-1"
+            className="!bg-primary w-full h-14"
+            textClassName="!text-white"
           />
         </View>
       </BottomSheetScrollView>

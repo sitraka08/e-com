@@ -49,6 +49,17 @@ export interface AuthResponse {
   };
   tokens: AuthTokens;
   sellerRequest?: SellerRequestInfo;
+  seller?: {
+    id: number;
+    userId: number;
+    storeName: string;
+    storeDescription: string | null;
+    storeLogo: string | null;
+    commissionRate: any;
+    isApproved: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+  };
 }
 
 export interface TokenPayload {

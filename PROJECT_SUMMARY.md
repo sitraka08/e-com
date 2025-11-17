@@ -16,19 +16,25 @@ e-commerce/
 ## 🎯 Fonctionnalités Implémentées
 
 ### Backend ✅
-- **Authentification JWT** avec 3 rôles (Admin, Seller, Buyer)
+- **Authentification JWT** avec 3 rôles (ADMIN, SELLER, CLIENT)
+- **Système d'approbation vendeur** avec workflow complet
 - **CRUD Produits** complet avec gestion par vendeur
 - **Base de données MySQL** avec Prisma ORM
 - **Architecture SOLID** avec injection de dépendances
 - **Middlewares** d'authentification et d'autorisation
+- **Guards de rôles** pour sécuriser les endpoints
 - **Seed data** avec comptes de test
 
 ### Mobile ✅
+- **Authentification complète** (Login, Register, Forgot Password, Reset Password)
+- **Inscription vendeur** avec formulaire de boutique
+- **Écran d'attente d'approbation** pour les vendeurs (pending-approval)
 - **Navigation** avec expo-router (file-based routing)
-- **State management** avec Zustand (cart) et TanStack Query (server)
+- **Guards de navigation** basés sur les rôles
+- **State management** avec Zustand (cart, auth) et TanStack Query (server)
 - **Styling** avec NativeWind (TailwindCSS)
-- **Écrans** : Home, Search, Cart, Orders, Profile
-- **Client API** Axios configuré
+- **Écrans** : Home, Search, Cart, Orders, Profile, Auth (login/register/forgot-password)
+- **Client API** Axios configuré avec intercepteurs JWT
 
 ## 🚀 Démarrage Rapide
 
@@ -61,20 +67,69 @@ npm start
 | Vendeur  | seller@ecommerce.com     | seller123    |
 | Acheteur | buyer@ecommerce.com      | buyer123     |
 
+## 👥 Rôles et Permissions
+
+### ADMIN (Administrateur)
+- ✅ Visualiser, activer, suspendre ou supprimer les comptes utilisateurs
+- ✅ Gérer les demandes de création de comptes vendeurs (approuver/rejeter)
+- ✅ Superviser les activités globales (ventes, paiements, produits)
+- ✅ Créer et gérer les catégories de produits
+
+### SELLER (Vendeur)
+- ✅ Créer, modifier et supprimer ses propres produits
+- ✅ Gérer le profil de sa boutique (nom, description, logo)
+- ✅ Suivre les ventes et l'état des paiements
+- ✅ Organiser les articles par catégories
+- ⚠️ **Nécessite l'approbation de l'admin** pour devenir vendeur
+
+### CLIENT (Acheteur)
+- ✅ Parcourir les produits par catégorie ou recherche
+- ✅ Ajouter des articles au panier et valider les commandes
+- ✅ Gérer les produits favoris et les paniers enregistrés
+- ✅ Choisir un ou plusieurs modes de paiement
+- ✅ Gérer ses adresses de livraison
+- ✅ Consulter l'historique de commandes et paiements
+- ✅ Modifier et sécuriser son profil personnel
+
+### Flux d'Approbation Vendeur
+1. **Inscription**: Utilisateur s'inscrit avec option "Je souhaite devenir vendeur"
+2. **Statut initial**: Créé avec rôle `CLIENT` + `SellerRequest` en statut `PENDING`
+3. **Écran d'attente**: Redirigé vers [pending-approval.tsx](mobile/app/(seller)/pending-approval.tsx)
+4. **Approbation admin**: Admin approuve → Rôle devient `SELLER` + création du compte `Seller`
+5. **Accès vendeur**: Utilisateur peut rafraîchir le statut et accéder au dashboard vendeur
+
 ## 📡 Endpoints API Principaux
 
 ### Authentification
-- `POST /api/auth/register` - Inscription
-- `POST /api/auth/login` - Connexion (retourne JWT)
-- `GET /api/auth/profile` - Profil utilisateur (protégé)
+- `POST /api/auth/register` - Inscription (avec option vendeur: `isSeller`, `storeName`, `storeDescription`)
+- `POST /api/auth/login` - Connexion (retourne JWT + user + sellerRequest si applicable)
+- `POST /api/auth/forgot-password` - Demande de réinitialisation de mot de passe (envoie OTP)
+- `POST /api/auth/reset-password` - Réinitialisation avec OTP
+- `GET /api/auth/profile` - Profil utilisateur (protégé, JWT requis)
 
 ### Produits
 - `GET /api/products` - Liste tous les produits
 - `GET /api/products/:id` - Détails d'un produit
 - `GET /api/products/search?q=query` - Recherche
-- `POST /api/products` - Créer un produit (auth requise)
-- `PUT /api/products/:id` - Mettre à jour (auth requise)
-- `DELETE /api/products/:id` - Supprimer (auth requise)
+- `POST /api/products` - Créer un produit (SELLER uniquement)
+- `PUT /api/products/:id` - Mettre à jour (SELLER, ses produits uniquement)
+- `DELETE /api/products/:id` - Supprimer (SELLER, ses produits uniquement)
+
+### Vendeurs (SELLER role)
+- `GET /api/sellers/request/me` - Statut de ma demande vendeur
+- `GET /api/sellers/me` - Mon profil vendeur
+- `PUT /api/sellers/me` - Mettre à jour mon profil vendeur
+- `GET /api/sellers/me/stats` - Mes statistiques de vente
+- `GET /api/sellers/me/products` - Mes produits
+
+### Administration (ADMIN role)
+- `GET /api/admin/seller-requests` - Liste des demandes vendeur en attente
+- `POST /api/admin/seller-requests/:id/approve` - Approuver une demande vendeur
+- `POST /api/admin/seller-requests/:id/reject` - Rejeter une demande vendeur (avec raison)
+- `GET /api/admin/users` - Liste tous les utilisateurs
+- `PUT /api/admin/users/:id/suspend` - Suspendre un utilisateur
+- `DELETE /api/admin/users/:id` - Supprimer un utilisateur
+- `POST /api/admin/categories` - Créer une catégorie
 
 ## 🏗️ Architecture Backend (Principes SOLID)
 
@@ -151,28 +206,58 @@ mobile/
 ## 🗄️ Modèle de Données
 
 ### User
-- Rôles : ADMIN, SELLER, BUYER
-- Email unique
-- Mot de passe hashé (bcrypt)
+- **Champs**: id, firstName, lastName, email (unique), password (hashé bcrypt), role, status, createdAt, updatedAt, lastLoginAt
+- **Rôles**: ADMIN, SELLER, CLIENT (défaut: CLIENT)
+- **Statuts**: ACTIVE, SUSPENDED, PENDING_VALIDATION (défaut: PENDING_VALIDATION)
+- **Relations**: sellerRequests[], seller?, addresses[], orders[], favoriteProducts[], carts[]
+
+### SellerRequest
+- **Champs**: id, userId, storeName, storeDescription, businessRegistration?, status, rejectionReason?, reviewedBy?, reviewedAt?, createdAt, updatedAt
+- **Statuts**: PENDING, APPROVED, REJECTED (défaut: PENDING)
+- **Relations**: user (User), reviewedByAdmin? (User)
+- **Usage**: Demande de création de compte vendeur, approuvée par admin
+
+### Seller
+- **Champs**: id, userId (unique), storeName, storeDescription?, storeLogo?, commissionRate (défaut: 0.10), isApproved (défaut: false), createdAt, updatedAt
+- **Relations**: user (User), products[]
+- **Création**: Automatique lors de l'approbation d'une SellerRequest par l'admin
 
 ### Product
-- Lié à un seller (User)
-- Stock, prix, catégorie
+- **Champs**: id, sellerId, name, description, price, stock, category, images[], createdAt, updatedAt
+- **Relations**: seller (Seller), orderItems[], favoriteByUsers[]
+- **Permissions**: Seul le vendeur propriétaire peut modifier/supprimer
 
 ### Order
-- Lié à un buyer (User)
-- Status : PENDING, CONFIRMED, PROCESSING, SHIPPED, DELIVERED, CANCELLED
+- **Champs**: id, buyerId, totalAmount, deliveryFee, status, paymentMethod, shippingAddressId, createdAt, updatedAt
+- **Statuts**: PENDING, CONFIRMED, PROCESSING, SHIPPED, DELIVERED, CANCELLED
+- **Relations**: buyer (User), items (OrderItem[]), shippingAddress (Address)
 
 ### OrderItem
-- Relation many-to-many entre Order et Product
+- **Champs**: id, orderId, productId, quantity, priceAtPurchase
+- **Relations**: order (Order), product (Product)
+- **Usage**: Relation many-to-many entre Order et Product, avec snapshot du prix
+
+### Address
+- **Champs**: id, userId, recipientName, phoneNumber, street, city, postalCode, country, isDefault
+- **Relations**: user (User)
+- **Usage**: Adresses de livraison de l'utilisateur
+
+### Category
+- **Champs**: id, name, description?, createdAt, updatedAt
+- **Relations**: products[]
+- **Permissions**: Seul ADMIN peut créer/modifier/supprimer
 
 ## 🔒 Sécurité
 
 - ✅ Hashage bcrypt (10 rounds)
-- ✅ JWT avec expiration configurable
-- ✅ Middleware d'authentification
-- ✅ Middleware d'autorisation par rôle
-- ✅ Validation des données
+- ✅ JWT avec expiration configurable (défaut: 7 jours)
+- ✅ Middleware d'authentification (vérifie le token JWT)
+- ✅ Middleware d'autorisation par rôle (ADMIN, SELLER, CLIENT)
+- ✅ Validation des données (Zod sur mobile, validations manuelles backend)
+- ✅ Système d'approbation vendeur (empêche les vendeurs non autorisés)
+- ✅ Vérification de statut utilisateur (SUSPENDED ne peut pas se connecter)
+- ✅ Guards de navigation par rôle (mobile)
+- ✅ SecureStore pour stocker les tokens JWT (mobile)
 
 ## 📋 Prochaines Étapes
 
