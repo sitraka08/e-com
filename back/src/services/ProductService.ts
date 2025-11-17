@@ -9,7 +9,6 @@ export class ProductService {
   ) {}
 
   async createProduct(data: CreateProductDTO, userId?: number, userRole?: UserRole): Promise<ProductDTO> {
-    // Only SELLER can create products
     if (userRole !== UserRole.SELLER) {
       throw new Error('Only sellers can create products');
     }
@@ -23,15 +22,16 @@ export class ProductService {
       throw new Error('Category not found');
     }
 
-    // Auto-assign sellerId for SELLER
-    let productData = { ...data };
-    if (userId && this.sellerRepository) {
-      const seller = await this.sellerRepository.findByUserId(userId);
-      if (!seller) {
-        throw new Error('Seller profile not found');
-      }
-      productData = { ...data, sellerId: seller.id };
+    if (!userId || !this.sellerRepository) {
+      throw new Error('User ID and seller repository are required');
     }
+
+    const seller = await this.sellerRepository.findByUserId(userId);
+    if (!seller) {
+      throw new Error('Seller profile not found');
+    }
+
+    const productData = { ...data, sellerId: seller.id };
 
     const product = await this.productRepository.create(productData as any);
     return this.mapToDTO(product, category.name);

@@ -1,8 +1,10 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image, Alert } from "react-native";
 import { OrderDTO } from "@/types";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { X } from "lucide-react-native";
+import { useOrderMutations } from "@/hooks/use-orders";
 
 interface OrderCardProps {
   order: OrderDTO;
@@ -53,6 +55,32 @@ export default function OrderCard({ order, onPress }: OrderCardProps) {
   const orderDate = new Date(order.createdAt);
   const firstImage = order.items?.[0]?.product?.images?.[0];
   const itemCount = order.items?.length || 0;
+  const { cancelOrder } = useOrderMutations();
+
+  // Can cancel if status is PENDING, CONFIRMED, or PROCESSING
+  const canCancel = ["PENDING", "CONFIRMED", "PROCESSING"].includes(
+    order.status
+  );
+
+  const handleCancelOrder = () => {
+    Alert.alert(
+      "Confirmer l'annulation",
+      "Êtes-vous sûr de vouloir annuler cette commande ? Cette action est irréversible.",
+      [
+        {
+          text: "Non",
+          style: "cancel",
+        },
+        {
+          text: "Oui, annuler",
+          style: "destructive",
+          onPress: async () => {
+            await cancelOrder.mutateAsync(order.id);
+          },
+        },
+      ]
+    );
+  };
 
   console.log(status, "status");
 
@@ -124,6 +152,23 @@ export default function OrderCard({ order, onPress }: OrderCardProps) {
           </View>
         )}
       </View>
+
+      {/* Cancel Button */}
+      {canCancel && (
+        <View className="border-t border-gray-200 mt-3 pt-3">
+          <TouchableOpacity
+            onPress={handleCancelOrder}
+            className="flex-row items-center justify-center bg-red-50 border border-red-200 rounded-lg py-3 px-4"
+            activeOpacity={0.7}
+            disabled={cancelOrder.isPending}
+          >
+            <X size={18} color="#dc2626" />
+            <Text className="font-fmedium text-sm text-red-600 ml-2">
+              {cancelOrder.isPending ? "Annulation..." : "Annuler la commande"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </TouchableOpacity>
   );
 }

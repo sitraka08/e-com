@@ -114,12 +114,15 @@ export default function Payement() {
           },
         ]
       );
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erreur lors de la création de la commande:", error);
+
       const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Une erreur est survenue lors de la création de votre commande.";
+        error?.response?.data?.error ||
+        error?.response?.data?.message ||
+        error?.message ||
+        "Une erreur est survenue lors de la création de votre commande.";
+
       Alert.alert("Erreur", errorMessage);
     }
   };

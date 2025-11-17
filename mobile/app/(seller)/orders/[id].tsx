@@ -101,14 +101,14 @@ export default function SellerOrderDetails() {
   }
 
   return (
-    <SafeAreaView className="flex-1 ">
+    <SafeAreaView className="h-full">
       <TopNavigation
         title=" Détails de la commande"
         onPress={() => router.push("/(seller)/orders")}
       />
 
       <ScrollView
-        className="flex-1"
+        className="h-full"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: 50,

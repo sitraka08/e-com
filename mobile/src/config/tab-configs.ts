@@ -61,7 +61,7 @@ export const CLIENT_HIDDEN_TABBAR_ROUTES = [
   "profile/forgot-password/index",
 ];
 
-export const SELLER_REMOVE_IN_TABS: string[] = [];
+export const SELLER_REMOVE_IN_TABS: string[] = ["orders/[id]"];
 export const SELLER_HIDDEN_TABBAR_ROUTES: string[] = [];
 
 export const ADMIN_REMOVE_IN_TABS: string[] = [];

@@ -1,9 +1,12 @@
-import { IOrderRepository } from '../repositories';
+import { IOrderRepository, IUserRepository } from '../repositories';
 import { OrderDTO, CreateOrderDTO, UpdateOrderStatusDTO, OrderFilters, PaginationParams, PaginatedResponse, OrderStatsDTO, OrderItemDTO, PaymentDTO } from '../types';
+import { EmailService } from './EmailService';
 
 export class OrderService {
   constructor(
-    private orderRepository: IOrderRepository
+    private orderRepository: IOrderRepository,
+    private emailService?: EmailService,
+    private userRepository?: IUserRepository
   ) {}
 
   async createOrder(data: CreateOrderDTO): Promise<OrderDTO> {
@@ -44,7 +47,40 @@ export class OrderService {
   }
 
   async cancelOrder(id: number): Promise<OrderDTO> {
+    // Get order with user info before cancellation
+    const orderBefore: any = await this.orderRepository.findById(id);
+    if (!orderBefore) {
+      throw new Error('Order not found');
+    }
+
+    // Cancel the order
     const order: any = await this.orderRepository.cancel(id);
+
+    // Send email notification to admin
+    if (this.emailService && this.userRepository) {
+      try {
+        // Find admin user
+        const adminUsers = await this.userRepository.findAll({ role: 'ADMIN' });
+        if (adminUsers && adminUsers.length > 0) {
+          const admin = adminUsers[0];
+
+          await this.emailService.sendOrderCancellationEmailToAdmin(
+            admin.email,
+            {
+              orderNumber: order.orderNumber,
+              clientName: `${orderBefore.user.firstName} ${orderBefore.user.lastName}`,
+              clientEmail: orderBefore.user.email,
+              total: Number(order.total),
+              cancelledAt: new Date(),
+            }
+          );
+        }
+      } catch (emailError) {
+        console.error('Failed to send cancellation email to admin:', emailError);
+        // Don't fail the cancellation if email fails
+      }
+    }
+
     return this.mapToDTO(order);
   }
 

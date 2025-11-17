@@ -14,10 +14,8 @@ export const createOrderRoutes = (orderController: OrderController): Router => {
   router.get('/number/:orderNumber', orderController.getOrderByNumber);
   router.patch('/:id/cancel', orderController.cancelOrder);
 
-  router.use(authorize(UserRole.ADMIN));
-  router.get('/stats', orderController.getStats);
-  router.get('/unpaid', orderController.getUnpaidOrders);
-  router.patch('/:id/status', orderController.updateOrderStatus);
+  router.get('/stats', authorize(UserRole.ADMIN), orderController.getStats);
+  router.get('/unpaid', authorize(UserRole.ADMIN), orderController.getUnpaidOrders);
 
   return router;
 };

@@ -102,7 +102,8 @@ export const useProductMutations = () => {
     queryKey: ["delete-product"],
     mutationFn: productService.delete,
     onSuccessCallback: () => {
-      queryClient.invalidateQueries({ queryKey: ["seller"], exact: false });
+      queryClient.invalidateQueries({ queryKey: ["seller", "products"] });
+      queryClient.invalidateQueries({ queryKey: ["seller", "stats"] });
     },
   });
 

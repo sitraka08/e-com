@@ -1,6 +1,13 @@
 import CartCard from "@/components/cart-card";
 import TopNavigation from "@/components/top-navigation";
-import { FlatList, Text, View, TouchableOpacity, TextInput, Modal } from "react-native";
+import {
+  FlatList,
+  Text,
+  View,
+  TouchableOpacity,
+  TextInput,
+  Modal,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DividerDashed from "@/components/divider-dashed";
 import Button from "@/components/button/button";
@@ -13,7 +20,7 @@ import { useState } from "react";
 
 export default function Cart() {
   const router = useRouter();
-  const { cart, getTotal, getTotalPayd } = useCartStore();
+  const { cart, getTotal, getTotalPayd, clearCart } = useCartStore();
   const { createSavedCart } = useSavedCartMutations();
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [cartName, setCartName] = useState("");
@@ -103,13 +110,21 @@ export default function Cart() {
                   className="mt-4 bg-gray-100 py-3 rounded-xl flex-row items-center justify-center gap-2"
                 >
                   <Save size={18} color="#374151" />
-                  <Text className="font-fsemibold text-gray-700">Sauvegarder ce panier</Text>
+                  <Text className="font-fsemibold text-gray-700">
+                    Sauvegarder ce panier
+                  </Text>
                 </TouchableOpacity>
 
                 <Button
                   className="mt-4"
                   label="Procéder au payement"
                   onPress={() => router.push("/(client)/cart/payement")}
+                />
+                <Button
+                  className="mt-4"
+                  label="Vider le panier"
+                  variant="destructive"
+                  onPress={clearCart}
                 />
               </View>
             }

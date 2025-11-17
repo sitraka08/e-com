@@ -5,13 +5,14 @@ import {
   RefreshControl,
   View,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ProductDTO } from "@/types";
 import ProductListItem from "@/components/admin/list-items/product-list-item";
 import ProductFormSheet from "@/components/admin/bottom-sheets/product-form-sheet";
 import ProductStockSheet from "@/components/admin/bottom-sheets/product-stock-sheet";
-import ConfirmSheet from "@/components/admin/confirm-sheet";
+import ConfirmDialog from "@/components/confirm-dialog";
 import FAB from "@/components/admin/fab";
 import EmptyState from "@/components/admin/empty-state";
 import { useSellerProducts } from "@/hooks/useSeller";
@@ -89,12 +90,13 @@ export default function SellerProducts() {
       setIsDeleteOpen(false);
       setSelectedProduct(null);
     } catch (error) {
+      // Error is already displayed via ToastAndroid in makeMutation
       console.error("Error deleting product:", error);
     }
   };
 
   return (
-    <SafeAreaView className="relative">
+    <SafeAreaView className="relative h-full">
       <TopNavigation
         title="Mes Produits"
         description={
@@ -151,17 +153,22 @@ export default function SellerProducts() {
         product={selectedProduct || undefined}
       />
 
-      <ConfirmSheet
-        isOpen={isDeleteOpen}
-        onClose={() => {
-          setIsDeleteOpen(false);
-          setSelectedProduct(null);
-        }}
-        onConfirm={confirmDelete}
-        title="Supprimer le produit"
-        message={`Êtes-vous sûr de vouloir supprimer "${selectedProduct?.name}" ?`}
-        confirmText="Supprimer"
-      />
+      {selectedProduct && (
+        <ConfirmDialog
+          visible={isDeleteOpen}
+          onClose={() => {
+            setIsDeleteOpen(false);
+            setSelectedProduct(null);
+          }}
+          onConfirm={confirmDelete}
+          title="Supprimer le produit"
+          message={`Êtes-vous sûr de vouloir supprimer "${selectedProduct.name}" ? Cette action est irréversible.`}
+          confirmText="Supprimer"
+          cancelText="Annuler"
+          confirmVariant="danger"
+          isLoading={deleteProduct.isPending}
+        />
+      )}
     </SafeAreaView>
   );
 }

@@ -79,6 +79,7 @@ export default function OrderStatusSheet({
     { label: "Confirmée", value: "CONFIRMED" },
     { label: "En traitement", value: "PROCESSING" },
     { label: "Expédiée", value: "SHIPPED" },
+    { label: "Livrée", value: "DELIVERED" },
   ];
 
   const statusOptions =

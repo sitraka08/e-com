@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -8,36 +8,19 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import { OrderDTO, UpdateOrderStatusDTO } from "@/types";
+import { OrderDTO } from "@/types";
 import OrderListItem from "@/components/admin/list-items/order-list-item";
-import OrderStatusSheet from "@/components/admin/bottom-sheets/order-status-sheet";
 import EmptyState from "@/components/admin/empty-state";
-import { useSellerOrders, useSellerMutations } from "@/hooks/useSeller";
+import { useSellerOrders } from "@/hooks/useSeller";
 import TopNavigation from "@/components/top-navigation";
 
 export default function SellerOrders() {
-  const [selectedOrder, setSelectedOrder] = useState<OrderDTO | null>(null);
-  const [isStatusOpen, setIsStatusOpen] = useState(false);
-
   const { data: ordersResponse, isLoading, refetch } = useSellerOrders();
-  const { updateOrderStatus } = useSellerMutations();
 
   const sellerOrders = ordersResponse?.data?.items || [];
 
   const handleViewDetails = (order: OrderDTO) => {
     router.push(`/(seller)/orders/${order.id}`);
-  };
-
-  const handleUpdateStatus = (order: OrderDTO) => {
-    setSelectedOrder(order);
-    setIsStatusOpen(true);
-  };
-
-  const handleStatusUpdate = async (
-    orderId: number,
-    data: UpdateOrderStatusDTO
-  ) => {
-    await updateOrderStatus.mutateAsync({ orderId, data });
   };
 
   if (isLoading) {
@@ -76,7 +59,6 @@ export default function SellerOrders() {
             <OrderListItem
               order={item}
               onViewDetails={() => handleViewDetails(item)}
-              onUpdateStatus={() => handleUpdateStatus(item)}
             />
           )}
           contentContainerStyle={{ padding: 20, paddingBottom: 200 }}
@@ -85,17 +67,6 @@ export default function SellerOrders() {
           }
         />
       )}
-
-      <OrderStatusSheet
-        isOpen={isStatusOpen}
-        onClose={() => {
-          setIsStatusOpen(false);
-          setSelectedOrder(null);
-        }}
-        order={selectedOrder || undefined}
-        role="SELLER"
-        onUpdate={handleStatusUpdate}
-      />
     </SafeAreaView>
   );
 }

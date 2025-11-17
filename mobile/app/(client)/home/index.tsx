@@ -30,6 +30,11 @@ export default function Home() {
     setCategory(id.toString());
   };
 
+  console.log(
+    products?.data?.items.length,
+    products?.data?.items.filter((p) => p.isActive).length
+  );
+
   const renderProductsContent = () => {
     if (isLoading) {
       return (
@@ -62,7 +67,7 @@ export default function Home() {
       <View className="h-full">
         <FlatList
           showsVerticalScrollIndicator={false}
-          data={products?.data?.items || []}
+          data={products?.data?.items.filter((p) => p.isActive) || []}
           keyExtractor={(item) => item.id.toString()}
           numColumns={2}
           contentContainerStyle={{ padding: 5, paddingBottom: 300 }}

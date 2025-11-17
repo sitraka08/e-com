@@ -125,7 +125,7 @@ export default function OrderListItem({
           onPress={onViewDetails}
           className="flex-1 p-3"
         />
-        {/* {onUpdateStatus && (
+        {onUpdateStatus && (
           <Button
             label="Statut"
             variant="action"
@@ -135,7 +135,7 @@ export default function OrderListItem({
             onPress={onUpdateStatus}
             className="flex-1 p-3"
           />
-        )} */}
+        )}
       </View>
     </View>
   );

@@ -13,8 +13,13 @@ export class OrderRepository implements IOrderRepository {
       data.items.map(async (item) => {
         const product = await this.prisma.product.findUnique({ where: { id: item.productId } });
         if (!product) throw new Error(`Product ${item.productId} not found`);
+
+        if (!product.sellerId) {
+          throw new Error(`Le produit "${product.name}" ne peut pas être commandé car il n'a pas de vendeur associé.`);
+        }
+
         if (product.stock < item.quantity) {
-          throw new Error(`Insufficient stock for product ${product.name}`);
+          throw new Error(`Stock insuffisant pour le produit ${product.name}`);
         }
 
         const priceAtPurchase = product.price;
@@ -22,7 +27,7 @@ export class OrderRepository implements IOrderRepository {
 
         return {
           product: { connect: { id: item.productId } },
-          seller: { connect: { id: product.sellerId! } },
+          seller: { connect: { id: product.sellerId } },
           productName: product.name,
           productImage: JSON.parse(product.images)[0] || '',
           quantity: item.quantity,

@@ -20,13 +20,15 @@ import {
   UpdateOrderStatusDTO,
   OrderStatus,
 } from '../types';
+import { EmailService } from './EmailService';
 
 export class SellerService {
   constructor(
     private sellerRepository: ISellerRepository,
     private sellerRequestRepository: ISellerRequestRepository,
     private orderRepository: IOrderRepository,
-    private prisma: PrismaClient
+    private prisma: PrismaClient,
+    private emailService?: EmailService
   ) {}
 
   // Seller Request Methods
@@ -294,7 +296,7 @@ export class SellerService {
 
     const [products, total] = await Promise.all([
       this.prisma.product.findMany({
-        where: { sellerId: seller.id },
+        where: { sellerId: seller.id, isActive: true },
         include: {
           category: {
             select: {
@@ -308,7 +310,7 @@ export class SellerService {
         take: limit,
       }),
       this.prisma.product.count({
-        where: { sellerId: seller.id },
+        where: { sellerId: seller.id, isActive: true },
       }),
     ]);
 
@@ -386,7 +388,7 @@ export class SellerService {
     }
 
     // 3. Validate that sellers can only set certain statuses
-    const allowedStatuses: OrderStatus[] = ['CONFIRMED', 'PROCESSING', 'SHIPPED'];
+    const allowedStatuses: OrderStatus[] = ['CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED'];
     if (!allowedStatuses.includes(data.status as OrderStatus)) {
       throw new Error(`Sellers cannot set order status to ${data.status}`);
     }
@@ -397,7 +399,31 @@ export class SellerService {
     }
 
     // 5. Update order status
-    return await this.orderRepository.update(orderId, data);
+    const updatedOrder = await this.orderRepository.update(orderId, data);
+
+    // 6. Send email notification if order is shipped
+    if (data.status === 'SHIPPED' && this.emailService) {
+      try {
+        const orderWithUser: any = await this.orderRepository.findById(orderId);
+        if (orderWithUser && orderWithUser.user) {
+          await this.emailService.sendOrderShippedEmailToClient(
+            orderWithUser.user.email,
+            {
+              orderNumber: orderWithUser.orderNumber,
+              clientName: `${orderWithUser.user.firstName} ${orderWithUser.user.lastName}`,
+              total: Number(orderWithUser.total),
+              estimatedDelivery: orderWithUser.estimatedDelivery,
+              shippedAt: new Date(),
+            }
+          );
+        }
+      } catch (emailError) {
+        console.error('Failed to send shipped email to client:', emailError);
+        // Don't fail the status update if email fails
+      }
+    }
+
+    return updatedOrder;
   }
 
   // Helper methods

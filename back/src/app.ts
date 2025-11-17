@@ -80,9 +80,9 @@ export const createApp = (): Application => {
   const productService = new ProductService(productRepository, categoryRepository, sellerRepository);
   const addressService = new AddressService(addressRepository);
   const paymentMethodService = new PaymentMethodService(paymentMethodRepository);
-  const orderService = new OrderService(orderRepository);
+  const orderService = new OrderService(orderRepository, emailService, userRepository);
   const paymentService = new PaymentService(paymentRepository, orderRepository);
-  const sellerService = new SellerService(sellerRepository, sellerRequestRepository, orderRepository, prisma);
+  const sellerService = new SellerService(sellerRepository, sellerRequestRepository, orderRepository, prisma, emailService);
   const favoriteService = new FavoriteService(favoriteRepository, productRepository);
   const savedCartService = new SavedCartService(savedCartRepository);
   const adminService = new AdminService(userRepository, productRepository, orderRepository, sellerRepository, prisma);
