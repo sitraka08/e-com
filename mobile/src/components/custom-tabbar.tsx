@@ -1,9 +1,11 @@
 import React from "react";
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import { House } from "lucide-react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { removeTabsByNames } from "@/utils/utils";
+import { removeTabsByNames, TabItem } from "@/utils/utils";
 import { TabConfig } from "@/config/tab-configs";
+import useFavorisStore from "@/stores/useFavorisStore";
+import useCartStore from "@/stores/useCartStore";
 
 interface CustomTabBarProps extends BottomTabBarProps {
   tabs: TabConfig[];
@@ -18,6 +20,9 @@ export default function CustomTabBar({
   removeInTabs = [],
   hiddenTabBarRoutes = [],
 }: CustomTabBarProps) {
+  const { getTotalFavorites } = useFavorisStore();
+  const { getTotalCart } = useCartStore();
+
   const currentRoute = state.routes[state.index].name;
   const shouldHideTabBar = hiddenTabBarRoutes.some((route) => {
     const pattern = route.replace(/\[.*?\]/g, "[^/]+");
@@ -28,7 +33,7 @@ export default function CustomTabBar({
   if (shouldHideTabBar) {
     return null;
   }
-  const STATE = removeTabsByNames(state.routes, removeInTabs);
+  const STATE = removeTabsByNames(state.routes as TabItem[], removeInTabs);
 
   return (
     <View
@@ -48,16 +53,21 @@ export default function CustomTabBar({
                 navigation.navigate(route.name);
               }
             }}
-            className={`flex-1 items-center justify-center h-full py-4 ${isFocused ? "bg-primary rounded-xl p-1" : ""}`}
+            className={`flex-1 items-center justify-center relative h-full py-4 ${isFocused ? "bg-primary rounded-xl p-1" : ""}`}
           >
             <View className={`"flex items-center gap-2"`}>
               <Icon size={20} color={isFocused ? "#fff" : "#000"} />
-              <Text
-                className={`text-[10px] font-fregular ${isFocused && "text-[#fff]"}`}
-              >
-                {label}
-              </Text>
             </View>
+            {label === "Favoris" && getTotalFavorites() > 0 && (
+              <Text className="bg-red-600 w-5 h-5  text-center text-xs rounded-full text-white absolute top-0 right-0">
+                {getTotalFavorites()}
+              </Text>
+            )}
+            {label === "Panier" && getTotalCart() > 0 && (
+              <Text className="bg-red-600 w-5 h-5  text-center text-xs rounded-full text-white absolute top-0 right-0">
+                {getTotalCart()}
+              </Text>
+            )}
           </TouchableOpacity>
         );
       })}

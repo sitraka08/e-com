@@ -67,8 +67,19 @@ export const useOrderMutations = () => {
     },
   });
 
+  const cancelOrder = makeMutation<number, OrderDTO>({
+    queryKey: ["cancel-order"],
+    mutationFn: (id) => orderService.cancel(id),
+    onSuccessCallback: () => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["order"] });
+      queryClient.invalidateQueries({ queryKey: ["order-stats"] });
+    },
+  });
+
   return {
     createOrder,
     updateOrderStatus,
+    cancelOrder,
   };
 };

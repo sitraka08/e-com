@@ -12,8 +12,10 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useProducts } from "@/hooks/use-products";
+import { useRouter } from "expo-router";
 
 export default function Home() {
+  const router = useRouter();
   const [category, setCategory] = useState<string>();
   const {
     data: products,
@@ -27,6 +29,11 @@ export default function Home() {
   const categoryHandle = (id: number) => {
     setCategory(id.toString());
   };
+
+  console.log(
+    products?.data?.items.length,
+    products?.data?.items.filter((p) => p.isActive).length
+  );
 
   const renderProductsContent = () => {
     if (isLoading) {
@@ -60,7 +67,7 @@ export default function Home() {
       <View className="h-full">
         <FlatList
           showsVerticalScrollIndicator={false}
-          data={products?.data?.items || []}
+          data={products?.data?.items.filter((p) => p.isActive) || []}
           keyExtractor={(item) => item.id.toString()}
           numColumns={2}
           contentContainerStyle={{ padding: 5, paddingBottom: 300 }}
@@ -76,7 +83,7 @@ export default function Home() {
 
   return (
     <SafeAreaView className="flex-1">
-      <SearchBar />
+      <SearchBar onFocus={() => router.push("/(client)/search")} />
       <View className="mt-28 p-5 flex gap-4">
         <View>
           <Text className="text-base font-fsemibold">Catégories</Text>

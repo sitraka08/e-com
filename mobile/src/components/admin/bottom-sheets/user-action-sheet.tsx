@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Text, TouchableOpacity } from 'react-native';
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import { UserDTO } from '@/types';
-import { CheckCircle, Ban, Trash2, UserCheck } from 'lucide-react-native';
-import ConfirmSheet from '../confirm-sheet';
-import { useUserMutations } from '@/hooks/use-users';
+import React, { useEffect, useRef, useState } from "react";
+import { Text, TouchableOpacity } from "react-native";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import { UserDTO } from "@/types";
+import { CheckCircle, Ban, Trash2, UserCheck } from "lucide-react-native";
+import ConfirmSheet from "../confirm-sheet";
+import { useUserMutations } from "@/hooks/use-users";
 
 interface UserActionSheetProps {
   isOpen: boolean;
@@ -18,8 +18,11 @@ export default function UserActionSheet({
   user,
 }: UserActionSheetProps) {
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const [confirmAction, setConfirmAction] = useState<'validate' | 'suspend' | 'activate' | 'delete' | null>(null);
-  const { validateUser, suspendUser, activateUser, deleteUser } = useUserMutations();
+  const [confirmAction, setConfirmAction] = useState<
+    "validate" | "suspend" | "activate" | "delete" | null
+  >(null);
+  const { validateUser, suspendUser, activateUser, deleteUser } =
+    useUserMutations();
 
   useEffect(() => {
     if (isOpen) {
@@ -33,74 +36,85 @@ export default function UserActionSheet({
     if (!user || !confirmAction) return;
     try {
       switch (confirmAction) {
-        case 'validate':
+        case "validate":
           await validateUser.mutateAsync(user.id);
           break;
-        case 'suspend':
+        case "suspend":
           await suspendUser.mutateAsync(user.id);
           break;
-        case 'activate':
+        case "activate":
           await activateUser.mutateAsync(user.id);
           break;
-        case 'delete':
+        case "delete":
           await deleteUser.mutateAsync(user.id);
           break;
       }
       setConfirmAction(null);
       onClose();
     } catch (error) {
-      console.error('Error performing action:', error);
+      console.error("Error performing action:", error);
     }
   };
 
   const getConfirmMessage = () => {
-    if (!user) return { title: '', message: '' };
+    if (!user) return { title: "", message: "" };
     switch (confirmAction) {
-      case 'validate':
+      case "validate":
         return {
-          title: 'Valider l\'utilisateur',
+          title: "Valider l'utilisateur",
           message: `Êtes-vous sûr de vouloir valider ${user.firstName} ${user.lastName} ?`,
         };
-      case 'suspend':
+      case "suspend":
         return {
-          title: 'Suspendre l\'utilisateur',
+          title: "Suspendre l'utilisateur",
           message: `Êtes-vous sûr de vouloir suspendre ${user.firstName} ${user.lastName} ?`,
         };
-      case 'activate':
+      case "activate":
         return {
-          title: 'Activer l\'utilisateur',
+          title: "Activer l'utilisateur",
           message: `Êtes-vous sûr de vouloir activer ${user.firstName} ${user.lastName} ?`,
         };
-      case 'delete':
+      case "delete":
         return {
-          title: 'Supprimer l\'utilisateur',
+          title: "Supprimer l'utilisateur",
           message: `Êtes-vous sûr de vouloir supprimer définitivement ${user.firstName} ${user.lastName} ?`,
         };
       default:
-        return { title: '', message: '' };
+        return { title: "", message: "" };
     }
   };
 
-  const isLoading = validateUser.isPending || suspendUser.isPending || activateUser.isPending || deleteUser.isPending;
+  const isLoading =
+    validateUser.isPending ||
+    suspendUser.isPending ||
+    activateUser.isPending ||
+    deleteUser.isPending;
 
   return (
     <>
       <BottomSheet
         ref={bottomSheetRef}
-        snapPoints={['50%']}
+        snapPoints={["50%"]}
         enablePanDownToClose
         onClose={onClose}
         index={-1}
-        backgroundStyle={{ backgroundColor: '#fff' }}
+        backgroundStyle={{
+          backgroundColor: "#edf4fc",
+          borderWidth: 1,
+          borderColor: "#0174D8",
+        }}
       >
-        <BottomSheetView className="flex-1 px-5">
-          <Text className="text-2xl font-fbold text-gray-900 mb-5">
+        <BottomSheetView
+          className="flex-1 px-5 gap-2"
+          style={{ paddingBottom: 100 }}
+        >
+          <Text className="text-xl font-fbold text-primary mb-5">
             Actions utilisateur
           </Text>
 
-          {user?.status === 'PENDING' && (
+          {user?.status === "PENDING_VALIDATION" && (
             <TouchableOpacity
-              onPress={() => setConfirmAction('validate')}
+              onPress={() => setConfirmAction("validate")}
               className="flex-row items-center p-4 bg-green-50 rounded-xl mb-3"
             >
               <UserCheck size={24} color="#10B981" />
@@ -110,9 +124,9 @@ export default function UserActionSheet({
             </TouchableOpacity>
           )}
 
-          {user?.status === 'ACTIVE' && (
+          {user?.status === "ACTIVE" && (
             <TouchableOpacity
-              onPress={() => setConfirmAction('suspend')}
+              onPress={() => setConfirmAction("suspend")}
               className="flex-row items-center p-4 bg-orange-50 rounded-xl mb-3"
             >
               <Ban size={24} color="#F59E0B" />
@@ -122,9 +136,9 @@ export default function UserActionSheet({
             </TouchableOpacity>
           )}
 
-          {user?.status === 'SUSPENDED' && (
+          {user?.status === "SUSPENDED" && (
             <TouchableOpacity
-              onPress={() => setConfirmAction('activate')}
+              onPress={() => setConfirmAction("activate")}
               className="flex-row items-center p-4 bg-blue-50 rounded-xl mb-3"
             >
               <CheckCircle size={24} color="#3B82F6" />
@@ -135,7 +149,7 @@ export default function UserActionSheet({
           )}
 
           <TouchableOpacity
-            onPress={() => setConfirmAction('delete')}
+            onPress={() => setConfirmAction("delete")}
             className="flex-row items-center p-4 bg-red-50 rounded-xl"
           >
             <Trash2 size={24} color="#EF4444" />
@@ -151,7 +165,7 @@ export default function UserActionSheet({
         onClose={() => setConfirmAction(null)}
         onConfirm={handleAction}
         {...getConfirmMessage()}
-        confirmVariant={confirmAction === 'delete' ? 'danger' : 'primary'}
+        confirmVariant={confirmAction === "delete" ? "danger" : "primary"}
         isLoading={isLoading}
       />
     </>

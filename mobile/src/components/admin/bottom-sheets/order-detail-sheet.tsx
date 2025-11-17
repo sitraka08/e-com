@@ -40,7 +40,7 @@ export default function OrderDetailSheet({
   return (
     <BottomSheet
       ref={bottomSheetRef}
-      snapPoints={['90%']}
+      snapPoints={['70%']}
       enablePanDownToClose
       onClose={onClose}
       index={-1}
@@ -105,10 +105,10 @@ export default function OrderDetailSheet({
               </View>
               <View className="flex-row justify-between mt-2">
                 <Text className="text-sm font-fregular text-gray-600">
-                  {(item.priceAtOrder || item.unitPrice).toLocaleString()} Ar/unité
+                  {((item as any).priceAtPurchase || (item as any).priceAtOrder || (item as any).unitPrice || 0).toLocaleString()} Ar/unité
                 </Text>
                 <Text className="text-base font-fbold text-primary">
-                  {(item.subtotal || item.totalPrice).toLocaleString()} Ar
+                  {((item as any).subtotal || (item as any).totalPrice || 0).toLocaleString()} Ar
                 </Text>
               </View>
             </View>

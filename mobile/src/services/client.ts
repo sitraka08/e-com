@@ -13,8 +13,6 @@ export const apiClient: AxiosInstance = axios.create({
   },
 });
 
-// Refresh token logic removed - using single 24h token for demo
-
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const { tokens } = useAuthStore.getState();

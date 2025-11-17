@@ -6,3 +6,7 @@ export { AddressController } from './AddressController';
 export { PaymentMethodController } from './PaymentMethodController';
 export { OrderController } from './OrderController';
 export { PaymentController } from './PaymentController';
+export { SellerController } from './SellerController';
+export { FavoriteController } from './FavoriteController';
+export { SavedCartController } from './SavedCartController';
+export { AdminController } from './AdminController';

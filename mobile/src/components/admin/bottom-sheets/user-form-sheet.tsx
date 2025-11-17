@@ -65,40 +65,46 @@ export default function UserFormSheet({
       enablePanDownToClose
       onClose={onClose}
       index={-1}
-      backgroundStyle={{ backgroundColor: '#fff' }}
+      backgroundStyle={{
+        backgroundColor: "#edf4fc",
+        borderWidth: 1,
+        borderColor: "#0174D8",
+      }}
     >
-      <BottomSheetScrollView className="flex-1 px-5">
-        <Text className="text-2xl font-fbold text-gray-900 mb-5">
+      <BottomSheetScrollView
+        className="flex-1 px-5 gap-2"
+        contentContainerStyle={{ paddingBottom: 100 }}
+      >
+        <Text className="text-xl font-fbold text-primary mb-5">
           Modifier l'utilisateur
         </Text>
+        <View className="flex gap-4">
+          <Input
+            form={form}
+            name="firstName"
+            label="Prénom"
+            placeholder="Prénom"
+            isAdmin
+          />
 
-        <Input
-          form={form}
-          name="firstName"
-          label="Prénom"
-          placeholder="Prénom"
-          isAdmin
-        />
+          <Input
+            form={form}
+            name="lastName"
+            label="Nom"
+            placeholder="Nom"
+            isAdmin
+          />
 
-        <Input
-          form={form}
-          name="lastName"
-          label="Nom"
-          placeholder="Nom"
-          className="mt-3"
-          isAdmin
-        />
+          <Input
+            form={form}
+            name="email"
+            label="Email"
+            placeholder="email@example.com"
+            isAdmin
+          />
+        </View>
 
-        <Input
-          form={form}
-          name="email"
-          label="Email"
-          placeholder="email@example.com"
-          className="mt-3"
-          isAdmin
-        />
-
-        <View className="mt-6 mb-4">
+        <View className="mb-4">
           <Button
             label="Mettre à jour"
             onPress={form.handleSubmit(onSubmit)}

@@ -63,10 +63,17 @@ export default function ProductStockSheet({
       enablePanDownToClose
       onClose={onClose}
       index={-1}
-      backgroundStyle={{ backgroundColor: '#fff' }}
+      backgroundStyle={{
+        backgroundColor: "#edf4fc",
+        borderWidth: 1,
+        borderColor: "#0174D8",
+      }}
     >
-      <BottomSheetView className="flex-1 px-5">
-        <Text className="text-2xl font-fbold text-gray-900 mb-3">
+      <BottomSheetView
+        className="flex-1 px-5 gap-2"
+        style={{ paddingBottom: 100 }}
+      >
+        <Text className="text-xl font-fbold text-primary mb-3">
           Mise à jour du stock
         </Text>
         {product && (
@@ -75,25 +82,27 @@ export default function ProductStockSheet({
           </Text>
         )}
 
-        <InputSelect
-          form={form}
-          name="operation"
-          label="Opération"
-          options={operationOptions}
-          placeholder="Sélectionner une opération"
-          isAdmin
-        />
+        <View className="flex gap-4">
+          <InputSelect
+            form={form}
+            name="operation"
+            label="Opération"
+            options={operationOptions}
+            placeholder="Sélectionner une opération"
+            isAdmin
+          />
 
-        <Input
-          form={form}
-          name="quantity"
-          label="Quantité"
-          placeholder="0"
-          className="mt-3"
-          isAdmin
-        />
+          <Input
+            form={form}
+            name="quantity"
+            label="Quantité"
+            placeholder="0"
+            isAdmin
+            keyboardType="numeric"
+          />
+        </View>
 
-        <View className="mt-6">
+        <View className="mb-4">
           <Button
             label="Mettre à jour le stock"
             onPress={form.handleSubmit(onSubmit)}

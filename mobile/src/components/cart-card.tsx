@@ -1,8 +1,8 @@
 import { View, Text, Image } from "react-native";
 import React from "react";
 import useCartStore from "@/stores/useCartStore";
-import MinusButton from "./button/MinusButton";
-import PlusButton from "./button/PlusButton";
+import MinusButton from "./button/minus-button";
+import PlusButton from "./button/plus-button";
 
 type CartItem = {
   id: number;

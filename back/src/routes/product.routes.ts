@@ -10,12 +10,14 @@ export const createProductRoutes = (productController: ProductController): Route
   router.get('/search', productController.searchProducts);
   router.get('/:id', productController.getProductById);
 
-  router.use(authenticate, authorize(UserRole.ADMIN));
-  router.post('/', uploadProductImages, productController.createProduct);
-  router.get('/low-stock', productController.getLowStockProducts);
-  router.put('/:id', uploadProductImages, productController.updateProduct);
-  router.delete('/:id', productController.deleteProduct);
-  router.patch('/:id/stock', productController.updateStock);
+  // Routes protégées: Seuls les SELLER peuvent gérer les produits
+  router.post('/', authenticate, authorize(UserRole.SELLER), uploadProductImages, productController.createProduct);
+  router.put('/:id', authenticate, authorize(UserRole.SELLER), uploadProductImages, productController.updateProduct);
+  router.delete('/:id', authenticate, authorize(UserRole.SELLER), productController.deleteProduct);
+
+  // Routes ADMIN uniquement
+  router.get('/low-stock', authenticate, authorize(UserRole.ADMIN), productController.getLowStockProducts);
+  router.patch('/:id/stock', authenticate, authorize(UserRole.ADMIN), productController.updateStock);
 
   return router;
 };

@@ -20,6 +20,25 @@ export const RegisterSchema = z.object({
       (val) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(val),
       'Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre'
     ),
+  isSeller: z.boolean().optional(),
+  storeName: z.string().optional(),
+  storeDescription: z.string().optional(),
+}).refine((data) => {
+  if (data.isSeller) {
+    return data.storeName && data.storeName.trim().length >= 3;
+  }
+  return true;
+}, {
+  message: 'Le nom du magasin doit contenir au moins 3 caractères',
+  path: ['storeName'],
+}).refine((data) => {
+  if (data.isSeller) {
+    return data.storeDescription && data.storeDescription.trim().length >= 10;
+  }
+  return true;
+}, {
+  message: 'La description doit contenir au moins 10 caractères',
+  path: ['storeDescription'],
 });
 
 export type RegisterDTO = z.infer<typeof RegisterSchema>;

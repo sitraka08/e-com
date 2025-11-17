@@ -5,16 +5,22 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/api/products/search?q=laptop&page=1&limit=10
+  url: {{baseUrl}}/api/products/search?q=dds&page=1&limit=10
   body: none
   auth: none
+}
+
+params:query {
+  q: dds
+  page: 1
+  limit: 10
 }
 
 tests {
   test("Status is 200", function() {
     expect(res.status).to.equal(200);
   });
-
+  
   test("Has products array", function() {
     expect(res.body.data.items).to.be.an('array');
   });

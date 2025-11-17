@@ -25,6 +25,7 @@ export default function TabLayout() {
       <Tabs.Screen name="search/index" />
       <Tabs.Screen name="cart/index" />
       <Tabs.Screen name="command/index" />
+      <Tabs.Screen name="favorites/index" />
       <Tabs.Screen name="profile/index" />
     </Tabs>
   );

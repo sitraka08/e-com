@@ -7,7 +7,7 @@ interface RadioButtonProps {
   onPress?: () => void;
 }
 
-export const RadioButton = ({ selected, onPress }: RadioButtonProps) => {
+const RadioButton = ({ selected, onPress }: RadioButtonProps) => {
   return (
     <Pressable onPress={onPress} className="flex-row items-center mb-2">
       <View
@@ -23,3 +23,5 @@ export const RadioButton = ({ selected, onPress }: RadioButtonProps) => {
     </Pressable>
   );
 };
+
+export default RadioButton;

@@ -87,4 +87,18 @@ export class AddressController {
       next(error);
     }
   };
+
+  getDefaultAddress = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = req.user!.id;
+      const result = await this.addressService.getDefaultAddress(userId);
+      if (!result) {
+        res.status(404).json({ success: false, error: 'Aucune adresse par défaut trouvée' } as ApiResponse);
+        return;
+      }
+      res.status(200).json({ success: true, data: result } as ApiResponse);
+    } catch (error) {
+      next(error);
+    }
+  };
 }

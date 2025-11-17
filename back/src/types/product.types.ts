@@ -8,6 +8,7 @@ export interface Product {
   stock: number;
   images: string;
   categoryId: number;
+  sellerId: number | null;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -22,6 +23,9 @@ export interface ProductDTO {
   images: string[];
   categoryId: number;
   categoryName?: string;
+  sellerId: number | null;
+  sellerName?: string;
+  sellerStoreName?: string;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -34,6 +38,7 @@ export interface CreateProductDTO {
   stock: number;
   images?: string[]; // Optionnel, peut venir de l'upload de fichiers
   categoryId: number;
+  sellerId?: number; // Optionnel, auto-assigné pour les SELLER
 }
 
 export interface UpdateProductDTO {

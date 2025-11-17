@@ -36,6 +36,11 @@ export class AddressService {
     return this.mapToDTO(address);
   }
 
+  async getDefaultAddress(userId: number): Promise<AddressDTO | null> {
+    const address = await this.addressRepository.findDefault(userId);
+    return address ? this.mapToDTO(address) : null;
+  }
+
   private mapToDTO(address: any): AddressDTO {
     return {
       id: address.id,

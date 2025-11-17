@@ -12,7 +12,6 @@ import UserListItem from "@/components/admin/list-items/user-list-item";
 import UserFormSheet from "@/components/admin/bottom-sheets/user-form-sheet";
 import UserActionSheet from "@/components/admin/bottom-sheets/user-action-sheet";
 import EmptyState from "@/components/admin/empty-state";
-import { Users } from "lucide-react-native";
 import { useUsers } from "@/hooks/use-users";
 import TopNavigation from "@/components/top-navigation";
 
@@ -58,7 +57,6 @@ export default function UsersScreen() {
 
       {users.length === 0 ? (
         <EmptyState
-          icon={Users}
           title="Aucun utilisateur"
           message="Aucun utilisateur enregistré"
         />

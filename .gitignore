@@ -1,6 +1,7 @@
 # Claude Code configuration
 CLAUDE.md
 .claude/
+PROJECT_SUMMARY.md
 
 # OS
 .DS_Store

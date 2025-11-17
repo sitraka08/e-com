@@ -3,59 +3,23 @@ import { Text, FlatList, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ProductDTO } from "@/types";
 import ProductListItem from "@/components/admin/list-items/product-list-item";
-import ProductFormSheet from "@/components/admin/bottom-sheets/product-form-sheet";
 import ProductStockSheet from "@/components/admin/bottom-sheets/product-stock-sheet";
-import ConfirmSheet from "@/components/admin/confirm-sheet";
-import FAB from "@/components/admin/fab";
-import EmptyState from "@/components/admin/empty-state";
-import { Package } from "lucide-react-native";
-import { useProducts, useProductMutations } from "@/hooks/use-products";
-import { STATIC_CATEGORIES } from "@/constants/categories";
+import { useProducts } from "@/hooks/use-products";
 import TopNavigation from "@/components/top-navigation";
 
 export default function Products() {
   const [selectedProduct, setSelectedProduct] = useState<ProductDTO | null>(
     null
   );
-  const [isFormOpen, setIsFormOpen] = useState(false);
   const [isStockOpen, setIsStockOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const { data: productsResponse, isLoading, refetch } = useProducts();
-  const { deleteProduct } = useProductMutations();
 
   const products = productsResponse?.data?.items || [];
-  const categories = STATIC_CATEGORIES;
-
-  const handleCreate = () => {
-    setSelectedProduct(null);
-    setIsFormOpen(true);
-  };
-
-  const handleEdit = (product: ProductDTO) => {
-    setSelectedProduct(product);
-    setIsFormOpen(true);
-  };
 
   const handleUpdateStock = (product: ProductDTO) => {
     setSelectedProduct(product);
     setIsStockOpen(true);
-  };
-
-  const handleDeletePrompt = (product: ProductDTO) => {
-    setSelectedProduct(product);
-    setIsDeleteOpen(true);
-  };
-
-  const confirmDelete = async () => {
-    if (!selectedProduct) return;
-    try {
-      await deleteProduct.mutateAsync(selectedProduct.id);
-      setIsDeleteOpen(false);
-      setSelectedProduct(null);
-    } catch (error) {
-      console.error("Error deleting product:", error);
-    }
   };
 
   return (
@@ -70,41 +34,21 @@ export default function Products() {
         noButton={true}
       />
 
-      {products.length === 0 ? (
-        <EmptyState
-          title="Aucun produit"
-          message="Commencez par créer votre premier produit"
-        />
-      ) : (
-        <FlatList
-          className="mt-12 h-[110%]"
-          data={products}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <ProductListItem
-              product={item}
-              onEdit={() => handleEdit(item)}
-              onDelete={() => handleDeletePrompt(item)}
-              onUpdateStock={() => handleUpdateStock(item)}
-            />
-          )}
-          contentContainerStyle={{ padding: 20, paddingBottom: 120 }}
-          refreshControl={
-            <RefreshControl refreshing={isLoading} onRefresh={refetch} />
-          }
-        />
-      )}
-
-      <FAB onPress={handleCreate} />
-
-      <ProductFormSheet
-        isOpen={isFormOpen}
-        onClose={() => {
-          setIsFormOpen(false);
-          setSelectedProduct(null);
-        }}
-        product={selectedProduct || undefined}
-        categories={categories}
+      <FlatList
+        className="mt-12 h-[110%]"
+        data={products}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <ProductListItem
+            product={item}
+            onUpdateStock={() => handleUpdateStock(item)}
+            readOnly
+          />
+        )}
+        contentContainerStyle={{ padding: 20, paddingBottom: 120 }}
+        refreshControl={
+          <RefreshControl refreshing={isLoading} onRefresh={refetch} />
+        }
       />
 
       <ProductStockSheet
@@ -114,20 +58,6 @@ export default function Products() {
           setSelectedProduct(null);
         }}
         product={selectedProduct || undefined}
-      />
-
-      <ConfirmSheet
-        isOpen={isDeleteOpen}
-        onClose={() => {
-          setIsDeleteOpen(false);
-          setSelectedProduct(null);
-        }}
-        onConfirm={confirmDelete}
-        title="Supprimer le produit"
-        message={`Êtes-vous sûr de vouloir supprimer "${selectedProduct?.name}" ?`}
-        confirmText="Supprimer"
-        confirmVariant="danger"
-        isLoading={deleteProduct.isPending}
       />
     </SafeAreaView>
   );

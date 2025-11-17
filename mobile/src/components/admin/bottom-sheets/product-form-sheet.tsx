@@ -41,7 +41,7 @@ export default function ProductFormSheet({
   const form = useForm<Omit<CreateProductDTO | UpdateProductDTO, "images">>({
     resolver: zodResolver(
       isEditMode ? UpdateProductSchema : CreateProductSchema
-    ),
+    ) as any,
     defaultValues: isEditMode
       ? {
           name: product.name,
@@ -124,7 +124,7 @@ export default function ProductFormSheet({
   return (
     <BottomSheet
       ref={bottomSheetRef}
-      snapPoints={["90%"]}
+      snapPoints={["70%"]}
       enablePanDownToClose
       onClose={onClose}
       index={-1}

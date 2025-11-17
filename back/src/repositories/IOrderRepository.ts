@@ -5,6 +5,7 @@ export interface IOrderRepository {
   findById(id: number): Promise<Order | null>;
   findByOrderNumber(orderNumber: string): Promise<Order | null>;
   findAll(filters?: OrderFilters, pagination?: PaginationParams): Promise<PaginatedResponse<Order>>;
+  findBySellerId(sellerId: number, filters?: OrderFilters, pagination?: PaginationParams): Promise<PaginatedResponse<Order>>;
   update(id: number, data: UpdateOrderStatusDTO): Promise<Order>;
   cancel(id: number): Promise<Order>;
   updateTotalPaid(id: number, amount: number): Promise<Order>;

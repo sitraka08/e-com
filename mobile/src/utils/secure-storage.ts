@@ -1,9 +1,10 @@
 import * as SecureStore from 'expo-secure-store';
-import { AuthTokens, UserDTO } from '@/types';
+import { AuthTokens, UserDTO, SellerDTO } from '@/types';
 
 const KEYS = {
   ACCESS_TOKEN: 'access_token',
   USER: 'user',
+  SELLER: 'seller',
 };
 
 export const secureStorage = {
@@ -76,8 +77,40 @@ export const secureStorage = {
     }
   },
 
+  async saveSeller(seller: SellerDTO): Promise<void> {
+    try {
+      await SecureStore.setItemAsync(KEYS.SELLER, JSON.stringify(seller));
+    } catch (error) {
+      console.error('Error saving seller:', error);
+      throw error;
+    }
+  },
+
+  async getSeller(): Promise<SellerDTO | null> {
+    try {
+      const sellerString = await SecureStore.getItemAsync(KEYS.SELLER);
+      if (!sellerString) {
+        return null;
+      }
+      return JSON.parse(sellerString) as SellerDTO;
+    } catch (error) {
+      console.error('Error getting seller:', error);
+      return null;
+    }
+  },
+
+  async removeSeller(): Promise<void> {
+    try {
+      await SecureStore.deleteItemAsync(KEYS.SELLER);
+    } catch (error) {
+      console.error('Error removing seller:', error);
+      throw error;
+    }
+  },
+
   async clearAll(): Promise<void> {
     await this.clearTokens();
     await this.clearUser();
+    await this.removeSeller();
   },
 };

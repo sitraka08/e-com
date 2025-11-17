@@ -8,6 +8,7 @@ export const createAddressRoutes = (addressController: AddressController): Route
   router.use(authenticate);
 
   router.post('/', addressController.createAddress);
+  router.get('/default', addressController.getDefaultAddress);
   router.get('/', addressController.getUserAddresses);
   router.get('/:id', addressController.getAddressById);
   router.put('/:id', addressController.updateAddress);

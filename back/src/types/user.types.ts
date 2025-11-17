@@ -39,6 +39,7 @@ export interface UpdateUserDTO {
   lastName?: string;
   email?: string;
   password?: string;
+  role?: UserRole;
 }
 
 export interface UserListFilters {

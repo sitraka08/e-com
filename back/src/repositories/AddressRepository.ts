@@ -11,14 +11,19 @@ export class AddressRepository implements IAddressRepository {
       throw new Error('Maximum 5 addresses per user');
     }
 
-    if (data.isDefault) {
+    let addressData = { ...data };
+    if (addressCount === 0) {
+      addressData.isDefault = true;
+    }
+
+    if (addressData.isDefault) {
       await this.prisma.address.updateMany({
         where: { userId: data.userId, isDefault: true },
         data: { isDefault: false },
       });
     }
 
-    return this.prisma.address.create({ data });
+    return this.prisma.address.create({ data: addressData });
   }
 
   async findById(id: number): Promise<Address | null> {

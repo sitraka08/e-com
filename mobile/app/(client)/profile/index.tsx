@@ -1,63 +1,31 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, Text, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { Redirect, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { LogOut, User as UserIcon } from "lucide-react-native";
+import {
+  LogOut,
+  MapPin,
+  CreditCard,
+  Lock,
+  ChevronRight,
+  User as UserIcon,
+  LucideIcon,
+} from "lucide-react-native";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { useUserMutations } from "@/hooks/use-users";
-import { UpdateUserDTO, UpdateUserSchema } from "@/types";
-import Input from "@/components/input";
-import Button from "@/components/button/button";
-import AvatarPicker from "@/components/admin/avatar-picker";
 import { COLORS } from "@/constants/colors";
 import TopNavigation from "@/components/top-navigation";
+import { Button } from "@/components/button";
+
+interface MenuItem {
+  icon: LucideIcon;
+  label: string;
+  route: string;
+  color?: string;
+}
 
 export default function Profil() {
   const router = useRouter();
   const { user, isAuthenticated, clearAuth } = useAuthStore();
-  const { updateUser } = useUserMutations();
-  const [avatar, setAvatar] = useState(user?.avatar || "");
-  const [avatarError, setAvatarError] = useState("");
-
-  const form = useForm<UpdateUserDTO>({
-    resolver: zodResolver(UpdateUserSchema),
-    defaultValues: {
-      firstName: user?.firstName || "",
-      lastName: user?.lastName || "",
-      email: user?.email || "",
-      password: "",
-    },
-  });
-
-  const onSubmit = async (data: UpdateUserDTO) => {
-    if (!user) return;
-
-    try {
-      // Filtrer les champs vides
-      const filteredData: UpdateUserDTO = {};
-      if (data.firstName) filteredData.firstName = data.firstName;
-      if (data.lastName) filteredData.lastName = data.lastName;
-      if (data.email) filteredData.email = data.email;
-      if (data.password) filteredData.password = data.password;
-
-      // TODO: Ajouter l'upload de l'avatar au backend quand disponible
-      // if (avatar && !avatar.startsWith("http")) {
-      //   await uploadAvatar(avatar);
-      // }
-
-      await updateUser.mutateAsync({
-        id: user.id,
-        data: filteredData,
-      });
-
-      // Réinitialiser le champ mot de passe
-      form.setValue("password", "");
-    } catch (error) {
-      console.error("Error updating profile:", error);
-    }
-  };
 
   const handleLogout = () => {
     Alert.alert("Déconnexion", "Êtes-vous sûr de vouloir vous déconnecter ?", [
@@ -76,145 +44,116 @@ export default function Profil() {
     ]);
   };
 
+  const menuItems: MenuItem[] = [
+    {
+      icon: MapPin,
+      label: "Mes adresses",
+      route: "/(client)/profile/addresses",
+    },
+    {
+      icon: CreditCard,
+      label: "Moyens de paiement",
+      route: "/(client)/profile/payment-methods",
+    },
+    {
+      icon: Lock,
+      label: "Changer le mot de passe",
+      route: "/(client)/profile/change-password",
+    },
+  ];
+
   if (!isAuthenticated || !user) {
     return <Redirect href="/(auth)/login" />;
   }
 
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView className="flex-1 bg-gray-50">
       <TopNavigation
         title="Mon Profil"
-        description="Gérez vos informations personnelles"
+        description="Gérez votre compte et vos préférences"
       />
 
-      <ScrollView className=" px-5 mt-16">
-        <View className="">
-          <AvatarPicker
-            value={avatar}
-            onChange={(newAvatar) => {
-              setAvatar(newAvatar);
-              setAvatarError("");
-            }}
-            error={avatarError}
-          />
-
-          <View className="mb-6">
-            <Text className="text-lg font-fbold text-zinc-800 mb-4">
-              Informations personnelles
-            </Text>
-
-            <View className="gap-4">
-              <Input
-                form={form}
-                name="firstName"
-                label="Prénom"
-                placeholder="Votre prénom"
-                isAdmin
-              />
-
-              <Input
-                form={form}
-                name="lastName"
-                label="Nom"
-                placeholder="Votre nom"
-                isAdmin
-              />
-
-              <Input
-                form={form}
-                name="email"
-                label="Email"
-                placeholder="votre@email.com"
-                isAdmin
-              />
+      <ScrollView className="flex-1 px-5 mt-16">
+        <View className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
+          <View className="items-center mb-4">
+            <View className="w-24 h-24 rounded-full bg-primary/10 items-center justify-center mb-3">
+              <UserIcon size={40} color={COLORS.primary} />
             </View>
-          </View>
-
-          {/* Sécurité */}
-          <View className="mb-6">
-            <Text className="text-lg font-fbold text-zinc-800 mb-4">
-              Sécurité
+            <Text className="text-xl font-fbold text-zinc-800">
+              {user.firstName} {user.lastName}
             </Text>
-
-            <Input
-              form={form}
-              name="password"
-              label="Nouveau mot de passe"
-              placeholder="Laissez vide pour ne pas changer"
-              type="password"
-              isAdmin
-            />
-
-            <Text className="text-xs font-fregular text-gray-500 mt-2">
-              Le mot de passe doit contenir au moins 8 caractères avec une
-              majuscule, une minuscule et un chiffre.
+            <Text className="text-sm font-fregular text-gray-500 mt-1">
+              {user.email}
             </Text>
           </View>
 
-          {/* Informations du compte */}
-          <View className="mb-6">
-            <Text className="text-lg font-fbold text-zinc-800 mb-4">
-              Informations du compte
-            </Text>
-
-            <View className="bg-gray-50 rounded-xl p-4 gap-3">
-              <View className="flex-row justify-between">
-                <Text className="text-sm font-fmedium text-gray-600">
-                  Statut
-                </Text>
-                <Text
-                  className={`text-sm font-fbold ${
-                    user.status === "ACTIVE"
-                      ? "text-green-600"
-                      : user.status === "SUSPENDED"
-                        ? "text-red-600"
-                        : "text-orange-600"
-                  }`}
-                >
-                  {user.status === "ACTIVE"
-                    ? "Actif"
+          <View className="bg-gray-50 rounded-xl p-4 gap-3">
+            <View className="flex-row justify-between">
+              <Text className="text-sm font-fmedium text-gray-600">Statut</Text>
+              <Text
+                className={`text-sm font-fbold ${
+                  user.status === "ACTIVE"
+                    ? "text-green-600"
                     : user.status === "SUSPENDED"
-                      ? "Suspendu"
-                      : "En attente"}
-                </Text>
-              </View>
-
-              <View className="flex-row justify-between">
-                <Text className="text-sm font-fmedium text-gray-600">
-                  Membre depuis
-                </Text>
-                <Text className="text-sm font-fregular text-gray-700">
-                  {new Date(user.createdAt).toLocaleDateString("fr-FR", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </Text>
-              </View>
-            </View>
-          </View>
-
-          {/* Boutons d'action */}
-          <View className="gap-3 mb-8">
-            <Button
-              label="Mettre à jour le profil"
-              onPress={form.handleSubmit(onSubmit)}
-              loading={updateUser.isPending}
-              className="!bg-primary w-full h-14"
-              textClassName="!text-white"
-            />
-
-            <TouchableOpacity
-              onPress={handleLogout}
-              className="flex-row items-center justify-center py-4 px-4 rounded-xl border-2 border-red-500 bg-red-50"
-            >
-              <LogOut size={20} color="#EF4444" />
-              <Text className="ml-2 text-base font-fbold text-red-500">
-                Se déconnecter
+                      ? "text-red-600"
+                      : "text-orange-600"
+                }`}
+              >
+                {user.status === "ACTIVE"
+                  ? "Actif"
+                  : user.status === "SUSPENDED"
+                    ? "Suspendu"
+                    : "En attente"}
               </Text>
-            </TouchableOpacity>
+            </View>
+
+            <View className="flex-row justify-between">
+              <Text className="text-sm font-fmedium text-gray-600">
+                Membre depuis
+              </Text>
+              <Text className="text-sm font-fregular text-gray-700">
+                {new Date(user.createdAt).toLocaleDateString("fr-FR", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </Text>
+            </View>
           </View>
         </View>
+
+        <View className="bg-white rounded-2xl mb-6 shadow-sm overflow-hidden">
+          {menuItems.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <TouchableOpacity
+                key={index}
+                onPress={() => router.push(item.route as any)}
+                className={`flex-row items-center justify-between px-6 py-4 ${
+                  index < menuItems.length - 1 ? "border-b border-gray-100" : ""
+                }`}
+              >
+                <View className="flex-row items-center gap-3">
+                  <View className="w-10 h-10 rounded-full bg-gray-50 items-center justify-center">
+                    <Icon size={20} color={COLORS.primary} />
+                  </View>
+                  <Text className="text-base font-fmedium text-zinc-800">
+                    {item.label}
+                  </Text>
+                </View>
+                <ChevronRight size={20} color="#9CA3AF" />
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        <Button
+          label="Se déconnecter"
+          variant="destructive"
+          iconLeft={<LogOut size={20} color="#EF4444" />}
+          onPress={handleLogout}
+          className="mb-8"
+        />
       </ScrollView>
     </SafeAreaView>
   );

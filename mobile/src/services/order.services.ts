@@ -43,6 +43,11 @@ export const orderService = {
     return response.data;
   },
 
+  async cancel(id: number): Promise<ApiResponse<OrderDTO>> {
+    const response = await apiClient.patch(`/orders/${id}/cancel`);
+    return response.data;
+  },
+
   async getStats(): Promise<ApiResponse<OrderStatsDTO>> {
     const response = await apiClient.get('/orders/stats');
     return response.data;
