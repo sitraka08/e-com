@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, Text } from 'react-native';
-import { OrderDTO } from '@/types';
-import { Eye, Edit } from 'lucide-react-native';
-import { Button } from '../../button';
+import React from "react";
+import { View, Text } from "react-native";
+import { OrderDTO } from "@/types";
+import { Eye, Edit } from "lucide-react-native";
+import { Button } from "../../button";
 
 interface OrderListItemProps {
   order: OrderDTO;
@@ -10,59 +10,63 @@ interface OrderListItemProps {
   onUpdateStatus?: () => void;
 }
 
-export default function OrderListItem({ order, onViewDetails, onUpdateStatus }: OrderListItemProps) {
+export default function OrderListItem({
+  order,
+  onViewDetails,
+  onUpdateStatus,
+}: OrderListItemProps) {
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
-      case 'PENDING':
-        return 'bg-orange-100';
-      case 'CONFIRMED':
-        return 'bg-blue-100';
-      case 'PROCESSING':
-        return 'bg-indigo-100';
-      case 'SHIPPED':
-        return 'bg-purple-100';
-      case 'DELIVERED':
-        return 'bg-green-100';
-      case 'CANCELLED':
-        return 'bg-red-100';
+      case "PENDING":
+        return "bg-orange-100";
+      case "CONFIRMED":
+        return "bg-blue-100";
+      case "PROCESSING":
+        return "bg-indigo-100";
+      case "SHIPPED":
+        return "bg-purple-100";
+      case "DELIVERED":
+        return "bg-green-100";
+      case "CANCELLED":
+        return "bg-red-100";
       default:
-        return 'bg-gray-100';
+        return "bg-gray-100";
     }
   };
 
   const getStatusTextColor = (status: string) => {
     switch (status) {
-      case 'PENDING':
-        return 'text-orange-700';
-      case 'CONFIRMED':
-        return 'text-blue-700';
-      case 'PROCESSING':
-        return 'text-indigo-700';
-      case 'SHIPPED':
-        return 'text-purple-700';
-      case 'DELIVERED':
-        return 'text-green-700';
-      case 'CANCELLED':
-        return 'text-red-700';
+      case "PENDING":
+        return "text-orange-700";
+      case "CONFIRMED":
+        return "text-blue-700";
+      case "PROCESSING":
+        return "text-indigo-700";
+      case "SHIPPED":
+        return "text-purple-700";
+      case "DELIVERED":
+        return "text-green-700";
+      case "CANCELLED":
+        return "text-red-700";
       default:
-        return 'text-gray-700';
+        return "text-gray-700";
     }
   };
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'PENDING':
-        return 'En attente';
-      case 'CONFIRMED':
-        return 'Confirmée';
-      case 'PROCESSING':
-        return 'En traitement';
-      case 'SHIPPED':
-        return 'Expédiée';
-      case 'DELIVERED':
-        return 'Livrée';
-      case 'CANCELLED':
-        return 'Annulée';
+      case "PENDING":
+        return "En attente";
+      case "CONFIRMED":
+        return "Confirmée";
+      case "PROCESSING":
+        return "En traitement";
+      case "SHIPPED":
+        return "Expédiée";
+      case "DELIVERED":
+        return "Livrée";
+      case "CANCELLED":
+        return "Annulée";
       default:
         return status;
     }
@@ -70,10 +74,10 @@ export default function OrderListItem({ order, onViewDetails, onUpdateStatus }: 
 
   const formatDate = (date: string | Date) => {
     const d = new Date(date);
-    return d.toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
+    return d.toLocaleDateString("fr-FR", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
     });
   };
 
@@ -85,8 +89,12 @@ export default function OrderListItem({ order, onViewDetails, onUpdateStatus }: 
             <Text className="text-base font-fbold text-gray-900">
               #{order.orderNumber}
             </Text>
-            <View className={`px-2 py-1 rounded ${getStatusBadgeColor(order.status)}`}>
-              <Text className={`text-xs font-fmedium ${getStatusTextColor(order.status)}`}>
+            <View
+              className={`px-2 py-1 rounded ${getStatusBadgeColor(order.status)}`}
+            >
+              <Text
+                className={`text-xs font-fmedium ${getStatusTextColor(order.status)}`}
+              >
                 {getStatusLabel(order.status)}
               </Text>
             </View>
@@ -117,7 +125,7 @@ export default function OrderListItem({ order, onViewDetails, onUpdateStatus }: 
           onPress={onViewDetails}
           className="flex-1 p-3"
         />
-        {onUpdateStatus && (
+        {/* {onUpdateStatus && (
           <Button
             label="Statut"
             variant="action"
@@ -127,7 +135,7 @@ export default function OrderListItem({ order, onViewDetails, onUpdateStatus }: 
             onPress={onUpdateStatus}
             className="flex-1 p-3"
           />
-        )}
+        )} */}
       </View>
     </View>
   );
