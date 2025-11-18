@@ -1,12 +1,11 @@
-import { IOrderRepository, IUserRepository } from '../repositories';
+import { IOrderRepository } from '../repositories';
 import { OrderDTO, CreateOrderDTO, UpdateOrderStatusDTO, OrderFilters, PaginationParams, PaginatedResponse, OrderStatsDTO, OrderItemDTO, PaymentDTO } from '../types';
 import { EmailService } from './EmailService';
 
 export class OrderService {
   constructor(
     private orderRepository: IOrderRepository,
-    private emailService?: EmailService,
-    private userRepository?: IUserRepository
+    private emailService?: EmailService
   ) {}
 
   async createOrder(data: CreateOrderDTO): Promise<OrderDTO> {
@@ -56,16 +55,21 @@ export class OrderService {
     // Cancel the order
     const order: any = await this.orderRepository.cancel(id);
 
-    // Send email notification to admin
-    if (this.emailService && this.userRepository) {
+    // Send email notification to sellers
+    if (this.emailService) {
       try {
-        // Find admin user
-        const adminUsers = await this.userRepository.findAll({ role: 'ADMIN' });
-        if (adminUsers && adminUsers.length > 0) {
-          const admin = adminUsers[0];
+        // Get unique sellers from order items
+        const sellerEmails = new Set<string>();
+        for (const item of orderBefore.items || []) {
+          if (item.product?.seller?.user?.email) {
+            sellerEmails.add(item.product.seller.user.email);
+          }
+        }
 
-          await this.emailService.sendOrderCancellationEmailToAdmin(
-            admin.email,
+        // Send email to each seller
+        for (const sellerEmail of sellerEmails) {
+          await this.emailService.sendOrderCancellationEmailToSeller(
+            sellerEmail,
             {
               orderNumber: order.orderNumber,
               clientName: `${orderBefore.user.firstName} ${orderBefore.user.lastName}`,
@@ -76,7 +80,7 @@ export class OrderService {
           );
         }
       } catch (emailError) {
-        console.error('Failed to send cancellation email to admin:', emailError);
+        console.error('Failed to send cancellation email to seller:', emailError);
         // Don't fail the cancellation if email fails
       }
     }

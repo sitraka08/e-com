@@ -1,13 +1,13 @@
-import * as nodemailer from 'nodemailer';
-import { Transporter } from 'nodemailer';
+import * as nodemailer from "nodemailer";
+import { Transporter } from "nodemailer";
 
 export class EmailService {
   private transporter: Transporter;
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.SMTP_PORT || '587'),
+      host: process.env.SMTP_HOST || "smtp.gmail.com",
+      port: parseInt(process.env.SMTP_PORT || "587"),
       secure: false, // true for 465, false for other ports
       auth: {
         user: process.env.SMTP_USER,
@@ -16,21 +16,27 @@ export class EmailService {
     });
   }
 
-  async sendOTPEmail(email: string, otp: string, userName?: string): Promise<void> {
+  async sendOTPEmail(
+    email: string,
+    otp: string,
+    userName?: string
+  ): Promise<void> {
     try {
       const htmlContent = this.getOTPEmailTemplate(otp, userName);
 
       await this.transporter.sendMail({
-        from: `"${process.env.SMTP_FROM_NAME || 'E-Commerce Support'}" <${process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER}>`,
+        from: `"${process.env.SMTP_FROM_NAME || "E-Commerce Support"}" <${
+          process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER
+        }>`,
         to: email,
-        subject: 'Code de vérification - Réinitialisation de mot de passe',
+        subject: "Code de vérification - Réinitialisation de mot de passe",
         html: htmlContent,
       });
 
       console.log(`✅ OTP email sent to ${email}`);
     } catch (error) {
-      console.error('❌ Error sending OTP email:', error);
-      throw new Error('Failed to send OTP email');
+      console.error("❌ Error sending OTP email:", error);
+      throw new Error("Failed to send OTP email");
     }
   }
 
@@ -60,7 +66,11 @@ export class EmailService {
                     <!-- Content -->
                     <tr>
                         <td style="padding: 40px 30px;">
-                            ${userName ? `<p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">Bonjour ${userName},</p>` : ''}
+                            ${
+                              userName
+                                ? `<p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">Bonjour ${userName},</p>`
+                                : ""
+                            }
 
                             <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
                                 Vous avez demandé à réinitialiser votre mot de passe. Utilisez le code de vérification ci-dessous pour continuer :
@@ -115,8 +125,8 @@ export class EmailService {
     `;
   }
 
-  async sendOrderCancellationEmailToAdmin(
-    adminEmail: string,
+  async sendOrderCancellationEmailToSeller(
+    sellerEmail: string,
     orderDetails: {
       orderNumber: string;
       clientName: string;
@@ -129,16 +139,18 @@ export class EmailService {
       const htmlContent = this.getOrderCancellationEmailTemplate(orderDetails);
 
       await this.transporter.sendMail({
-        from: `"${process.env.SMTP_FROM_NAME || 'E-Commerce Support'}" <${process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER}>`,
-        to: adminEmail,
+        from: `"${process.env.SMTP_FROM_NAME || "E-Commerce Support"}" <${
+          process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER
+        }>`,
+        to: sellerEmail,
         subject: `❌ Commande annulée - ${orderDetails.orderNumber}`,
         html: htmlContent,
       });
 
-      console.log(`✅ Order cancellation email sent to admin ${adminEmail}`);
+      console.log(`✅ Order cancellation email sent to seller ${sellerEmail}`);
     } catch (error) {
-      console.error('❌ Error sending order cancellation email:', error);
-      throw new Error('Failed to send order cancellation email');
+      console.log("❌ Error sending order cancellation email:", error);
+      throw new Error("Failed to send order cancellation email");
     }
   }
 
@@ -156,7 +168,9 @@ export class EmailService {
       const htmlContent = this.getOrderShippedEmailTemplate(orderDetails);
 
       await this.transporter.sendMail({
-        from: `"${process.env.SMTP_FROM_NAME || 'E-Commerce Support'}" <${process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER}>`,
+        from: `"${process.env.SMTP_FROM_NAME || "E-Commerce Support"}" <${
+          process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER
+        }>`,
         to: clientEmail,
         subject: `📦 Votre commande ${orderDetails.orderNumber} a été expédiée !`,
         html: htmlContent,
@@ -164,8 +178,8 @@ export class EmailService {
 
       console.log(`✅ Order shipped email sent to client ${clientEmail}`);
     } catch (error) {
-      console.error('❌ Error sending order shipped email:', error);
-      throw new Error('Failed to send order shipped email');
+      console.error("❌ Error sending order shipped email:", error);
+      throw new Error("Failed to send order shipped email");
     }
   }
 
@@ -176,13 +190,16 @@ export class EmailService {
     total: number;
     cancelledAt: Date;
   }): string {
-    const formattedDate = new Date(orderDetails.cancelledAt).toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    const formattedDate = new Date(orderDetails.cancelledAt).toLocaleDateString(
+      "fr-FR",
+      {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }
+    );
 
     return `
 <!DOCTYPE html>
@@ -210,11 +227,11 @@ export class EmailService {
                     <tr>
                         <td style="padding: 40px 30px;">
                             <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-                                Bonjour Administrateur,
+                                Bonjour,
                             </p>
 
                             <p style="color: #333333; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-                                Un client a annulé sa commande. Voici les détails :
+                                Une commande contenant vos produits a été annulée par le client. Voici les détails :
                             </p>
 
                             <!-- Order Details Box -->
@@ -269,8 +286,8 @@ export class EmailService {
 
                             <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 30px 0; border-radius: 4px;">
                                 <p style="color: #856404; font-size: 14px; margin: 0; line-height: 1.6;">
-                                    <strong>📊 Action requise :</strong><br>
-                                    Le stock des produits a été automatiquement restauré. Vérifiez le statut de la commande dans le tableau de bord administrateur.
+                                    <strong>📊 Information :</strong><br>
+                                    Le stock de vos produits a été automatiquement restauré. Vous pouvez consulter les détails dans votre tableau de bord vendeur.
                                 </p>
                             </div>
                         </td>
@@ -303,21 +320,23 @@ export class EmailService {
     estimatedDelivery?: Date | null;
     shippedAt: Date;
   }): string {
-    const formattedShippedDate = new Date(orderDetails.shippedAt).toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    const formattedShippedDate = new Date(
+      orderDetails.shippedAt
+    ).toLocaleDateString("fr-FR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
 
     const estimatedDeliveryText = orderDetails.estimatedDelivery
-      ? new Date(orderDetails.estimatedDelivery).toLocaleDateString('fr-FR', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
+      ? new Date(orderDetails.estimatedDelivery).toLocaleDateString("fr-FR", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
         })
-      : 'Non spécifiée';
+      : "Non spécifiée";
 
     return `
 <!DOCTYPE html>
@@ -431,10 +450,10 @@ export class EmailService {
   async verifyConnection(): Promise<boolean> {
     try {
       await this.transporter.verify();
-      console.log('✅ SMTP connection verified successfully');
+      console.log("✅ SMTP connection verified successfully");
       return true;
     } catch (error) {
-      console.error('❌ SMTP connection failed:', error);
+      console.error("❌ SMTP connection failed:", error);
       return false;
     }
   }
