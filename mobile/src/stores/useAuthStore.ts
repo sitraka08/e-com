@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import { AuthTokens, UserDTO, SellerDTO } from '@/types';
-import { secureStorage } from '@/utils/secure-storage';
+import { create } from "zustand";
+import { AuthTokens, UserDTO, SellerDTO } from "@/types";
+import { secureStorage } from "@/utils/secure-storage";
 
 interface AuthState {
   user: UserDTO | null;
@@ -11,7 +11,11 @@ interface AuthState {
 }
 
 interface AuthActions {
-  setAuth: (user: UserDTO, tokens: AuthTokens, seller?: SellerDTO) => Promise<void>;
+  setAuth: (
+    user: UserDTO,
+    tokens: AuthTokens,
+    seller?: SellerDTO
+  ) => Promise<void>;
   clearAuth: () => Promise<void>;
   setUser: (user: UserDTO) => Promise<void>;
   setSeller: (seller: SellerDTO | null) => Promise<void>;
@@ -41,7 +45,6 @@ export const useAuthStore = create<AuthStore>((set) => ({
         isAuthenticated: true,
       });
     } catch (error) {
-      console.error('Error setting auth:', error);
       throw error;
     }
   },
@@ -56,7 +59,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
         isAuthenticated: false,
       });
     } catch (error) {
-      console.error('Error clearing auth:', error);
+      console.error("Error clearing auth:", error);
       throw error;
     }
   },
@@ -66,7 +69,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
       await secureStorage.saveUser(user);
       set({ user });
     } catch (error) {
-      console.error('Error setting user:', error);
+      console.error("Error setting user:", error);
       throw error;
     }
   },
@@ -80,7 +83,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
       }
       set({ seller });
     } catch (error) {
-      console.error('Error setting seller:', error);
+      console.error("Error setting seller:", error);
       throw error;
     }
   },
@@ -112,7 +115,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
         });
       }
     } catch (error) {
-      console.error('Error initializing auth:', error);
+      console.error("Error initializing auth:", error);
       set({
         user: null,
         tokens: null,

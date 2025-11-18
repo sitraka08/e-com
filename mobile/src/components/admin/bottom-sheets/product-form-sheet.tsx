@@ -17,6 +17,7 @@ import {
 } from "@/types";
 import { useProductMutations } from "@/hooks/use-products";
 import { COLORS } from "@/constants/colors";
+import { useCategories } from "../../../hooks/use-categories";
 
 interface ProductFormSheetProps {
   isOpen: boolean;
@@ -37,6 +38,7 @@ export default function ProductFormSheet({
   const isEditMode = !!product;
   const [images, setImages] = useState<string[]>([]);
   const [imageError, setImageError] = useState<string>("");
+  const { data } = useCategories();
 
   const form = useForm<Omit<CreateProductDTO | UpdateProductDTO, "images">>({
     resolver: zodResolver(
@@ -116,7 +118,7 @@ export default function ProductFormSheet({
     }
   };
 
-  const categoryOptions = categories.map((cat) => ({
+  const categoryOptions = data?.data?.map((cat) => ({
     label: cat.name,
     value: cat.id,
   }));
@@ -180,7 +182,7 @@ export default function ProductFormSheet({
             form={form}
             name="categoryId"
             label="Catégorie"
-            options={categoryOptions}
+            options={categoryOptions || []}
             placeholder="Sélectionner une catégorie"
             isAdmin
           />

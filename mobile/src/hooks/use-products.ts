@@ -71,7 +71,7 @@ export const useProductMutations = () => {
     mutationFn: ({ data, imageUris }) =>
       productService.createWithImages(data, imageUris),
     onSuccessCallback: () => {
-      queryClient.invalidateQueries({ queryKey: ["seller"], exact: false });
+      queryClient.invalidateQueries({ queryKey: ["seller"] });
     },
   });
 
@@ -82,7 +82,7 @@ export const useProductMutations = () => {
     queryKey: ["update-product"],
     mutationFn: ({ id, data }) => productService.update(id, data),
     onSuccessCallback: () => {
-      queryClient.invalidateQueries({ queryKey: ["seller"], exact: false });
+      queryClient.invalidateQueries({ queryKey: ["seller"] });
     },
   });
 
@@ -94,7 +94,7 @@ export const useProductMutations = () => {
     mutationFn: ({ id, data, imageUris }) =>
       productService.updateWithImages(id, data, imageUris),
     onSuccessCallback: () => {
-      queryClient.invalidateQueries({ queryKey: ["seller"], exact: false });
+      queryClient.invalidateQueries({ queryKey: ["seller"] });
     },
   });
 
@@ -114,7 +114,7 @@ export const useProductMutations = () => {
     queryKey: ["update-stock"],
     mutationFn: ({ id, data }) => productService.updateStock(id, data),
     onSuccessCallback: () => {
-      queryClient.invalidateQueries({ queryKey: ["seller"], exact: false });
+      queryClient.invalidateQueries({ queryKey: ["seller"] });
     },
   });
 

@@ -82,8 +82,6 @@ export default function OrderCard({ order, onPress }: OrderCardProps) {
     );
   };
 
-  console.log(status, "status");
-
   return (
     <TouchableOpacity
       onPress={onPress}

@@ -4,7 +4,7 @@
     "slug": "Qitkif",
     "version": "1.0.0",
     "orientation": "portrait",
-    "scheme": "Qitkif",
+    "scheme": "qitkif",
     "icon": "assets/icons/adaptive-icon.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -38,10 +38,18 @@
           "imageWidth": 200,
           "resizeMode": "contain"
         }
-      ]
+      ],
+      "expo-font",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "8bf603d5-8e6b-4c80-b30a-d637fc0198cb"
+      }
     }
   }
 }

@@ -1,7 +1,8 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import { useAuthStore } from "@/stores/useAuthStore";
 
-export const IP_URL = "http://192.168.1.117:3000";
+// export const IP_URL = "http://192.168.1.117:3000";
+export const IP_URL = "https://e-com-st3r.onrender.com";
 export const API_BASE_URL = `${IP_URL}/api`;
 
 export const apiClient: AxiosInstance = axios.create({

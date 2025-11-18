@@ -12,7 +12,6 @@ import {
 export const authService = {
   async login(data: LoginDTO): Promise<ApiResponse<AuthResponse>> {
     try {
-      console.log(data, "login");
       const response = await apiClient.post("/auth/login", data);
       return response.data;
     } catch (error: any) {
@@ -23,7 +22,8 @@ export const authService = {
       // Si c'est une erreur réseau (backend inaccessible)
       return {
         success: false,
-        message: "Impossible de se connecter au serveur. Vérifiez votre connexion.",
+        message:
+          "Impossible de se connecter au serveur. Vérifiez votre connexion.",
         error: error.message,
       };
     }
@@ -39,7 +39,8 @@ export const authService = {
       }
       return {
         success: false,
-        message: "Impossible de se connecter au serveur. Vérifiez votre connexion.",
+        message:
+          "Impossible de se connecter au serveur. Vérifiez votre connexion.",
         error: error.message,
       };
     }

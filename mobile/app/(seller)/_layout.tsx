@@ -14,8 +14,6 @@ function SellerGuard({ children }: { children: React.ReactNode }) {
   const { user, seller, isLoading } = useAuthStore();
   const router = useRouter();
 
-  console.log(seller, "seller");
-
   useEffect(() => {
     if (isLoading) return;
 

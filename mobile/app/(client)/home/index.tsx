@@ -30,11 +30,6 @@ export default function Home() {
     setCategory(id.toString());
   };
 
-  console.log(
-    products?.data?.items.length,
-    products?.data?.items.filter((p) => p.isActive).length
-  );
-
   const renderProductsContent = () => {
     if (isLoading) {
       return (

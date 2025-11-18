@@ -135,9 +135,9 @@ export default function PendingApprovalComponent() {
                   Temps de traitement
                 </Text>
                 <Text className="text-sm text-gray-600 font-fregular">
-                  Le traitement de votre demande peut prendre de 24 à 72
-                  heures. Vous pouvez vérifier le statut à tout moment en
-                  cliquant sur le bouton ci-dessus.
+                  Le traitement de votre demande peut prendre de 24 à 72 heures.
+                  Vous pouvez vérifier le statut à tout moment en cliquant sur
+                  le bouton ci-dessus.
                 </Text>
               </View>
             </View>
@@ -153,8 +153,8 @@ export default function PendingApprovalComponent() {
                   Besoin d'aide ?
                 </Text>
                 <Text className="text-sm text-gray-600 font-fregular">
-                  Si vous avez des questions concernant votre demande,
-                  n'hésitez pas à contacter notre équipe support.
+                  Si vous avez des questions concernant votre demande, n'hésitez
+                  pas à contacter notre équipe support.
                 </Text>
               </View>
             </View>
